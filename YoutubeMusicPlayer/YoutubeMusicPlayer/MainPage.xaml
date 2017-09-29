@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:YoutubeMusicPlayer"
+             x:Class="YoutubeMusicPlayer.MainPage" >
+    <local:MusicPlayerPage Title="Player"></local:MusicPlayerPage>
+    <ContentPage Title="Search">
+        <StackLayout>
+            <ProgressBar Progress="0.0" IsVisible="False" BackgroundColor="BlanchedAlmond" x:Name="progressBar" IsEnabled="False"/>
+            <SearchBar x:Name="searchBar" Placeholder="Enter music title..." SearchButtonPressed="SearchBar_OnSearchButtonPressed" 
+                       CancelButtonColor="DarkRed" TextChanged="SearchBar_OnTextChanged">
+            </SearchBar>
+            <ActivityIndicator IsRunning="False" x:Name="activityIndicator" IsVisible="False"/>
+            <ListView x:Name="listView" ItemSelected="ListView_OnItemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ImageCell ImageSource="{Binding ImageSource}" Text="{Binding Title}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </StackLayout>
+    </ContentPage>
+    <local:DownloadsPage x:Name="downloadPage">
+        
+    </local:DownloadsPage>
+
+</TabbedPage>
