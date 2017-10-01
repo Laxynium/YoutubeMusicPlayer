@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YoutubeMusicPlayer.AbstractLayer;
@@ -29,9 +32,27 @@ namespace YoutubeMusicPlayer
             InitializeComponent();
 
             _musicRepository = new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection());
-
-         
+       
             _musicPlayer = DependencyService.Get<IMusicPlayer>();
+
+            _musicPlayer.PlaybackCompleted += NextButton_OnClicked;
+
+            _musicPlayer.ProgressChanged += _musicPlayer_ProgressChanged;
+
+            slider.ProgressArranged += Slider_ProgressArranged;
+        }
+
+        private async void Slider_ProgressArranged(object sender, double e)
+        {
+            await _musicPlayer.SetProgressAsync(e);
+        }
+
+        private async void _musicPlayer_ProgressChanged(object sender, int e)
+        {
+           await Task.Run(() =>
+            {
+                slider.Value = e;
+            });            
         }
 
         protected override async void OnAppearing()
@@ -40,11 +61,33 @@ namespace YoutubeMusicPlayer
 
             if (!IsInitialize)
             {
-                await _musicRepository.Initialize();
+                IsInitialize = true;
+
+                await _musicRepository.InitializeAsync();
 
                 _musics=new ObservableCollection<Music>(await _musicRepository.GetAllAsync());
 
                 listView.ItemsSource = _musics;
+
+                listView.SelectedItem = _musics.Any() ? _musics.First() : null;
+                        
+                return;
+            }
+
+            await UpdateMusicAsync();
+        }
+
+        private async Task  UpdateMusicAsync()
+        {
+            if (_musics == null) return;
+
+            var musics =await  _musicRepository.GetAllAsync();
+            foreach (var music in musics)
+            {
+                var mus=_musics.SingleOrDefault(x => x.VideoId == music.VideoId);
+
+                if(mus==null)
+                    _musics.Add(music);
             }        
         }
 
@@ -62,10 +105,17 @@ namespace YoutubeMusicPlayer
         private async void PlayPauseButton_OnClicked(object sender, EventArgs e)
         {
             if (!IsPlaying)
-                await _musicPlayer.Play();
-            else
-                await _musicPlayer.Pause();
+            {
+                await _musicPlayer.PlayAsync();
+                playPauseButton.Text = "Pause";
+            }
 
+            else
+            {
+                await _musicPlayer.Pause();
+                playPauseButton.Text = "Play";
+            }
+                
             IsPlaying = !IsPlaying;
         }
 
@@ -88,7 +138,7 @@ namespace YoutubeMusicPlayer
 
             IsPlaying = false;
 
-            await _musicPlayer.SetSource(music.FilePath);
+            await _musicPlayer.SetSourceAsync(music.FilePath);
 
             PlayPauseButton_OnClicked(null, null);
         }

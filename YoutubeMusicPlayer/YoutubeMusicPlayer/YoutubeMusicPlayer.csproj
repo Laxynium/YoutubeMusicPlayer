@@ -43,9 +43,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Customs\CustomSlider.cs" />
     <Compile Include="DownloadsPage.xaml.cs">
       <DependentUpon>DownloadsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\MusicSearchViewModel.cs" />
     <Compile Include="MusicPlayerPage.xaml.cs">
       <DependentUpon>MusicPlayerPage.xaml</DependentUpon>
     </Compile>
@@ -53,7 +55,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\IOnProgressChanged.cs" />
+    <Compile Include="Models\INotifyProgressChanged.cs" />
     <Compile Include="Models\Music.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\MusicRepository.cs" />

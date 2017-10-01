@@ -6,7 +6,6 @@
     <local:MusicPlayerPage Title="Player"></local:MusicPlayerPage>
     <ContentPage Title="Search">
         <StackLayout>
-            <ProgressBar Progress="0.0" IsVisible="False" BackgroundColor="BlanchedAlmond" x:Name="progressBar" IsEnabled="False"/>
             <SearchBar x:Name="searchBar" Placeholder="Enter music title..." SearchButtonPressed="SearchBar_OnSearchButtonPressed" 
                        CancelButtonColor="DarkRed" TextChanged="SearchBar_OnTextChanged">
             </SearchBar>

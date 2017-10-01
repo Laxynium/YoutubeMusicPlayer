@@ -7,6 +7,6 @@ namespace YoutubeMusicPlayer.AbstractLayer
 {
     public interface IFileOpener
     {
-        Task OpenFile(string filePath);
+        Task OpenFileAsync(string filePath);
     }
 }

@@ -24,7 +24,7 @@ namespace YoutubeMusicPlayer
 
         private readonly MusicDownloader _musicDownloader;
 
-        public async Task DownloadFile(Music music)
+        public async Task DownloadFileAsync(Music music)
         {
             if (_collection.SingleOrDefault(x => x.VideoId == music.VideoId) != null)
             {
@@ -33,7 +33,7 @@ namespace YoutubeMusicPlayer
 
             _collection.Add(music);
 
-            var filePath=await _musicDownloader.DowloadFile(music);
+            var filePath=await _musicDownloader.DowloadFileAsync(music);
 
             music.FilePath = filePath;
 
@@ -53,7 +53,7 @@ namespace YoutubeMusicPlayer
         
         protected override async void OnAppearing()
         {
-            await _musicRepository.Initialize();
+            await _musicRepository.InitializeAsync();
 
             var musics = await _musicRepository.GetAllAsync();
             
@@ -73,7 +73,7 @@ namespace YoutubeMusicPlayer
 
             if (downloadItem?.FilePath == null) return;
       
-            await DependencyService.Get<IFileOpener>().OpenFile(downloadItem.FilePath);
+            await DependencyService.Get<IFileOpener>().OpenFileAsync(downloadItem.FilePath);
         }
 
        

@@ -12,7 +12,7 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
 {
     public class FileOpener:IFileOpener
     {
-        public async Task OpenFile(string filePath)
+        public async Task OpenFileAsync(string filePath)
         {
             var intent = new Intent(Intent.ActionView);
             intent.SetDataAndType(Uri.FromFile(new File(filePath)),"audio/*");

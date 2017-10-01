@@ -16,8 +16,7 @@ namespace YoutubeMusicPlayer
             _youtubeService = new YoutubeService();
 
             InitializeComponent();
-
-            
+           
         }
 
 
@@ -27,7 +26,7 @@ namespace YoutubeMusicPlayer
             {
                 var title = searchBar.Text;
                 SetActivityIndicator(true);
-                listView.ItemsSource=await _youtubeService.FindMusic(title);
+                listView.ItemsSource=await _youtubeService.FindMusicAsync(title);
                 SetActivityIndicator(false);
             }
             catch (Exception exception)
@@ -47,10 +46,8 @@ namespace YoutubeMusicPlayer
 
                 if (music == null) return;
 
-                await downloadPage.DownloadFile(music);
-                
-                
-
+                await downloadPage.DownloadFileAsync(music);
+                               
             }
             catch (Exception exception)
             {

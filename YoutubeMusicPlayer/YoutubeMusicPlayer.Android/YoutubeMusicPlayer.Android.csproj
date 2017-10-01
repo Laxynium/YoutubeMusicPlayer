@@ -140,6 +140,7 @@
     <Compile Include="AbstractLayer\FileOpener.cs" />
     <Compile Include="AbstractLayer\MusicPlayer.cs" />
     <Compile Include="AbstractLayer\SqlConnection.cs" />
+    <Compile Include="CustomRenderers\CustomSliderRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

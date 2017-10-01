@@ -8,7 +8,7 @@ namespace YoutubeMusicPlayer.Services
 {
     public class YoutubeService : IYoutubeService
     {
-        public async Task<IEnumerable<Music>> FindMusic(string title)
+        public async Task<IEnumerable<Music>> FindMusicAsync(string title)
         {
             var client = new HttpClient();
 
@@ -89,6 +89,7 @@ namespace YoutubeMusicPlayer.Services
                     VideoId = content?.videoRenderer?.videoId,
                     ImageSource = content?.videoRenderer?.thumbnail?.thumbnails[0]?.url
                 };
+
                 if (item.Title == null || item.VideoId == null) continue;
 
                 musicItems.Add(item);

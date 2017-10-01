@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Android.Media;
 using Java.IO;
@@ -18,21 +19,48 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
 
         private List<EventHandler> Actions { get; set; }
 
+        public event EventHandler PlaybackCompleted;
+
+        public event EventHandler<int> ProgressChanged;
+
         public MusicPlayer()
         {
             _mediaPlayer = new MediaPlayer();
 
-            Actions=new List<EventHandler>
+            Actions = new List<EventHandler>
             {
-                (s, a) => _mediaPlayer.Start(),
+                (s, a) =>
+                {
+                    _mediaPlayer.Start();
+                    Task.Run(() => OnProgressChanged(0));
+                },
                 (s, a) =>_mediaPlayer.Pause(),
                 (s, a) =>_mediaPlayer.Stop()
             };
 
             _mediaPlayer.Prepared += _mediaPlayer_Prepared;
+
+            _mediaPlayer.Completion += _mediaPlayer_Completion;
+       
         }
 
-        public async Task SetSource(string fileUrl)
+
+        private void _mediaPlayer_Completion(object sender, EventArgs e)
+        {
+            PlaybackCompleted?.Invoke(sender,e);
+        }
+
+        public async Task SetProgressAsync(double percentOfLength)
+        {
+            if (!IsPrepared)
+                return;
+
+            int msec = (int)(_mediaPlayer.Duration * percentOfLength / 100f);
+
+           _mediaPlayer.SeekTo(msec);
+        }
+
+        public async Task SetSourceAsync(string fileUrl)
         {
             _mediaPlayer.Reset();
 
@@ -45,9 +73,16 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
             _mediaPlayer.PrepareAsync();
         }
 
-        public async Task Play()
+        public async Task PlayAsync()
         {
-            PrepareAction(_mediaPlayer.Start, Actions[0]);
+            if (_mediaPlayer.IsPlaying)
+                return;
+
+            PrepareAction(()=>
+            {
+                _mediaPlayer.Start();
+                Task.Run(() => OnProgressChanged(0));
+            }, Actions[0]);
         }
         public async Task Pause()
         {
@@ -76,5 +111,26 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
         {
             IsPrepared = true;
         }
+
+       
+        public async void OnProgressChanged(int value)
+        {
+            if (!_mediaPlayer.IsPlaying)
+            {
+                return;
+            }
+            var pos = _mediaPlayer.CurrentPosition;
+            var length = _mediaPlayer.Duration;
+           
+            var progress = (int)(((double)pos / length) * 100);
+
+            ProgressChanged?.Invoke(this, progress);
+
+            await Task.Delay(1000);
+
+            OnProgressChanged(0);
+        }
+
+        public double Value { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace YoutubeMusicPlayer.Models
 {
-    public interface IOnProgressChanged
+    public interface INotifyProgressChanged
     {
         event EventHandler<int> ProgressChanged;
 

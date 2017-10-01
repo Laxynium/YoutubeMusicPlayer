@@ -17,7 +17,7 @@ namespace YoutubeMusicPlayer.Repositories
             _connection = connection;           
         }
 
-        public async Task Initialize()
+        public async Task InitializeAsync()
         {
             await _connection.CreateTableAsync<Music>();
 

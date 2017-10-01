@@ -9,6 +9,6 @@ namespace YoutubeMusicPlayer.Services
 {
     public interface IYoutubeService
     {
-        Task<IEnumerable<Music>> FindMusic(string title);
+        Task<IEnumerable<Music>> FindMusicAsync(string title);
     }
 }

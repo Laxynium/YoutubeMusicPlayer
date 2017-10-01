@@ -13,6 +13,6 @@ namespace YoutubeMusicPlayer.AbstractLayer
 {
     public interface IDownloader
     {
-        Task<Stream> GetStream(string url, IOnProgressChanged onProgressChanged2);
+        Task<Stream> GetStreamAsync(string url, INotifyProgressChanged onProgressChanged2);
     }
 }

@@ -9,7 +9,7 @@ namespace YoutubeMusicPlayer.UWP.AbstractLayer
 {
     public class FileOpener:IFileOpener
     {
-        public async Task OpenFile(string filePath)
+        public async Task OpenFileAsync(string filePath)
         {
             Device.OpenUri(new Uri(filePath));
         }

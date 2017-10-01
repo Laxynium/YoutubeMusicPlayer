@@ -52,18 +52,18 @@ namespace YoutubeMusicPlayer.Services
 
         public event EventHandler<int> OnProgressChanged;
 
-        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,IOnProgressChanged onProgressChanged)
+        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged)
         {
-            var response = await GetResponse(musicIdFromYoutube);
+            var response = await GetResponseAsync(musicIdFromYoutube);
 
-            var info = await ParseResponse(response);
+            var info = await ParseResponseAsync(response);
 
             var downloadUrl = $"https://{_servers[info.Item1]}.ymcdn.cc/{info.Item2}/{musicIdFromYoutube}";
 
-            return await Download(downloadUrl, onProgressChanged);
+            return await DownloadAsync(downloadUrl, onProgressChanged);
         }
 
-        private async Task<HttpResponseMessage> GetResponse(string musicIdFromYoutube)
+        private async Task<HttpResponseMessage> GetResponseAsync(string musicIdFromYoutube)
         {
             var url = 
                 $"https://d.ymcdn.cc/check.php?callback=jQuery321018152062429700822_1506173145863&v={musicIdFromYoutube}&f=mp3&_=1506173145865";
@@ -75,7 +75,7 @@ namespace YoutubeMusicPlayer.Services
            return await client.GetAsync(url);
         }
 
-        private async Task<Tuple<int, string>> ParseResponse(HttpResponseMessage response)
+        private async Task<Tuple<int, string>> ParseResponseAsync(HttpResponseMessage response)
         {
             var result = await response.Content.ReadAsStringAsync();
 
@@ -92,9 +92,9 @@ namespace YoutubeMusicPlayer.Services
             return new Tuple<int, string>(sid,info.hash);
         }
 
-        private async Task<Stream> Download(string downloadUrl,IOnProgressChanged onProgressChanged)
+        private async Task<Stream> DownloadAsync(string downloadUrl,INotifyProgressChanged onProgressChanged)
         {
-            var result = await DependencyService.Get<IDownloader>().GetStream(downloadUrl,onProgressChanged);
+            var result = await DependencyService.Get<IDownloader>().GetStreamAsync(downloadUrl,onProgressChanged);
  
             return result;
         }

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:customs="clr-namespace:YoutubeMusicPlayer.Customs;assembly=YoutubeMusicPlayer"
              x:Class="YoutubeMusicPlayer.MusicPlayerPage">
     <ContentPage.Content>
-       <RelativeLayout>
+        <RelativeLayout>
             <ListView  x:Name="listView" ItemSelected="ListView_OnItemSelected" 
                       RelativeLayout.YConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
@@ -20,29 +21,45 @@
                              Property=Width,
                              Factor=1
                              }">
-                
-               <ListView.ItemTemplate >
-                   <DataTemplate>
-                       <ViewCell>
-                           <StackLayout Orientation="Horizontal">
-                               <Image Source="{Binding ImageSource}" VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
+
+                <ListView.ItemTemplate >
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="{Binding ImageSource}" VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
                                 <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
                             </StackLayout>
-                       </ViewCell>
-                   </DataTemplate>
-               </ListView.ItemTemplate>
-           </ListView>
-            <StackLayout Orientation="Horizontal" 
-                         
-                         RelativeLayout.YConstraint ="{ConstraintExpression 
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView >
+            <customs:CustomSlider x:Name="slider" Minimum="0" Maximum="100" RelativeLayout.YConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Height,
                              Factor=0.8
                              }"
+                    RelativeLayout.HeightConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.05
+                             }"
+                    RelativeLayout.WidthConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Width,
+                             Factor=1
+                             }" BackgroundColor="CornflowerBlue"/>
+
+            <StackLayout Orientation="Horizontal" Opacity="0.4" 
+                         
+                         RelativeLayout.YConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.85
+                             }"
                          RelativeLayout.HeightConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Height,
-                             Factor=0.2
+                             Factor=0.15
                              }"
                          RelativeLayout.WidthConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
@@ -50,11 +67,10 @@
                              Factor=1
                              }"
                          
-            BackgroundColor="CadetBlue">
-
-                <Button Text="Prev" Clicked="PrevButton_OnClicked"/>
-                <Button Text="Play" Clicked="PlayPauseButton_OnClicked" HorizontalOptions="CenterAndExpand"/>
-                <Button Text="Next" Clicked="NextButton_OnClicked"/>
+            BackgroundColor="CornflowerBlue">
+                <Button Text="Prev" Clicked="PrevButton_OnClicked" VerticalOptions="Center"/>
+                <Button Text="Play" x:Name="playPauseButton" Clicked="PlayPauseButton_OnClicked" HorizontalOptions="CenterAndExpand" VerticalOptions="Center"/>
+                <Button Text="Next" Clicked="NextButton_OnClicked" VerticalOptions="Center"/>
             </StackLayout>
           
 

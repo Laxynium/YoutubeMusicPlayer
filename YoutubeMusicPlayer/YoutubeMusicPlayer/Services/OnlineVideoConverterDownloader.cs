@@ -26,19 +26,19 @@ namespace YoutubeMusicPlayer.Services
 
         public async Task<byte[]> DownloadMusicAsyncArray(string musicIdFromYoutube)
         {
-            var downloadReponse = await GetDownloadResponse(musicIdFromYoutube);
+            var downloadReponse = await GetDownloadResponseAsync(musicIdFromYoutube);
 
             return await downloadReponse.Content.ReadAsByteArrayAsync();
         }
 
-        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,IOnProgressChanged onProgressChanged2)
+        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged2)
         {
-            var downloadReponse = await GetDownloadResponse(musicIdFromYoutube);
+            var downloadReponse = await GetDownloadResponseAsync(musicIdFromYoutube);
 
             return await downloadReponse.Content.ReadAsStreamAsync();
         }
 
-        private async Task<HttpResponseMessage> GetDownloadResponse(string musicIdFromYoutube)
+        private async Task<HttpResponseMessage> GetDownloadResponseAsync(string musicIdFromYoutube)
         {
             string encodedYtUrl = $"https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3{musicIdFromYoutube}";
 

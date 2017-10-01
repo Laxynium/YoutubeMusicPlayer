@@ -6,7 +6,7 @@ namespace YoutubeMusicPlayer.Repositories
 {
     public interface IMusicRepository
     {
-        Task Initialize();
+        Task InitializeAsync();
 
         Task<Music> GetAsync(string id);
 
