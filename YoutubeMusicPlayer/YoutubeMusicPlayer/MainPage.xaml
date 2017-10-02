@@ -6,18 +6,17 @@
     <local:MusicPlayerPage Title="Player"></local:MusicPlayerPage>
     <ContentPage Title="Search">
         <StackLayout>
-            <SearchBar x:Name="searchBar" Placeholder="Enter music title..." SearchButtonPressed="SearchBar_OnSearchButtonPressed" 
-                       CancelButtonColor="DarkRed" TextChanged="SearchBar_OnTextChanged">
+            <SearchBar Placeholder="Enter music title..." Text="{Binding SearchText}"
+                       CancelButtonColor="DarkRed" TextChanged="SearchBar_OnTextChanged" SearchCommand="{Binding MusicSearchCommand}">
             </SearchBar>
-            <ActivityIndicator IsRunning="False" x:Name="activityIndicator" IsVisible="False"/>
-            <ListView x:Name="listView" ItemSelected="ListView_OnItemSelected">
+            <ActivityIndicator IsRunning="{Binding IsSearching,Mode=TwoWay}" IsVisible="{Binding IsSearching,Mode=TwoWay}"/>
+            <ListView x:Name="listView" ItemSelected="ListView_OnItemSelected" ItemsSource="{Binding MusicListView,Mode=TwoWay}" SelectedItem="{Binding SelectedMusic,Mode=TwoWay}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ImageCell ImageSource="{Binding ImageSource}" Text="{Binding Title}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-
         </StackLayout>
     </ContentPage>
     <local:DownloadsPage x:Name="downloadPage">

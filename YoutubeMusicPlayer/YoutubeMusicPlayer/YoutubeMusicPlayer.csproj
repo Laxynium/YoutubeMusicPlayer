@@ -47,6 +47,8 @@
     <Compile Include="DownloadsPage.xaml.cs">
       <DependentUpon>DownloadsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Services\IPageService.cs" />
     <Compile Include="ViewModels\MusicSearchViewModel.cs" />
     <Compile Include="MusicPlayerPage.xaml.cs">
       <DependentUpon>MusicPlayerPage.xaml</DependentUpon>
@@ -66,6 +68,8 @@
     <Compile Include="Services\OnlineVideoConverterDownloader.cs" />
     <Compile Include="Services\YoutubeService.cs" />
     <Compile Include="Services\YtMp3DownloadService.cs" />
+    <Compile Include="ViewModels\MusicViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
