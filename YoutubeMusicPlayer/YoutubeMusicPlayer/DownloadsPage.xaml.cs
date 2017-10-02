@@ -9,78 +9,40 @@ using Plugin.MediaManager.Abstractions.Implementations;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Annotations;
 using YoutubeMusicPlayer.Models;
 using YoutubeMusicPlayer.Repositories;
 using YoutubeMusicPlayer.Services;
+using YoutubeMusicPlayer.ViewModels;
 
 namespace YoutubeMusicPlayer
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DownloadsPage : ContentPage
     {
-        private readonly ObservableCollection<Music>_collection=new ObservableCollection<Music>();
+        private readonly DownloadViewModel _viewModel;
 
-        private readonly IMusicRepository _musicRepository;
-
-        private readonly MusicDownloader _musicDownloader;
-
-        public async Task DownloadFileAsync(Music music)
+        public async Task DownloadFileAsync(MusicViewModel music)
         {
-            if (_collection.SingleOrDefault(x => x.VideoId == music.VideoId) != null)
-            {
-                return;
-            }
-
-            _collection.Add(music);
-
-            music.ProgressChanged += (o, v) =>
-            {
-                music.Value = v / 100f;
-            };
-
-            var filePath=await _musicDownloader.DownloadFileAsync(music);
-
-            music.FilePath = filePath;
-
-            await _musicRepository.AddAsync(music);
+            await Task.Run(()=>_viewModel.DownloadFileCommand.Execute(music));
         }
 
         public DownloadsPage()
         {
             InitializeComponent();
 
-            _musicRepository = new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection());
-
-            _musicDownloader = new MusicDownloader(DependencyService.Get<IFileManager>(), new YtMp3DownloadService());
-
-            listView.ItemsSource = _collection;
+            BindingContext=_viewModel=new DownloadViewModel();
         }
         
-        protected override async void OnAppearing()
+        protected override  void OnAppearing()
         {
-            await _musicRepository.InitializeAsync();
-
-            var musics = await _musicRepository.GetAllAsync();
-            
-            foreach (var music in musics)
-            {
-                if(_collection.SingleOrDefault(m=>m.VideoId==music.VideoId)==null)
-                    _collection.Add(music);
-            }
+              base.OnAppearing();
+             _viewModel.UpdateDataCommand.Execute(null);
         }
 
-        private async void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        private void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-
-            var downloadItem = e.SelectedItem as Music;
-
-            listView.SelectedItem = null;
-
-            if (downloadItem?.FilePath == null) return;
-      
-            await DependencyService.Get<IFileOpener>().OpenFileAsync(downloadItem.FilePath);
-        }
-
-       
+            _viewModel.SelectItemCommand.Execute(e.SelectedItem as MusicViewModel);
+        }   
     }
 }

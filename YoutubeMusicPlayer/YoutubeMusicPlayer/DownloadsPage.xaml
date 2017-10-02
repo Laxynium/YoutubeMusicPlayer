@@ -4,7 +4,7 @@
              x:Class="YoutubeMusicPlayer.DownloadsPage" Title="Downloads">
     <ContentPage.Content>
         <StackLayout>
-            <ListView x:Name="listView" ItemSelected="ListView_OnItemSelected">
+            <ListView ItemsSource="{Binding Songs}" SelectedItem="{Binding SelectedMusic,Mode=TwoWay}" ItemSelected="ListView_OnItemSelected">
                 <ListView.ItemTemplate >
                     <DataTemplate>
                         <ViewCell>

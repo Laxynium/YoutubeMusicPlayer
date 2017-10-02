@@ -22,18 +22,9 @@ namespace YoutubeMusicPlayer.Services
         }
         public async Task DownloadFileAsync(MusicViewModel music)
         {
-            var song = new Music
-            {
-                Title = music.Title,
-                VideoId = music.VideoId,
-                FilePath = music.FilePath,
-                Value = music.Value,
-                ImageSource = music.ImageSource
-            };
-
             var downloadPage = (Application.Current.MainPage as MainPage)?.DownloadsPage;
 
-            await downloadPage?.DownloadFileAsync(song);
+            await downloadPage?.DownloadFileAsync(music);
         }
     }
 }

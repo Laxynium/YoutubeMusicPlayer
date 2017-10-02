@@ -28,9 +28,7 @@ namespace YoutubeMusicPlayer.Services
 
             _downloadService.OnProgressChanged += (o, v) => OnProgressChanged?.Invoke(o, v);
         }
-
-        
-
+      
         public async Task<string> DownloadFileAsync(Music music)
         {         
             var downloadedFileStream=await _downloadService.DownloadMusicAsync(music.VideoId,music);
