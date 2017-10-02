@@ -12,6 +12,6 @@ namespace YoutubeMusicPlayer.Services
     {
         event EventHandler<int> OnProgressChanged;
         
-        Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged2);
+        Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged);
     }
 }

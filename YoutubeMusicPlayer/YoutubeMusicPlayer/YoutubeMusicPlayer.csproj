@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\IPageService.cs" />
+    <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\MusicSearchViewModel.cs" />
     <Compile Include="MusicPlayerPage.xaml.cs">
       <DependentUpon>MusicPlayerPage.xaml</DependentUpon>

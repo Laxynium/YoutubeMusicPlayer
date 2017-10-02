@@ -11,7 +11,5 @@ namespace YoutubeMusicPlayer.Models
         event EventHandler<int> ProgressChanged;
 
         void OnProgressChanged(int value);
-
-        double Value { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace YoutubeMusicPlayer.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void SetValue<T>(ref T backingProp, T newValue, [CallerMemberName] string propertyName = null)
+        protected void SetValue<T>(ref T backingProp, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingProp, newValue)) return;
 

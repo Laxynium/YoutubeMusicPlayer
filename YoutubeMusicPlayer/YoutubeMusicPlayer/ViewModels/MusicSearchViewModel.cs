@@ -32,7 +32,6 @@ namespace YoutubeMusicPlayer.ViewModels
         public string SearchText { get; set; }
 
         private ObservableCollection<MusicViewModel> _musicListView = new ObservableCollection<MusicViewModel>();
-
         public ObservableCollection<MusicViewModel> MusicListView
         {
             get => _musicListView;

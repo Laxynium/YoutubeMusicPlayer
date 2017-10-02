@@ -33,7 +33,12 @@ namespace YoutubeMusicPlayer
 
             _collection.Add(music);
 
-            var filePath=await _musicDownloader.DowloadFileAsync(music);
+            music.ProgressChanged += (o, v) =>
+            {
+                music.Value = v / 100f;
+            };
+
+            var filePath=await _musicDownloader.DownloadFileAsync(music);
 
             music.FilePath = filePath;
 

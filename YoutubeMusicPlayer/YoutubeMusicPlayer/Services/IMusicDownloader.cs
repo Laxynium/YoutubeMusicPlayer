@@ -8,6 +8,6 @@ namespace YoutubeMusicPlayer.Services
     {
         event EventHandler<int> OnProgressChanged;
 
-        Task<string> DowloadFileAsync(Music music);
+        Task<string> DownloadFileAsync(Music music);
     }
 }

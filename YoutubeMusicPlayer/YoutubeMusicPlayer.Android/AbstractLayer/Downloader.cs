@@ -17,11 +17,6 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
         {
            var webClient=new WebClient();
 
-            onProgressChanged.ProgressChanged += (o, v) =>
-            {
-                onProgressChanged.Value = v / 100f;
-            };
-
            webClient.DownloadProgressChanged += (o, ea) =>
            {
                onProgressChanged.OnProgressChanged(ea.ProgressPercentage);

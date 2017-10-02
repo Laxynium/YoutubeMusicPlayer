@@ -9,7 +9,7 @@ using SQLite;
 
 namespace YoutubeMusicPlayer.Models
 {
-    public class Music: INotifyProgressChanged
+    public class Music: INotifyProgressChanged,INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

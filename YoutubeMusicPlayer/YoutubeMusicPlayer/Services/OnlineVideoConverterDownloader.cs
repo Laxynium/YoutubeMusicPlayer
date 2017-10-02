@@ -31,7 +31,7 @@ namespace YoutubeMusicPlayer.Services
             return await downloadReponse.Content.ReadAsByteArrayAsync();
         }
 
-        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged2)
+        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged)
         {
             var downloadReponse = await GetDownloadResponseAsync(musicIdFromYoutube);
 
