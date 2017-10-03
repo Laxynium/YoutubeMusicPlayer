@@ -9,53 +9,21 @@ using SQLite;
 
 namespace YoutubeMusicPlayer.Models
 {
-    public class Music: INotifyProgressChanged,INotifyPropertyChanged
+    public class Music:INotifyProgressChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public event EventHandler<int> ProgressChanged;
 
-        private double _value;
-        public double Value
-        {
-            get => _value;
-            set
-            {
-                if (Math.Abs(_value - value) < 0.01) return;
+        public double Value { get; set; }
 
-                _value = value;
-
-                OnPropertyChanged();
-            }
-        }
         [PrimaryKey]
         public string VideoId { get; set; }
 
         public string Title { get; set; }
 
-
-        private string _imageSource;
-
-        public string ImageSource
-        {
-            get=>_imageSource;          
-            set
-            {
-                if (value == _imageSource) return;
-
-                _imageSource = value;
-
-                OnPropertyChanged();
-            }
-        }
+        public string ImageSource { get; set; }
 
         public string FilePath { get; set; }
 
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public void OnProgressChanged(int value)
         {
