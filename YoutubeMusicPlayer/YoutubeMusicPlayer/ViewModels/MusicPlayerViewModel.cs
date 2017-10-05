@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Models;
 using YoutubeMusicPlayer.Repositories;
 
 namespace YoutubeMusicPlayer.ViewModels
@@ -21,6 +23,8 @@ namespace YoutubeMusicPlayer.ViewModels
         private readonly IMusicPlayer _musicPlayer;
 
         private readonly IMusicRepository _musicRepository;
+
+        private readonly IFileManager _fileManager;
 
         private bool IsPlaying { get; set; }
 
@@ -61,12 +65,16 @@ namespace YoutubeMusicPlayer.ViewModels
         public ICommand PlayPauseSongCommand { get; private set; }
         public ICommand SetMusicPositionCommand { get; private set; }
         public ICommand UpdateDataCommand { get; private set; }
+        public ICommand DeleteSongCommand { get; private set; }
 
-        public MusicPlayerViewModel()
+
+
+        public MusicPlayerViewModel(IFileManager fileManager,IMusicRepository musicRepository,IMusicPlayer musicPlayer)
         {
-            _musicRepository = new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection());
+            _fileManager = fileManager;
+            _musicRepository = musicRepository;
 
-            _musicPlayer = DependencyService.Get<IMusicPlayer>();
+            _musicPlayer = musicPlayer;
 
             _musicPlayer.PlaybackCompleted += (s, e) => NextSong();
 
@@ -79,6 +87,8 @@ namespace YoutubeMusicPlayer.ViewModels
             PlayPauseSongCommand = new Command(async()=>await StartPauseSong());
             SetMusicPositionCommand = new Command(async()=>await SetMusicPosition());
             UpdateDataCommand = new Command(async()=>await UpdateData());
+            DeleteSongCommand = new Command<object>(async(s)=>await DeleteSong(s as MusicViewModel));
+            DeleteSongCommand= new Command<MusicViewModel>(async (x)=>await DeleteSong(x));
         }
 
         private async void _musicPlayer_ProgressChanged(object sender, int e)
@@ -183,6 +193,22 @@ namespace YoutubeMusicPlayer.ViewModels
             await _musicPlayer.SetSourceAsync(selectedMusic.FilePath);
 
             await StartPauseSong();
+        }
+
+        private async Task DeleteSong(MusicViewModel music)
+        {
+            if (CurrentSong.VideoId == music.VideoId && IsPlaying)
+            {
+                NextSong();
+            }
+               
+            var musicToDel = new Music {VideoId = music.VideoId,FilePath = music.FilePath};
+
+            Songs.Remove(music);
+
+            await _musicRepository.DeleteAsync(musicToDel);
+
+            await _fileManager.DeleteFileAsync(musicToDel);         
         }
 
     }

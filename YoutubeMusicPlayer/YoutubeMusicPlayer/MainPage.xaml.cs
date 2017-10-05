@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using Plugin.MediaManager.Abstractions.Implementations;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Models;
+using YoutubeMusicPlayer.Repositories;
 using YoutubeMusicPlayer.Services;
 using YoutubeMusicPlayer.ViewModels;
 
@@ -10,24 +13,20 @@ namespace YoutubeMusicPlayer
 {
     public partial class MainPage 
     {
-        private readonly MusicSearchViewModel _viewModel;
-        public MainPage()
+        public MainPage(/*MusicPlayerPage musicPlayerPage, MusicSearchPage musicSearchPage, DownloadsPage downloadsPage*/)
         {
             InitializeComponent();
+            var musicPlayerPage = new MusicPlayerPage(new MusicPlayerViewModel(DependencyService.Get<IFileManager>(),
+                new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection()),
+                DependencyService.Get<IMusicPlayer>()));
 
-            BindingContext = _viewModel=new MusicSearchViewModel(new YoutubeService(), new DownloadPageService());
+            Children.Add(musicPlayerPage);
+            Children.Add(new MusicSearchPage(new MusicSearchViewModel(new YoutubeService(),new DownloadPageService())));
+            Children.Add(new DownloadsPage(new DownloadViewModel(new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection()),
+                new MusicDownloader(DependencyService.Get<IFileManager>(),new YtMp3DownloadService()) )));
+            CurrentPage = musicPlayerPage;
         }
 
-        public DownloadsPage DownloadsPage => downloadPage;
-
-        private void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {        
-            _viewModel.SelectItemCommand.Execute(e.SelectedItem as MusicViewModel);       
-        }
-
-        private void SearchBar_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            _viewModel.TextChangeCommand.Execute(null);
-        }
+        public DownloadsPage DownloadsPage => Children.ToList().OfType<DownloadsPage>().First();
     }
 }

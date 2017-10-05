@@ -33,5 +33,18 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
         {
             return File.Exists(filePath);
         }
+
+        public async Task<bool> DeleteFileAsync(Music music)
+        {
+            return await Task.Run(() =>
+            {
+                if (!Exists(music.FilePath)) return false;
+
+                File.Delete(music.FilePath);
+
+                return true;
+            });
+
+        }
     }
 }

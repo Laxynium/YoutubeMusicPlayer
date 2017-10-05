@@ -27,11 +27,11 @@ namespace YoutubeMusicPlayer
             await Task.Run(()=>_viewModel.DownloadFileCommand.Execute(music));
         }
 
-        public DownloadsPage()
+        public DownloadsPage(DownloadViewModel viewModel)
         {
             InitializeComponent();
 
-            BindingContext=_viewModel=new DownloadViewModel();
+            BindingContext = _viewModel = viewModel;
         }
         
         protected override  void OnAppearing()

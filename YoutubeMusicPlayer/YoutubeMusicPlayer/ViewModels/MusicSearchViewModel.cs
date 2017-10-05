@@ -90,8 +90,7 @@ namespace YoutubeMusicPlayer.ViewModels
             {
                 Debug.WriteLine(e.Message);
             }
-
-                            
+                           
             IsSearching = false;
         }
 

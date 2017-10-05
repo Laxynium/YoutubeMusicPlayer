@@ -49,12 +49,19 @@ namespace YoutubeMusicPlayer.Repositories
 
         public async Task UpdateAsync(Music music)
         {
-            await _connection.UpdateAsync(music);
+            var musicInDb = await GetAsync(music.VideoId);
+            musicInDb.FilePath = music.FilePath;
+            musicInDb.ImageSource = music.ImageSource;
+            musicInDb.Title = music.Title;
+            musicInDb.Value = music.Value;
+            await _connection.UpdateAsync(musicInDb);
         }
 
         public async Task DeleteAsync(Music music)
         {
-            await _connection.DeleteAsync(music);
+            var musicInDb=await GetAsync(music.VideoId);
+
+            await _connection.DeleteAsync(musicInDb);
         }
 
     }

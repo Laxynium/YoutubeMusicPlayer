@@ -6,6 +6,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Ninject;
+using YoutubeMusicPlayer.Droid.Ninject;
 
 namespace YoutubeMusicPlayer.Droid
 {
@@ -18,9 +20,13 @@ namespace YoutubeMusicPlayer.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(bundle);
-
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+           // NinjectInitializer.Initialize();
+           // var app= NinjectInitializer.Kernel.Get<App>();
+
             LoadApplication(new App());
+
         }
     }
 }

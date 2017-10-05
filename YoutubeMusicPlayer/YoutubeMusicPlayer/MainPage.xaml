@@ -3,24 +3,4 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:YoutubeMusicPlayer"
              x:Class="YoutubeMusicPlayer.MainPage" >
-    <local:MusicPlayerPage Title="Player"></local:MusicPlayerPage>
-    <ContentPage Title="Search">
-        <StackLayout>
-            <SearchBar Placeholder="Enter music title..." Text="{Binding SearchText}"
-                       CancelButtonColor="DarkRed" TextChanged="SearchBar_OnTextChanged" SearchCommand="{Binding MusicSearchCommand}">
-            </SearchBar>
-            <ActivityIndicator IsRunning="{Binding IsSearching,Mode=TwoWay}" IsVisible="{Binding IsSearching,Mode=TwoWay}"/>
-            <ListView x:Name="listView" ItemSelected="ListView_OnItemSelected" ItemsSource="{Binding MusicListView,Mode=TwoWay}" SelectedItem="{Binding SelectedMusic,Mode=TwoWay}" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ImageCell ImageSource="{Binding ImageSource}" Text="{Binding Title}" />
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackLayout>
-    </ContentPage>
-    <local:DownloadsPage x:Name="downloadPage">
-        
-    </local:DownloadsPage>
-
 </TabbedPage>

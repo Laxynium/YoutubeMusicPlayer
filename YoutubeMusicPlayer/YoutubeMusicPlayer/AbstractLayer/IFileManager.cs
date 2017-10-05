@@ -13,7 +13,7 @@ namespace YoutubeMusicPlayer.AbstractLayer
         Task<string> CreateFileAsync(Music music,Stream stream);
 
         bool Exists(string filePath);
-        //Task<>
 
+        Task<bool> DeleteFileAsync(Music music);
     }
 }

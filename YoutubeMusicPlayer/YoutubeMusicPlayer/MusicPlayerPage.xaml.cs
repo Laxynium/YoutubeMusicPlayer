@@ -18,11 +18,11 @@ namespace YoutubeMusicPlayer
     {
         private readonly MusicPlayerViewModel _viewModel;
 
-        public MusicPlayerPage()
+        public MusicPlayerPage(MusicPlayerViewModel viewModel)
         {
             InitializeComponent();
 
-            BindingContext= _viewModel = new MusicPlayerViewModel();
+            BindingContext = _viewModel = viewModel;
         }
 
         private void Slider_ProgressArranged(object sender, double e)

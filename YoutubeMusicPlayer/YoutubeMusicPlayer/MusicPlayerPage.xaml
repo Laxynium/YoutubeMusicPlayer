@@ -2,10 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:customs="clr-namespace:YoutubeMusicPlayer.Customs;assembly=YoutubeMusicPlayer"
-             x:Class="YoutubeMusicPlayer.MusicPlayerPage">
+             x:Class="YoutubeMusicPlayer.MusicPlayerPage" Title="MusicPlayer">
     <ContentPage.Content>
         <RelativeLayout>
-            <ListView  ItemSelected="ListView_OnItemSelected" 
+            <ListView  x:Name="listView" ItemSelected="ListView_OnItemSelected" 
                        ItemsSource="{Binding Songs,Mode=TwoWay}"
                        SelectedItem="{Binding CurrentSong,Mode=TwoWay}"
                       RelativeLayout.YConstraint ="{ConstraintExpression 
@@ -23,12 +23,15 @@
                              Property=Width,
                              Factor=1
                              }">
-
                 <ListView.ItemTemplate >
                     <DataTemplate>
                         <ViewCell>
+                        <ViewCell.ContextActions>
+                                <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference listView},Path=BindingContext.DeleteSongCommand}"
+                                          IsDestructive="True"/>
+                        </ViewCell.ContextActions>   
                             <StackLayout Orientation="Horizontal">
-                                <Image Source="{Binding ImageSource}" VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
+                                <Image Source="{Binding ImageSource}"  VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
                                 <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
                             </StackLayout>
                         </ViewCell>

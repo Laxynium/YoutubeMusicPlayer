@@ -35,10 +35,10 @@ namespace YoutubeMusicPlayer.ViewModels
             set => SetValue(ref _selectedMusic, value);
         }
 
-        public DownloadViewModel()
+        public DownloadViewModel(IMusicRepository musicRepository,IMusicDownloader musicDownloader)
         {
-            _musicRepository = new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection());
-            _musicDownloader = new MusicDownloader(DependencyService.Get<IFileManager>(), new YtMp3DownloadService());
+            _musicRepository = musicRepository;
+            _musicDownloader = musicDownloader;
 
             DownloadFileCommand = new Command<MusicViewModel>(async (m) => await DownloadFileAsync(m));
             UpdateDataCommand = new Command(async () => await UpdateData());

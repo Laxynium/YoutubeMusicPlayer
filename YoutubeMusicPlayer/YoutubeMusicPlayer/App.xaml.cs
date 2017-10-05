@@ -13,7 +13,7 @@ namespace YoutubeMusicPlayer
         {
             InitializeComponent();
 
-            MainPage = new YoutubeMusicPlayer.MainPage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()

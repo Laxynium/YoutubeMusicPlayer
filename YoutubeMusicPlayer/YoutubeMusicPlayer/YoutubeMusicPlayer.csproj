@@ -47,7 +47,11 @@
     <Compile Include="DownloadsPage.xaml.cs">
       <DependentUpon>DownloadsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MusicSearchPage.xaml.cs">
+      <DependentUpon>MusicSearchPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Services\DownloadPageService.cs" />
     <Compile Include="Services\IPageService.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\MusicPlayerViewModel.cs" />
@@ -159,6 +163,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MusicPlayerPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MusicSearchPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

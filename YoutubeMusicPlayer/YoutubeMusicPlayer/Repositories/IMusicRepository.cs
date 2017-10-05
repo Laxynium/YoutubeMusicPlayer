@@ -15,5 +15,7 @@ namespace YoutubeMusicPlayer.Repositories
         Task AddAsync(Music music);
 
         Task UpdateAsync(Music music);
+
+        Task DeleteAsync(Music music);
     }
 }
