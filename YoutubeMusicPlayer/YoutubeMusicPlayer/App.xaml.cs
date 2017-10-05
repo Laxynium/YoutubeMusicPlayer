@@ -9,11 +9,11 @@ namespace YoutubeMusicPlayer
 {
     public partial class App : Application
     {
-        public App()
+        public App(MainPage page)
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = page;
         }
 
         protected override void OnStart()

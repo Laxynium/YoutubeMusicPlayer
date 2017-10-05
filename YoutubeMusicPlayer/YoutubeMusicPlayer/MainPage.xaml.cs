@@ -13,20 +13,12 @@ namespace YoutubeMusicPlayer
 {
     public partial class MainPage 
     {
-        public MainPage(/*MusicPlayerPage musicPlayerPage, MusicSearchPage musicSearchPage, DownloadsPage downloadsPage*/)
+        public MainPage(ContentPage[]pages)
         {
             InitializeComponent();
-            var musicPlayerPage = new MusicPlayerPage(new MusicPlayerViewModel(DependencyService.Get<IFileManager>(),
-                new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection()),
-                DependencyService.Get<IMusicPlayer>()));
-
-            Children.Add(musicPlayerPage);
-            Children.Add(new MusicSearchPage(new MusicSearchViewModel(new YoutubeService(),new DownloadPageService())));
-            Children.Add(new DownloadsPage(new DownloadViewModel(new MusicRepository(DependencyService.Get<ISqlConnection>().GetConnection()),
-                new MusicDownloader(DependencyService.Get<IFileManager>(),new YtMp3DownloadService()) )));
-            CurrentPage = musicPlayerPage;
+            Children.AddRange(pages);
+            CurrentPage = DownloadsPage;
         }
-
         public DownloadsPage DownloadsPage => Children.ToList().OfType<DownloadsPage>().First();
     }
 }

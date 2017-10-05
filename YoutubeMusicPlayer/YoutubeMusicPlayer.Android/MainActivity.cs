@@ -22,10 +22,11 @@ namespace YoutubeMusicPlayer.Droid
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
-           // NinjectInitializer.Initialize();
-           // var app= NinjectInitializer.Kernel.Get<App>();
+            NinjectInitializer.Initialize();
 
-            LoadApplication(new App());
+            var app= NinjectInitializer.Kernel.Get<App>();
+
+            LoadApplication(app);
 
         }
     }

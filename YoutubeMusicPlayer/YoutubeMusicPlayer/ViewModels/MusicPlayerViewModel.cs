@@ -72,6 +72,7 @@ namespace YoutubeMusicPlayer.ViewModels
         public MusicPlayerViewModel(IFileManager fileManager,IMusicRepository musicRepository,IMusicPlayer musicPlayer)
         {
             _fileManager = fileManager;
+
             _musicRepository = musicRepository;
 
             _musicPlayer = musicPlayer;
