@@ -33,6 +33,8 @@ namespace YoutubeMusicPlayer.Services
         {         
             var downloadedFileStream=await _downloadService.DownloadMusicAsync(music.VideoId,music);
 
+            if (downloadedFileStream == null) return "";
+
             var filePath=await _fileManager.CreateFileAsync(music, downloadedFileStream);      
 
              return filePath;

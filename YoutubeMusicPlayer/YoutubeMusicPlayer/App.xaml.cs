@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Xamarin;
 using Xamarin.Forms;
 
 namespace YoutubeMusicPlayer
@@ -12,7 +12,6 @@ namespace YoutubeMusicPlayer
         public App(MainPage page)
         {
             InitializeComponent();
-
             MainPage = page;
         }
 

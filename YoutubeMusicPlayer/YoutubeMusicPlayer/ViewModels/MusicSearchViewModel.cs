@@ -16,7 +16,7 @@ namespace YoutubeMusicPlayer.ViewModels
     {
         private readonly IYoutubeService _youtubeService;
 
-        private readonly IPageService _pageService;
+        private readonly IDownloadPageService _downloadPageService;
 
         public string ImageSource { get; set; }
 
@@ -51,10 +51,10 @@ namespace YoutubeMusicPlayer.ViewModels
 
         public ICommand TextChangeCommand { get; }
 
-        public MusicSearchViewModel(IYoutubeService youtubeService,IPageService pageService)
+        public MusicSearchViewModel(IYoutubeService youtubeService,IDownloadPageService downloadPageService)
         {
             _youtubeService = youtubeService;
-            _pageService = pageService;
+            _downloadPageService = downloadPageService;
 
             MusicSearchCommand = new Command(SearchMusic);
             SelectItemCommand = new Command<MusicViewModel>(SelectItem);
@@ -100,7 +100,7 @@ namespace YoutubeMusicPlayer.ViewModels
 
             SelectedMusic = null;
 
-            await _pageService.DownloadFileAsync(music);
+            await _downloadPageService.DownloadFileAsync(music);
         }
 
         private void ChangeText()

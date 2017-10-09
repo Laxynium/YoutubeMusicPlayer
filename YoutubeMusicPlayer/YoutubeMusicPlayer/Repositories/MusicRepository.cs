@@ -33,8 +33,9 @@ namespace YoutubeMusicPlayer.Repositories
         }
 
         public async Task<Music> GetAsync(string id)
-        {          
-            return await _connection.GetAsync<Music>(x => x.VideoId == id);
+        {        
+            var music= await _connection.FindAsync<Music>(x => x.VideoId == id);
+            return music;
         }
 
         public async Task<IEnumerable<Music>> GetAllAsync()
@@ -44,6 +45,9 @@ namespace YoutubeMusicPlayer.Repositories
 
         public async Task AddAsync(Music music)
         {
+            if (await GetAsync(music.VideoId) != null)
+                return;
+
             await _connection.InsertAsync(music);
         }
 

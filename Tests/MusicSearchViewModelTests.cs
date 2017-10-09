@@ -13,7 +13,7 @@ namespace Tests
     {
         private Mock<IYoutubeService> _youtubeService;
 
-        private Mock<IPageService> _pageService;
+        private Mock<IDownloadPageService> _pageService;
 
         private MusicSearchViewModel _viewModel;
 
@@ -45,7 +45,7 @@ namespace Tests
 
             });
 
-            _pageService =new Mock<IPageService>();
+            _pageService =new Mock<IDownloadPageService>();
             _viewModel=new MusicSearchViewModel(_youtubeService.Object,_pageService.Object);
         }
         [Test]

@@ -47,12 +47,13 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<IDownloader>().ToMethod(x => DependencyService.Get<IDownloader>()).InSingletonScope();
             Bind<IFileOpener>().ToMethod(x => DependencyService.Get<IFileOpener>()).InSingletonScope();
             Bind<IMusicPlayer>().ToMethod(x => DependencyService.Get<IMusicPlayer>()).InSingletonScope();
-            Bind<SQLiteAsyncConnection>().ToMethod(x => DependencyService.Get<ISqlConnection>().GetConnection()).InSingletonScope();
+            Bind<SQLiteAsyncConnection>().ToMethod(x => DependencyService.Get<ISqlConnection>().GetConnection());
 
             Bind<IMusicRepository>().To<MusicRepository>().InSingletonScope();
             Bind<IDownloadService>().To<YtMp3DownloadService>().InSingletonScope();
             Bind<IMusicDownloader>().To<MusicDownloader>().InSingletonScope();
-            Bind<IPageService>().To<DownloadPageService>().InSingletonScope();
+            Bind<IDownloadPageService>().To<DownloadPageService>().InSingletonScope();
+            Bind<ITabbedPageService>().To<TabbedPageService>().InSingletonScope();
             Bind<IYoutubeService>().To<YoutubeService>().InSingletonScope();
 
         }

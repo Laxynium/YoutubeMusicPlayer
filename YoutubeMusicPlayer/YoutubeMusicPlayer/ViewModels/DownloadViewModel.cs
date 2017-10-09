@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace YoutubeMusicPlayer.ViewModels
         private readonly IMusicRepository _musicRepository;
 
         private readonly IMusicDownloader _musicDownloader;
+        private readonly ITabbedPageService _pageService;
 
         public ICommand DownloadFileCommand;
 
@@ -35,10 +37,11 @@ namespace YoutubeMusicPlayer.ViewModels
             set => SetValue(ref _selectedMusic, value);
         }
 
-        public DownloadViewModel(IMusicRepository musicRepository,IMusicDownloader musicDownloader)
+        public DownloadViewModel(IMusicRepository musicRepository,IMusicDownloader musicDownloader, ITabbedPageService pageService)
         {
             _musicRepository = musicRepository;
             _musicDownloader = musicDownloader;
+            _pageService = pageService;
 
             DownloadFileCommand = new Command<MusicViewModel>(async (m) => await DownloadFileAsync(m));
             UpdateDataCommand = new Command(async () => await UpdateData());
@@ -58,12 +61,23 @@ namespace YoutubeMusicPlayer.ViewModels
                     Title = x.Title,
                     ImageSource = x.ImageSource,
                     Value = x.Value                  
-                });
+                }).ToList();
 
             foreach (var song in songs)
             {
+                if(String.IsNullOrWhiteSpace(song.FilePath))
+                    continue;
+
                 if (Songs.SingleOrDefault(m => m.VideoId == song.VideoId) == null)
                     Songs.Add(song);
+            }
+
+            foreach (var song in Songs.ToList())
+            {
+                if (String.IsNullOrWhiteSpace(song.FilePath)) continue;
+
+                if (songs.SingleOrDefault(m => m.VideoId == song.VideoId) == null)
+                    Songs.Remove(song);
             }
         }
 
@@ -90,6 +104,8 @@ namespace YoutubeMusicPlayer.ViewModels
 
             var filePath = await _musicDownloader.DownloadFileAsync(song);
 
+            if (String.IsNullOrEmpty(filePath)) return;
+
             music.FilePath = filePath;
 
             song.FilePath = filePath;
@@ -99,11 +115,13 @@ namespace YoutubeMusicPlayer.ViewModels
 
         private async Task SelectItem(MusicViewModel music)
         {
+            SelectedMusic = null;
+
             if (music?.FilePath==null) return;
 
-             SelectedMusic = null;
-
-            await DependencyService.Get<IFileOpener>().OpenFileAsync(music.FilePath);
+            
+            await _pageService.ChangePage(0);
+            //await DependencyService.Get<IFileOpener>().OpenFileAsync(music.FilePath);
         }
     }
 }

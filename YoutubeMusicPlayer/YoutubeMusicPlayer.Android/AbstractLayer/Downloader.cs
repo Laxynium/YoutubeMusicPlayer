@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq.Expressions;
 using System.Net;
@@ -22,10 +23,17 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
                onProgressChanged.OnProgressChanged(ea.ProgressPercentage);
            };
 
-           var result=await webClient.DownloadDataTaskAsync(new Uri(url));
+            try
+            {
+                var result = await webClient.DownloadDataTaskAsync(new Uri(url));
 
-            return new MemoryStream(result);
-            
+                return new MemoryStream(result);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Something has gone wrong in request{url}");
+                return null;
+            }                 
         }
     }
 }

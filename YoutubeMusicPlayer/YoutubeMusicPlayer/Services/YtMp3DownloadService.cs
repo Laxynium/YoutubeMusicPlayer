@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
@@ -56,7 +57,11 @@ namespace YoutubeMusicPlayer.Services
         {
             var response = await GetResponseAsync(musicIdFromYoutube);
 
+            if (!response.IsSuccessStatusCode)
+                return null;
+
             var info = await ParseResponseAsync(response);
+
 
             var downloadUrl = $"https://{_servers[info.Item1]}.ymcdn.cc/{info.Item2}/{musicIdFromYoutube}";
 
@@ -71,8 +76,16 @@ namespace YoutubeMusicPlayer.Services
 
             client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
             client.DefaultRequestHeaders.Add("Host", "d.ymcdn.cc");
-
-           return await client.GetAsync(url);
+            try
+            {
+                var response = await client.GetAsync(url);
+                return response;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Something has gone wrong in request{url}");
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }                     
         }
 
         private async Task<Tuple<int, string>> ParseResponseAsync(HttpResponseMessage response)
@@ -89,13 +102,13 @@ namespace YoutubeMusicPlayer.Services
 
             var sid = Convert.ToInt32(info.sid);
 
-            return new Tuple<int, string>(sid,info.hash);
+            return new Tuple<int, string>(sid!=0?sid:1,info.hash);
         }
 
         private async Task<Stream> DownloadAsync(string downloadUrl,INotifyProgressChanged onProgressChanged)
         {
             var result = await DependencyService.Get<IDownloader>().GetStreamAsync(downloadUrl,onProgressChanged);
- 
+            
             return result;
         }
 

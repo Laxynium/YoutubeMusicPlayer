@@ -4,7 +4,7 @@ using YoutubeMusicPlayer.ViewModels;
 
 namespace YoutubeMusicPlayer.Services
 {
-    public class DownloadPageService : IPageService
+    public class DownloadPageService : IDownloadPageService
     {
         public DownloadPageService()
         {
@@ -13,6 +13,7 @@ namespace YoutubeMusicPlayer.Services
         public async Task DownloadFileAsync(MusicViewModel music)
         {
             var downloadPage = (Application.Current.MainPage as MainPage)?.DownloadsPage;
+            if (downloadPage == null) return;
 
             await downloadPage?.DownloadFileAsync(music);
         }
