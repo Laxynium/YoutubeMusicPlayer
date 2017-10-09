@@ -118,10 +118,8 @@ namespace YoutubeMusicPlayer.ViewModels
             SelectedMusic = null;
 
             if (music?.FilePath==null) return;
-
-            
+        
             await _pageService.ChangePage(0);
-            //await DependencyService.Get<IFileOpener>().OpenFileAsync(music.FilePath);
         }
     }
 }
