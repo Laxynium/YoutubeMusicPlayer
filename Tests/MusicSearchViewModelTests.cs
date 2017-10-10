@@ -13,8 +13,6 @@ namespace Tests
     {
         private Mock<IYoutubeService> _youtubeService;
 
-        private Mock<IDownloadPageService> _pageService;
-
         private MusicSearchViewModel _viewModel;
 
         [SetUp]
@@ -45,8 +43,7 @@ namespace Tests
 
             });
 
-            _pageService =new Mock<IDownloadPageService>();
-            _viewModel=new MusicSearchViewModel(_youtubeService.Object,_pageService.Object);
+            _viewModel=new MusicSearchViewModel(_youtubeService.Object);
         }
         [Test]
         public void SearchMusic_WhenCalled_ShouldFillListView()

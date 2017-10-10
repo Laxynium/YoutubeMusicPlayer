@@ -45,7 +45,7 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
         }
 
 
-        private void _mediaPlayer_Completion(object sender, EventArgs e)
+        private void _mediaPlayer_Completion(object sender, System.EventArgs e)
         {
             PlaybackCompleted?.Invoke(sender,e);
         }
@@ -107,7 +107,7 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
             else
                 _mediaPlayer.Prepared += handler;
         }
-        private void _mediaPlayer_Prepared(object sender, EventArgs e)
+        private void _mediaPlayer_Prepared(object sender, System.EventArgs e)
         {
             IsPrepared = true;
         }

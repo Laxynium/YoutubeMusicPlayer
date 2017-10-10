@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.EventArgs;
+using YoutubeMusicPlayer.MessangingCenter;
 using YoutubeMusicPlayer.Models;
 using YoutubeMusicPlayer.Repositories;
+using YoutubeMusicPlayer.Services;
 
 namespace YoutubeMusicPlayer.ViewModels
 {
@@ -90,6 +93,12 @@ namespace YoutubeMusicPlayer.ViewModels
             UpdateDataCommand = new Command(async()=>await UpdateData());
             DeleteSongCommand = new Command<object>(async(s)=>await DeleteSong(s as MusicViewModel));
             DeleteSongCommand= new Command<MusicViewModel>(async (x)=>await DeleteSong(x));
+
+            MessagingCenter.Subscribe<DownloadViewModel,MusicEventArgs>(this,GlobalNames.DownloadFinished, 
+                async(s, a) =>
+                {
+                    await UpdateMusicAsync();
+                });
         }
 
         private async void _musicPlayer_ProgressChanged(object sender, int e)
@@ -121,7 +130,6 @@ namespace YoutubeMusicPlayer.ViewModels
 
                 return;
             }
-            await UpdateMusicAsync();
         }
 
         private async Task UpdateMusicAsync()

@@ -47,13 +47,14 @@
     <Compile Include="DownloadsPage.xaml.cs">
       <DependentUpon>DownloadsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EventArgs\MusicEventArgs.cs" />
+    <Compile Include="MessangingCenter\GlobalNames.cs" />
     <Compile Include="MusicSearchPage.xaml.cs">
       <DependentUpon>MusicSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Services\DownloadPageService.cs" />
-    <Compile Include="Services\IDownloadPageService.cs" />
     <Compile Include="Services\ITabbedPageService.cs" />
+    <Compile Include="Services\TabbedPageService.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\MusicPlayerViewModel.cs" />
     <Compile Include="ViewModels\MusicSearchViewModel.cs" />
@@ -72,7 +73,6 @@
     <Compile Include="Services\IMusicDownloader.cs" />
     <Compile Include="Services\IYoutubeService.cs" />
     <Compile Include="Services\MusicDownloader.cs" />
-    <Compile Include="Services\OnlineVideoConverterDownloader.cs" />
     <Compile Include="Services\YoutubeService.cs" />
     <Compile Include="Services\YtMp3DownloadService.cs" />
     <Compile Include="ViewModels\MusicViewModel.cs" />
@@ -177,6 +177,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -17,8 +17,7 @@ namespace YoutubeMusicPlayer
         {
             InitializeComponent();
             Children.AddRange(pages);
-            CurrentPage = DownloadsPage;
+            CurrentPage = Children.ToList().OfType<MusicSearchPage>().First();
         }
-        public DownloadsPage DownloadsPage => Children.ToList().OfType<DownloadsPage>().First();
     }
 }

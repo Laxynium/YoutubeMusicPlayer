@@ -52,7 +52,6 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<IMusicRepository>().To<MusicRepository>().InSingletonScope();
             Bind<IDownloadService>().To<YtMp3DownloadService>().InSingletonScope();
             Bind<IMusicDownloader>().To<MusicDownloader>().InSingletonScope();
-            Bind<IDownloadPageService>().To<DownloadPageService>().InSingletonScope();
             Bind<ITabbedPageService>().To<TabbedPageService>().InSingletonScope();
             Bind<IYoutubeService>().To<YoutubeService>().InSingletonScope();
 

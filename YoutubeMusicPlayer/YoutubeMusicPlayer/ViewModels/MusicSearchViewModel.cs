@@ -5,9 +5,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Plugin.MediaManager.Abstractions.Implementations;
 using Xamarin.Forms;
+using YoutubeMusicPlayer.EventArgs;
+using YoutubeMusicPlayer.MessangingCenter;
 using YoutubeMusicPlayer.Services;
 
 namespace YoutubeMusicPlayer.ViewModels
@@ -16,7 +19,6 @@ namespace YoutubeMusicPlayer.ViewModels
     {
         private readonly IYoutubeService _youtubeService;
 
-        private readonly IDownloadPageService _downloadPageService;
 
         public string ImageSource { get; set; }
 
@@ -51,10 +53,9 @@ namespace YoutubeMusicPlayer.ViewModels
 
         public ICommand TextChangeCommand { get; }
 
-        public MusicSearchViewModel(IYoutubeService youtubeService,IDownloadPageService downloadPageService)
+        public MusicSearchViewModel(IYoutubeService youtubeService)
         {
             _youtubeService = youtubeService;
-            _downloadPageService = downloadPageService;
 
             MusicSearchCommand = new Command(SearchMusic);
             SelectItemCommand = new Command<MusicViewModel>(SelectItem);
@@ -65,31 +66,25 @@ namespace YoutubeMusicPlayer.ViewModels
         {
             var title = SearchText;
 
-            if (title == null) return;
+            if (String.IsNullOrWhiteSpace(title)) return;
 
             IsSearching = true;
 
-            try
+            var foundMusics = await _youtubeService.FindMusicAsync(title);
+
+            var musicViewModels = new ObservableCollection<MusicViewModel>();
+
+            foreach (var music in foundMusics)
             {
-                var foundMusics = await _youtubeService.FindMusicAsync(title);
-
-                var musicViewModels = new ObservableCollection<MusicViewModel>();
-
-                foreach (var music in foundMusics)
+                musicViewModels.Add(new MusicViewModel
                 {
-                   musicViewModels.Add(new MusicViewModel
-                   {
-                       Title = music.Title,
-                       VideoId = music.VideoId,
-                       ImageSource = music.ImageSource
-                   });
-                }
-                MusicListView = musicViewModels;
+                    Title = music.Title,
+                    VideoId = music.VideoId,
+                    ImageSource = music.ImageSource
+                });
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
+            MusicListView = musicViewModels;
+
                            
             IsSearching = false;
         }
@@ -100,7 +95,11 @@ namespace YoutubeMusicPlayer.ViewModels
 
             SelectedMusic = null;
 
-            await _downloadPageService.DownloadFileAsync(music);
+            await Task.Run(
+            () =>
+            {
+                MessagingCenter.Send(this, GlobalNames.DownloadMusic, new MusicEventArgs { Music = music });
+            });
         }
 
         private void ChangeText()
