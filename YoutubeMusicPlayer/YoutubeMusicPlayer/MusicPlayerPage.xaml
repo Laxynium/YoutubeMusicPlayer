@@ -31,7 +31,7 @@
                                           IsDestructive="True"/>
                         </ViewCell.ContextActions>   
                             <StackLayout Orientation="Horizontal">
-                                <Image Source="{Binding ImageSource}"  VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
+                                <Image Source="{Binding ImageSource}" VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
                                 <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
                             </StackLayout>
                         </ViewCell>

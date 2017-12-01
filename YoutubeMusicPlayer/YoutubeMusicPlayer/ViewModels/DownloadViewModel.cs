@@ -104,7 +104,7 @@ namespace YoutubeMusicPlayer.ViewModels
                 Value = music.Value,
                 ImageSource = music.ImageSource
             };
-
+            
             song.ProgressChanged += (s,v) =>
             {
                 music.Value = v/100f;

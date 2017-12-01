@@ -1,4 +1,6 @@
-﻿namespace YoutubeMusicPlayer.ViewModels
+﻿using Xamarin.Forms;
+
+namespace YoutubeMusicPlayer.ViewModels
 {
     public class MusicViewModel:ViewModelBase
     {
@@ -16,7 +18,7 @@
         public string ImageSource
         {
             get => _imageSource;
-            set => SetValue(ref _imageSource,value);
+            set => SetValue(ref _imageSource, value);
         }
 
         public string FilePath { get; set; }

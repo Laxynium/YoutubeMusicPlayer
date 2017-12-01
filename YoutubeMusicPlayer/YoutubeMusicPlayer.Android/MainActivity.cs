@@ -20,8 +20,10 @@ namespace YoutubeMusicPlayer.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(bundle);
+
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
+           
             NinjectInitializer.Initialize();
 
             var app= NinjectInitializer.Kernel.Get<App>();

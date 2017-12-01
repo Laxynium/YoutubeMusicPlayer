@@ -49,10 +49,13 @@
     </Compile>
     <Compile Include="EventArgs\MusicEventArgs.cs" />
     <Compile Include="MessangingCenter\GlobalNames.cs" />
+    <Compile Include="Models\DownloadServer.cs" />
     <Compile Include="MusicSearchPage.xaml.cs">
       <DependentUpon>MusicSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Repositories\DownloadServerRepository.cs" />
+    <Compile Include="Repositories\IDownloadServerRepository.cs" />
     <Compile Include="Services\ITabbedPageService.cs" />
     <Compile Include="Services\TabbedPageService.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />

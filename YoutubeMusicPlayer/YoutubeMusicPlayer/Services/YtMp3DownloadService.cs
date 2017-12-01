@@ -12,11 +12,14 @@ using Newtonsoft.Json;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Models;
+using YoutubeMusicPlayer.Repositories;
 
 namespace YoutubeMusicPlayer.Services
 {
     public class YtMp3DownloadService:IDownloadService
     {
+        private readonly IDownloadServerRepository _downloadServerRepository;
+
         private readonly Dictionary<int, string> _servers=new Dictionary<int, string>
         {
             {1,"odg"},
@@ -49,12 +52,39 @@ namespace YoutubeMusicPlayer.Services
             {28,"nim"},
             {29,"omp"},
             {30,"eez"},
+            {31,"rpx"},
+            {32,"cxq"},
+            {33,"typ"},
+            {34,"amv"},
+            {35,"rlv"},
+            {36,"xnx"}
         };
+
+        private List<DownloadServer> _downloadServers = null;
+
+        private static bool _isInitialize=false;
+
+        public YtMp3DownloadService(IDownloadServerRepository downloadServerRepository)
+        {
+            _downloadServerRepository = downloadServerRepository;
+        }
 
         public event EventHandler<int> OnProgressChanged;
 
         public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged)
         {
+            if (!_isInitialize)
+            {
+                _isInitialize = true;
+
+                await _downloadServerRepository.InitializeAsync();
+
+                var downloadServers = await _downloadServerRepository.GetAllAsync();
+
+                _downloadServers = downloadServers?.ToList();
+
+            }
+
             var response = await GetResponseAsync(musicIdFromYoutube);
 
             if (!response.IsSuccessStatusCode)
@@ -62,6 +92,11 @@ namespace YoutubeMusicPlayer.Services
 
             var info = await ParseResponseAsync(response);
 
+            //if new server is added
+            if (!_servers.ContainsKey(info.Item1))
+            {
+                return null;
+            }
 
             var downloadUrl = $"https://{_servers[info.Item1]}.ymcdn.cc/{info.Item2}/{musicIdFromYoutube}";
 
@@ -111,6 +146,5 @@ namespace YoutubeMusicPlayer.Services
             
             return result;
         }
-
     }
 }
