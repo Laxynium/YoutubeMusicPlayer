@@ -16,7 +16,7 @@ using YoutubeMusicPlayer.Services;
 
 namespace YoutubeMusicPlayer.ViewModels
 {
-    public class DownloadViewModel:ViewModelBase
+    public class DownloadViewModel : ViewModelBase
     {
         private readonly IMusicRepository _musicRepository;
 
@@ -30,17 +30,19 @@ namespace YoutubeMusicPlayer.ViewModels
 
         public ICommand SelectItemCommand;
 
-        public  ObservableCollection<MusicViewModel> Songs { get; set; } 
-                        = new ObservableCollection<MusicViewModel>();
+        public ObservableCollection<MusicViewModel> Songs { get; set; }
+            = new ObservableCollection<MusicViewModel>();
 
         private MusicViewModel _selectedMusic;
+
         public MusicViewModel SelectedMusic
         {
             get => _selectedMusic;
             set => SetValue(ref _selectedMusic, value);
         }
 
-        public DownloadViewModel(IMusicRepository musicRepository,IMusicDownloader musicDownloader,ITabbedPageService tabbedPageService)
+        public DownloadViewModel(IMusicRepository musicRepository, IMusicDownloader musicDownloader,
+            ITabbedPageService tabbedPageService)
         {
             _musicRepository = musicRepository;
             _musicDownloader = musicDownloader;
@@ -49,13 +51,10 @@ namespace YoutubeMusicPlayer.ViewModels
 
             DownloadFileCommand = new Command<MusicViewModel>(async (m) => await DownloadFileAsync(m));
             UpdateDataCommand = new Command(async () => await UpdateData());
-            SelectItemCommand = new Command<MusicViewModel>(async (m) =>await SelectItem(m));
+            SelectItemCommand = new Command<MusicViewModel>(async (m) => await SelectItem(m));
 
-            MessagingCenter.Subscribe<MusicSearchViewModel,MusicEventArgs>(this, GlobalNames.DownloadMusic,
-                (s, a) =>
-                {
-                    DownloadFileCommand.Execute(a.Music);
-                });
+            MessagingCenter.Subscribe<MusicSearchViewModel, MusicEventArgs>(this, GlobalNames.DownloadMusic,
+                (s, a) => { DownloadFileCommand.Execute(a.Music); });
         }
 
         private async Task UpdateData()
@@ -63,18 +62,18 @@ namespace YoutubeMusicPlayer.ViewModels
             await _musicRepository.InitializeAsync();
 
             var songs = (await _musicRepository.GetAllAsync())
-                .ToList().Select((x)=>new MusicViewModel
+                .ToList().Select((x) => new MusicViewModel
                 {
                     FilePath = x.FilePath,
                     VideoId = x.VideoId,
                     Title = x.Title,
                     ImageSource = x.ImageSource,
-                    Value = x.Value                  
+                    Value = x.Value
                 }).ToList();
 
             foreach (var song in songs)
             {
-                if(String.IsNullOrWhiteSpace(song.FilePath))
+                if (String.IsNullOrWhiteSpace(song.FilePath))
                     continue;
 
                 if (Songs.SingleOrDefault(m => m.VideoId == song.VideoId) == null)
@@ -104,34 +103,34 @@ namespace YoutubeMusicPlayer.ViewModels
                 Value = music.Value,
                 ImageSource = music.ImageSource
             };
-            
-            song.ProgressChanged += (s,v) =>
+
+            song.ProgressChanged += (s, v) =>
             {
-                music.Value = v/100f;
-                song.Value = v/100f;
+                music.Value = v / 100f;
+                song.Value = v / 100f;
             };
 
             var filePath = await _musicDownloader.DownloadFileAsync(song);
 
             if (String.IsNullOrEmpty(filePath)) return;
-          
+
             music.FilePath = filePath;
 
             song.FilePath = filePath;
 
             await _musicRepository.AddAsync(song);
 
-            MessagingCenter.Send(this,GlobalNames.DownloadFinished,
-                                 new MusicEventArgs{Music = music});         
+            MessagingCenter.Send(this, GlobalNames.DownloadFinished,
+                new MusicEventArgs {Music = music});
         }
 
         private async Task SelectItem(MusicViewModel music)
         {
             SelectedMusic = null;
 
-            if (music?.FilePath==null) return;
-       
-            await _tabbedPageService.ChangePage(0);           
+            if (music?.FilePath == null) return;
+
+            await _tabbedPageService.ChangePage(0);
         }
     }
 }

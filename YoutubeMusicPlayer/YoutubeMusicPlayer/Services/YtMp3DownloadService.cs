@@ -92,6 +92,8 @@ namespace YoutubeMusicPlayer.Services
 
             var info = await ParseResponseAsync(response);
 
+            if (info == null)
+                return null;
             //if new server is added
             if (!_servers.ContainsKey(info.Item1))
             {
@@ -105,12 +107,13 @@ namespace YoutubeMusicPlayer.Services
 
         private async Task<HttpResponseMessage> GetResponseAsync(string musicIdFromYoutube)
         {
-            var url = 
-                $"https://d.ymcdn.cc/check.php?callback=jQuery321018152062429700822_1506173145863&v={musicIdFromYoutube}&f=mp3&_=1506173145865";
-            var client = new HttpClient();
+            var url = $"https://d.ymcdn.cc/check.php?callback=jQuery3210817177162820844_1517651306766&v={musicIdFromYoutube}&f=mp3&_=1517651306768";
 
-            client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
+            var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Host", "d.ymcdn.cc");
+            client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
+            client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.1.1");
+
             try
             {
                 var response = await client.GetAsync(url);
@@ -131,13 +134,19 @@ namespace YoutubeMusicPlayer.Services
 
             var end = result.LastIndexOf('}');
 
-            var json = result.Substring(beg, end - beg + 1);
+            if (beg == -1 || end == -1)
+            {
+                return null;
+            }
 
+           
+            var json = result.Substring(beg, end - beg + 1);
             var info = JsonConvert.DeserializeAnonymousType(json, new { sid = "", hash = "" });
 
             var sid = Convert.ToInt32(info.sid);
 
-            return new Tuple<int, string>(sid!=0?sid:1,info.hash);
+            return new Tuple<int, string>(sid != 0 ? sid : 1, info.hash);
+                           
         }
 
         private async Task<Stream> DownloadAsync(string downloadUrl,INotifyProgressChanged onProgressChanged)

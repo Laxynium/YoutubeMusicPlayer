@@ -102,12 +102,12 @@ namespace YoutubeMusicPlayer.ViewModels
             if (music == null) return;
 
             SelectedMusic = null;
-
-            await Task.Run(
-            () =>
+  
+            await Task.Run(() =>
             {
                 MessagingCenter.Send(this, GlobalNames.DownloadMusic, new MusicEventArgs { Music = music });
             });
+     
         }
 
         private void ChangeText()
