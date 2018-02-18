@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,8 +8,10 @@ using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
+using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Models;
+using YoutubeMusicPlayer.Repositories;
 
 namespace YoutubeMusicPlayer.Services
 {
@@ -17,6 +20,7 @@ namespace YoutubeMusicPlayer.Services
         private readonly IFileManager _fileManager;
 
         private readonly IDownloadService _downloadService;
+
 
         public event EventHandler<int> OnProgressChanged;
 
@@ -33,9 +37,7 @@ namespace YoutubeMusicPlayer.Services
         {         
             var downloadedFileStream=await _downloadService.DownloadMusicAsync(music.VideoId,music);
 
-            if (downloadedFileStream == null) return "";
-
-            var filePath=await _fileManager.CreateFileAsync(music, downloadedFileStream);      
+            var filePath=await _fileManager.CreateFileAsync(music, downloadedFileStream);
 
             return filePath;
         }

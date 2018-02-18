@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -8,17 +9,18 @@ namespace YoutubeMusicPlayer.Services
 {
     public class YoutubeService : IYoutubeService
     {
+        private string _url = "https://www.youtube.com/results?search_query={0}&pbj=1";
+
         public async Task<IEnumerable<Music>> FindMusicAsync(string title)
         {
             var client = new HttpClient();
-
             var uri = $"https://www.youtube.com/results?search_query={title}&pbj=1";
             client.DefaultRequestHeaders.Add("X-YouTube-Client-Name", "1");
             client.DefaultRequestHeaders.Add("X-YouTube-Client-Version", "2.20170919");
             client.DefaultRequestHeaders.Add("Accept", @"*/*");
 
 
-            var response = await client.GetAsync(uri);
+            var response = await client.GetAsync(String.Format(_url,title));
             var result = await response.Content.ReadAsStringAsync();
 
             var type = new[]

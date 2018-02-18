@@ -4,6 +4,22 @@
              x:Class="YoutubeMusicPlayer.DownloadsPage" Title="Downloads">
     <ContentPage.Content>
         <StackLayout>
+                <Frame BackgroundColor="Firebrick" IsVisible="{Binding ErrorOccured}" HorizontalOptions="FillAndExpand">
+                    <StackLayout  Orientation="Horizontal">
+                        <Label Text="{Binding ErrorMessage}" 
+                               TextColor="FloralWhite" 
+                               HorizontalTextAlignment="Start"
+                               HorizontalOptions="StartAndExpand"
+                        >
+                        </Label>
+                        <Button Text="Ok" 
+                                VerticalOptions="FillAndExpand" 
+                                TextColor="FloralWhite" 
+                                Command="{Binding HideErrorCommand}">                                                       
+                        </Button>
+                    </StackLayout>                    
+                </Frame>
+            
             <ListView ItemsSource="{Binding Songs}" SelectedItem="{Binding SelectedMusic,Mode=TwoWay}" ItemSelected="ListView_OnItemSelected">
                 <ListView.ItemTemplate >
                     <DataTemplate>

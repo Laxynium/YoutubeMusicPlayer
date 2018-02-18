@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Reflection;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
-using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Models;
-using YoutubeMusicPlayer.Repositories;
 
 namespace YoutubeMusicPlayer.Services
 {
     public class YtMp3DownloadService:IDownloadService
     {
-        private readonly IDownloadServerRepository _downloadServerRepository;
+        private readonly IDownloader _downloader;
 
         private readonly Dictionary<int, string> _servers=new Dictionary<int, string>
         {
@@ -60,44 +56,29 @@ namespace YoutubeMusicPlayer.Services
             {36,"xnx"}
         };
 
-        private List<DownloadServer> _downloadServers = null;
-
-        private static bool _isInitialize=false;
-
-        public YtMp3DownloadService(IDownloadServerRepository downloadServerRepository)
+        public YtMp3DownloadService(IDownloader downloader)
         {
-            _downloadServerRepository = downloadServerRepository;
+            _downloader = downloader;
         }
 
         public event EventHandler<int> OnProgressChanged;
 
         public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged)
         {
-            if (!_isInitialize)
-            {
-                _isInitialize = true;
-
-                await _downloadServerRepository.InitializeAsync();
-
-                var downloadServers = await _downloadServerRepository.GetAllAsync();
-
-                _downloadServers = downloadServers?.ToList();
-
-            }
-
             var response = await GetResponseAsync(musicIdFromYoutube);
 
-            if (!response.IsSuccessStatusCode)
-                return null;
 
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Request failed : {response}");
+            }
+     
             var info = await ParseResponseAsync(response);
 
-            if (info == null)
-                return null;
             //if new server is added
             if (!_servers.ContainsKey(info.Item1))
             {
-                return null;
+                throw new Exception($"Could not find server with id '{info.Item1}' in dictionary.");
             }
 
             var downloadUrl = $"https://{_servers[info.Item1]}.ymcdn.cc/{info.Item2}/{musicIdFromYoutube}";
@@ -107,23 +88,38 @@ namespace YoutubeMusicPlayer.Services
 
         private async Task<HttpResponseMessage> GetResponseAsync(string musicIdFromYoutube)
         {
-            var url = $"https://d.ymcdn.cc/check.php?callback=jQuery3210817177162820844_1517651306766&v={musicIdFromYoutube}&f=mp3&_=1517651306768";
+            var scriptId = await GetScriptId();
 
+            var url = $"https://d.ymcdn.cc/check.php?callback=https://d.ymcdn.cc/check.php?callback=jQuery33106493845259851172_1518788953932&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=2518788953934";
+                  
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Host", "d.ymcdn.cc");
             client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
             client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.1.1");
 
-            try
-            {
-                var response = await client.GetAsync(url);
-                return response;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Something has gone wrong in request{url}");
-                return new HttpResponseMessage(HttpStatusCode.BadRequest);
-            }                     
+            var response = await client.GetAsync(url);
+
+            return response;
+        }
+
+        private async Task<string> GetScriptId()
+        {
+            var client = new HttpClient();
+            var response=await client.GetAsync("https://ytmp3.cc/");
+            var responseAsString=await response.Content.ReadAsStringAsync();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(responseAsString);
+
+            var srcValue = doc.DocumentNode.Descendants("script").SingleOrDefault(x => x.Id == "cs")
+                ?.Attributes["src"].Value;
+                       
+            if(srcValue==null)
+                throw new Exception($"Error occured while getting scriptId");
+
+            var scriptId=Regex.Match(input:srcValue,pattern:@"[a-z]{1}\=[a-zA-Z0-9\-\\_]{4,16}").ToString().Substring(2);
+
+            return scriptId;
         }
 
         private async Task<Tuple<int, string>> ParseResponseAsync(HttpResponseMessage response)
@@ -136,22 +132,21 @@ namespace YoutubeMusicPlayer.Services
 
             if (beg == -1 || end == -1)
             {
-                return null;
+                //Means server couldn't handle request as we expected.
+                throw new Exception($"ytmp3.cc server couldn\'t handle our request.\nReturned error:{result}");
             }
-
-           
+         
             var json = result.Substring(beg, end - beg + 1);
             var info = JsonConvert.DeserializeAnonymousType(json, new { sid = "", hash = "" });
 
             var sid = Convert.ToInt32(info.sid);
 
-            return new Tuple<int, string>(sid != 0 ? sid : 1, info.hash);
-                           
+            return new Tuple<int, string>(sid != 0 ? sid : 1, info.hash);                           
         }
 
         private async Task<Stream> DownloadAsync(string downloadUrl,INotifyProgressChanged onProgressChanged)
         {
-            var result = await DependencyService.Get<IDownloader>().GetStreamAsync(downloadUrl,onProgressChanged);
+            var result = await _downloader.GetStreamAsync(downloadUrl, onProgressChanged);
             
             return result;
         }

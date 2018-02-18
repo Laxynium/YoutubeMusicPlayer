@@ -30,6 +30,8 @@ namespace YoutubeMusicPlayer.ViewModels
 
         public ICommand SelectItemCommand;
 
+        public ICommand HideErrorCommand { get; private set; }
+
         public ObservableCollection<MusicViewModel> Songs { get; set; }
             = new ObservableCollection<MusicViewModel>();
 
@@ -39,6 +41,20 @@ namespace YoutubeMusicPlayer.ViewModels
         {
             get => _selectedMusic;
             set => SetValue(ref _selectedMusic, value);
+        }
+
+        private bool _errorOccured;
+        public bool ErrorOccured
+        {
+            get => _errorOccured;
+            set => SetValue(ref _errorOccured, value);
+        }
+
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set => SetValue(ref _errorMessage, value);
         }
 
         public DownloadViewModel(IMusicRepository musicRepository, IMusicDownloader musicDownloader,
@@ -52,13 +68,17 @@ namespace YoutubeMusicPlayer.ViewModels
             DownloadFileCommand = new Command<MusicViewModel>(async (m) => await DownloadFileAsync(m));
             UpdateDataCommand = new Command(async () => await UpdateData());
             SelectItemCommand = new Command<MusicViewModel>(async (m) => await SelectItem(m));
-
+            HideErrorCommand = new Command(() =>
+            {
+                ErrorOccured = false;
+            });
             MessagingCenter.Subscribe<MusicSearchViewModel, MusicEventArgs>(this, GlobalNames.DownloadMusic,
                 (s, a) => { DownloadFileCommand.Execute(a.Music); });
         }
 
         private async Task UpdateData()
         {
+            //ErrorOccured = false;
             await _musicRepository.InitializeAsync();
 
             var songs = (await _musicRepository.GetAllAsync())
@@ -91,43 +111,59 @@ namespace YoutubeMusicPlayer.ViewModels
 
         private async Task DownloadFileAsync(MusicViewModel music)
         {
-            if (Songs.SingleOrDefault(x => x.VideoId == music.VideoId) != null)
-                return;
-
-            Songs.Add(music);
-
-            var song = new Music
+            try
             {
-                VideoId = music.VideoId,
-                Title = music.Title,
-                Value = music.Value,
-                ImageSource = music.ImageSource
-            };
+                if (Songs.SingleOrDefault(x => x.VideoId == music.VideoId) != null)
+                {
+                    throw new Exception("Music is already downloaded.");
+                }
+                    
+                Songs.Add(music);
 
-            song.ProgressChanged += (s, v) =>
+                var song = new Music
+                {
+                    VideoId = music.VideoId,
+                    Title = music.Title,
+                    Value = music.Value,
+                    ImageSource = music.ImageSource
+                };
+
+                song.ProgressChanged += (s, v) =>
+                {
+                    music.Value = v / 100f;
+                    song.Value = v / 100f;
+                };
+
+                var filePath = await _musicDownloader.DownloadFileAsync(song);
+         
+                if (String.IsNullOrEmpty(filePath))
+                {
+                    throw new Exception("Could not retrive music path.");
+                }
+
+                music.FilePath = filePath;
+
+                song.FilePath = filePath;
+
+                await _musicRepository.AddAsync(song);
+
+                MessagingCenter.Send(this, GlobalNames.DownloadFinished,
+                    new MusicEventArgs {Music = music});
+            }
+            catch (Exception e)
             {
-                music.Value = v / 100f;
-                song.Value = v / 100f;
-            };
-
-            var filePath = await _musicDownloader.DownloadFileAsync(song);
-
-            if (String.IsNullOrEmpty(filePath)) return;
-
-            music.FilePath = filePath;
-
-            song.FilePath = filePath;
-
-            await _musicRepository.AddAsync(song);
-
-            MessagingCenter.Send(this, GlobalNames.DownloadFinished,
-                new MusicEventArgs {Music = music});
+                ErrorOccured = true;
+                ErrorMessage = e.Message;
+                Debug.WriteLine(e);
+            }
+           
         }
 
         private async Task SelectItem(MusicViewModel music)
         {
             SelectedMusic = null;
 
+            //Checks if music is already downloaded
             if (music?.FilePath == null) return;
 
             await _tabbedPageService.ChangePage(0);

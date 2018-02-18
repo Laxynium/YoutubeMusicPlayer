@@ -64,37 +64,33 @@ namespace YoutubeMusicPlayer.ViewModels
 
         private async void SearchMusic()
         {
-            try
+
+            var title = SearchText;
+
+            if (String.IsNullOrWhiteSpace(title)) 
+                return;
+
+            IsSearching = true;
+
+            var foundMusics = await _youtubeService.FindMusicAsync(title);
+
+            var musicViewModels = new ObservableCollection<MusicViewModel>();
+
+            foreach (var music in foundMusics)
             {
-                var title = SearchText;
-
-                if (String.IsNullOrWhiteSpace(title)) return;
-
-                IsSearching = true;
-
-                var foundMusics = await _youtubeService.FindMusicAsync(title);
-
-                var musicViewModels = new ObservableCollection<MusicViewModel>();
-
-                foreach (var music in foundMusics)
+                musicViewModels.Add(new MusicViewModel
                 {
-                    musicViewModels.Add(new MusicViewModel
-                    {
-                        Title = music.Title,
-                        VideoId = music.VideoId,
-                        ImageSource = music.ImageSource
-                    });
-                }
-                MusicListView = musicViewModels;
+                    Title = music.Title,
+                    VideoId = music.VideoId,
+                    ImageSource = music.ImageSource
+                });
+            }
+
+            MusicListView = musicViewModels;
 
 
-                IsSearching = false;
-            }
-            catch(Exception e)
-            {
-                ;
-            }
-           
+            IsSearching = false;
+          
         }
 
         private async void SelectItem(MusicViewModel music)

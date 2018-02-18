@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Plugin.MediaManager.Abstractions.Implementations;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using YoutubeMusicPlayer.AbstractLayer;
-using YoutubeMusicPlayer.Annotations;
-using YoutubeMusicPlayer.Models;
-using YoutubeMusicPlayer.Repositories;
-using YoutubeMusicPlayer.Services;
 using YoutubeMusicPlayer.ViewModels;
 
 namespace YoutubeMusicPlayer
@@ -43,6 +32,6 @@ namespace YoutubeMusicPlayer
         private void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             _viewModel.SelectItemCommand.Execute(e.SelectedItem as MusicViewModel);
-        }   
+        }
     }
 }
