@@ -53,7 +53,9 @@ namespace YoutubeMusicPlayer.Services
             {33,"typ"},
             {34,"amv"},
             {35,"rlv"},
-            {36,"xnx"}
+            {36,"xnx"},
+            {37,"vro"},
+            {38,"pfg"}
         };
 
         public YtMp3DownloadService(IDownloader downloader)
@@ -110,14 +112,15 @@ namespace YoutubeMusicPlayer.Services
 
             var doc = new HtmlDocument();
             doc.LoadHtml(responseAsString);
-
-            var srcValue = doc.DocumentNode.Descendants("script").SingleOrDefault(x => x.Id == "cs")
+            var tmp = doc.DocumentNode.Descendants("script")
+                .Where(e => e.Attributes["src"].Value.Contains("js/converter")).Take(1);
+            var srcValue = doc.DocumentNode.Descendants("script").ElementAt(1)
                 ?.Attributes["src"].Value;
                        
             if(srcValue==null)
                 throw new Exception($"Error occured while getting scriptId");
 
-            var scriptId=Regex.Match(input:srcValue,pattern:@"[a-z]{1}\=[a-zA-Z0-9\-\\_]{4,16}").ToString().Substring(2);
+            var scriptId=Regex.Match(input:srcValue,pattern:@"[a-z]{1}\=[a-zA-Z0-9\-\\_]{4,32}").ToString().Substring(2);
 
             return scriptId;
         }
