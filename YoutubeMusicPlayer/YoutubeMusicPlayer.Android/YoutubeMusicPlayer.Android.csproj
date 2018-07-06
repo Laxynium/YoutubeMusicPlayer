@@ -16,8 +16,8 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
     <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
     <JavaMaximumHeapSize />
@@ -152,6 +152,7 @@
     <Compile Include="AbstractLayer\Downloader.cs" />
     <Compile Include="AbstractLayer\FileManager.cs" />
     <Compile Include="AbstractLayer\FileOpener.cs" />
+    <Compile Include="AbstractLayer\MusicLoader.cs" />
     <Compile Include="AbstractLayer\MusicPlayer.cs" />
     <Compile Include="AbstractLayer\SqlConnection.cs" />
     <Compile Include="CustomRenderers\CustomSliderRenderer.cs" />

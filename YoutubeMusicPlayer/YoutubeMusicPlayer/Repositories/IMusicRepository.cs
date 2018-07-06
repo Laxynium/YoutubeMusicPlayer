@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ninject;
 using YoutubeMusicPlayer.Models;
 
 namespace YoutubeMusicPlayer.Repositories

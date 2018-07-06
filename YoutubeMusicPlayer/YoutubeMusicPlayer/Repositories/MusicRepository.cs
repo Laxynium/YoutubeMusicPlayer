@@ -67,6 +67,5 @@ namespace YoutubeMusicPlayer.Repositories
 
             await _connection.DeleteAsync(musicInDb);
         }
-
     }
 }

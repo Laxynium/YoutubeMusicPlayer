@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
-using Newtonsoft.Json;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Models;
 
@@ -18,45 +18,87 @@ namespace YoutubeMusicPlayer.Services
 
         private readonly Dictionary<int, string> _servers=new Dictionary<int, string>
         {
-            {1,"odg"},
-            {2,"ado"},
-            {3,"jld"},
-            {4,"tzg"},
-            {5,"uuj"},
-            {6,"bkl"},
-            {7,"fnw"},
-            {8,"eeq"},
-            {9,"ebr"},
-            {10,"asx"},
-            {11,"ghn"},
-            {12,"eal"},
-            {13,"hrh"},
-            {14,"quq"},
-            {15,"zki"},
-            {16,"tff"},
-            {17,"aol"},
-            {18,"eeu"},
-            {19,"kkr"},
-            {20,"yui"},
-            {21,"yyd"},
-            {22,"hdi"},
-            {23,"ddb"},
-            {24,"iir"},
-            {25,"ihi"},
-            {26,"heh"},
-            {27,"xaa"},
-            {28,"nim"},
-            {29,"omp"},
-            {30,"eez"},
-            {31,"rpx"},
-            {32,"cxq"},
-            {33,"typ"},
-            {34,"amv"},
-            {35,"rlv"},
-            {36,"xnx"},
-            {37,"vro"},
-            {38,"pfg"}
+            {1, "wyy"},
+            {2, "yww"},
+            {3, "ywz"},
+            {4, "zwx"},
+            {5, "xyy"},
+            {6, "xxw"},
+            {7, "wxz"},
+            {8, "yxw"},
+            {9, "zzz"},
+            {10, "zxw"},
+            {11, "xzw"},
+            {12, "ywx"},
+            {13, "wyw"},
+            {14, "zwy"},
+            {15, "wzw"},
+            {16, "xyx"},
+            {17, "xwx"},
+            {18, "yyx"},
+            {19, "yyy"},
+            {20, "wwz"},
+            {21, "yyw"},
+            {22, "wxy"},
+            {23, "zwz"},
+            {24, "zww"},
+            {25, "xxy"},
+            {26, "wzy"},
+            {27, "xwz"},
+            {28, "xwy"},
+            {29, "wxw"},
+            {30, "xyw"},
+            {31, "yxy"},
+            {32, "xzz"},
+            {33, "yzw"},
+            {34, "ywy"},
+            {35, "yxx"},
+            {36, "wyz"},
+            {37, "xzx"},
+            {38, "zxx"},
+            {39, "xyz"},
+            {40, "zzy"},
+            //{1,"odg"},
+            //{2,"ado"},
+            //{3,"jld"},
+            //{4,"tzg"},
+            //{5,"uuj"},
+            //{6,"bkl"},
+            //{7,"fnw"},
+            //{8,"eeq"},
+            //{9,"ebr"},
+            //{10,"asx"},
+            //{11,"ghn"},
+            //{12,"eal"},
+            //{13,"hrh"},
+            //{14,"quq"},
+            //{15,"zki"},
+            //{16,"tff"},
+            //{17,"aol"},
+            //{18,"eeu"},
+            //{19,"kkr"},
+            //{20,"yui"},
+            //{21,"yyd"},
+            //{22,"hdi"},
+            //{23,"ddb"},
+            //{24,"iir"},
+            //{25,"ihi"},
+            //{26,"heh"},
+            //{27,"xaa"},
+            //{28,"nim"},
+            //{29,"omp"},
+            //{30,"eez"},
+            //{31,"rpx"},
+            //{32,"cxq"},
+            //{33,"typ"},
+            //{34,"amv"},
+            //{35,"rlv"},
+            //{36,"xnx"},
+            //{37,"vro"},
+            //{38,"pfg"}
         };
+
+        private string _serverName = "x.wywx.xyz";
 
         public YtMp3DownloadService(IDownloader downloader)
         {
@@ -83,7 +125,7 @@ namespace YoutubeMusicPlayer.Services
                 throw new Exception($"Could not find server with id '{info.Item1}' in dictionary.");
             }
 
-            var downloadUrl = $"https://{_servers[info.Item1]}.ymcdn.cc/{info.Item2}/{musicIdFromYoutube}";
+            var downloadUrl = $"https://{_servers[info.Item1]}.wywx.xyz/{info.Item2}/{musicIdFromYoutube}";
 
             return await DownloadAsync(downloadUrl, onProgressChanged);
         }
@@ -92,12 +134,16 @@ namespace YoutubeMusicPlayer.Services
         {
             var scriptId = await GetScriptId();
 
-            var url = $"https://d.ymcdn.cc/check.php?callback=https://d.ymcdn.cc/check.php?callback=jQuery33106493845259851172_1518788953932&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=2518788953934";
-                  
+            scriptId = "dd0zFSQ4HGd2d04SF4pFQ80SHFzpd404";
+
+            var url = $"https://{_serverName}/check.php?/check.php?callback=jQuery33103506909994451777_1530813313782&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=1530813313784";
+             
+            url = $"https://x.wywx.xyz/check.php?callback=jQuery33103506909994451777_1530813313782&v={musicIdFromYoutube}&f=mp3&k=dd0zFSQ4HGd2d04SF4pFQ80SHFzpd404&_=1530813313784";
+
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Host", "d.ymcdn.cc");
             client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
-            client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.1.1");
+            client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.1.5");
+
 
             var response = await client.GetAsync(url);
 

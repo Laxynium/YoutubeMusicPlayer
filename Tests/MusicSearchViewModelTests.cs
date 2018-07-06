@@ -43,7 +43,7 @@ namespace Tests
 
             });
 
-            _viewModel=new MusicSearchViewModel(_youtubeService.Object);
+            //_viewModel=new MusicSearchViewModel(_youtubeService.Object);
         }
         [Test]
         public void SearchMusic_WhenCalled_ShouldFillListView()

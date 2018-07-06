@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Plugin.MediaManager.Abstractions.Implementations;
 using Xamarin.Forms;
+using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.EventArgs;
 using YoutubeMusicPlayer.MessangingCenter;
 using YoutubeMusicPlayer.Services;
@@ -18,6 +19,7 @@ namespace YoutubeMusicPlayer.ViewModels
     public class MusicSearchViewModel:ViewModelBase
     {
         private readonly IYoutubeService _youtubeService;
+        private readonly IMusicLoader _musicLoader;
 
 
         public string ImageSource { get; set; }
@@ -53,13 +55,17 @@ namespace YoutubeMusicPlayer.ViewModels
 
         public ICommand TextChangeCommand { get; }
 
-        public MusicSearchViewModel(IYoutubeService youtubeService)
+        public ICommand LoadMusicCommand { get; }
+        public MusicSearchViewModel(IYoutubeService youtubeService,IMusicLoader musicLoader)
         {
             _youtubeService = youtubeService;
+            _musicLoader = musicLoader;
 
             MusicSearchCommand = new Command(SearchMusic);
             SelectItemCommand = new Command<MusicViewModel>(SelectItem);
             TextChangeCommand = new Command(ChangeText);
+
+            LoadMusicCommand = new Command(LoadFiles);
         }
 
         private async void SearchMusic()
@@ -106,6 +112,10 @@ namespace YoutubeMusicPlayer.ViewModels
      
         }
 
+        private async void LoadFiles()
+        {
+            await _musicLoader.LoadMusic();
+        }
         private void ChangeText()
         {
             if (SearchText.Length == 0)

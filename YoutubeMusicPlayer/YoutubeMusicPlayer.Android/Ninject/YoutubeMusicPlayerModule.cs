@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Ninject.Modules;
+﻿using Ninject.Modules;
 using SQLite;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Droid.AbstractLayer;
 using YoutubeMusicPlayer.Repositories;
 using YoutubeMusicPlayer.Services;
 using YoutubeMusicPlayer.ViewModels;
@@ -46,6 +36,7 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<IDownloader>().ToMethod(x => DependencyService.Get<IDownloader>()).InThreadScope();
             Bind<IFileOpener>().ToMethod(x => DependencyService.Get<IFileOpener>()).InSingletonScope();
             Bind<IMusicPlayer>().ToMethod(x => DependencyService.Get<IMusicPlayer>()).InSingletonScope();
+            Bind<IMusicLoader>().To<MusicLoader>().InSingletonScope();
             Bind<SQLiteAsyncConnection>().ToMethod(x => DependencyService.Get<ISqlConnection>().GetConnection());
 
             Bind<IMusicRepository>().To<MusicRepository>().InSingletonScope();

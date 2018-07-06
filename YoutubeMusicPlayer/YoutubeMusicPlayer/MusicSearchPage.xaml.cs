@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.ViewModels;
 
 namespace YoutubeMusicPlayer
@@ -13,6 +14,11 @@ namespace YoutubeMusicPlayer
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MusicSearchPage : ContentPage
     {
+        protected override void OnAppearing()
+        {
+            //_viewModel.LoadMusicCommand.Execute(null);
+        }
+
         private readonly MusicSearchViewModel _viewModel;
         public MusicSearchPage(MusicSearchViewModel viewModel)
         {
