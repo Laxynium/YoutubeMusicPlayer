@@ -52,6 +52,9 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -62,6 +65,9 @@
     </Reference>
     <Reference Include="HtmlAgilityPack.CssSelectors.NetCore, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\HtmlAgilityPack.CssSelectors.NetCore.1.1.0\lib\netstandard1.5\HtmlAgilityPack.CssSelectors.NetCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Jint.2.11.58\lib\netstandard2.0\Jint.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Android" />
@@ -154,6 +160,7 @@
     <Compile Include="AbstractLayer\FileOpener.cs" />
     <Compile Include="AbstractLayer\MusicLoader.cs" />
     <Compile Include="AbstractLayer\MusicPlayer.cs" />
+    <Compile Include="AbstractLayer\ScriptIdEncoder.cs" />
     <Compile Include="AbstractLayer\SqlConnection.cs" />
     <Compile Include="CustomRenderers\CustomSliderRenderer.cs" />
     <Compile Include="MainActivity.cs" />
@@ -164,7 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>

@@ -15,94 +15,58 @@ namespace YoutubeMusicPlayer.Services
     public class YtMp3DownloadService:IDownloadService
     {
         private readonly IDownloader _downloader;
+        private readonly IScriptIdEncoder _encoder;
 
         private readonly Dictionary<int, string> _servers=new Dictionary<int, string>
         {
-            {1, "wyy"},
-            {2, "yww"},
-            {3, "ywz"},
-            {4, "zwx"},
-            {5, "xyy"},
-            {6, "xxw"},
-            {7, "wxz"},
-            {8, "yxw"},
-            {9, "zzz"},
-            {10, "zxw"},
-            {11, "xzw"},
-            {12, "ywx"},
-            {13, "wyw"},
-            {14, "zwy"},
-            {15, "wzw"},
-            {16, "xyx"},
-            {17, "xwx"},
-            {18, "yyx"},
-            {19, "yyy"},
-            {20, "wwz"},
-            {21, "yyw"},
-            {22, "wxy"},
-            {23, "zwz"},
-            {24, "zww"},
-            {25, "xxy"},
-            {26, "wzy"},
-            {27, "xwz"},
-            {28, "xwy"},
-            {29, "wxw"},
-            {30, "xyw"},
-            {31, "yxy"},
-            {32, "xzz"},
-            {33, "yzw"},
-            {34, "ywy"},
-            {35, "yxx"},
-            {36, "wyz"},
-            {37, "xzx"},
-            {38, "zxx"},
-            {39, "xyz"},
-            {40, "zzy"},
-            //{1,"odg"},
-            //{2,"ado"},
-            //{3,"jld"},
-            //{4,"tzg"},
-            //{5,"uuj"},
-            //{6,"bkl"},
-            //{7,"fnw"},
-            //{8,"eeq"},
-            //{9,"ebr"},
-            //{10,"asx"},
-            //{11,"ghn"},
-            //{12,"eal"},
-            //{13,"hrh"},
-            //{14,"quq"},
-            //{15,"zki"},
-            //{16,"tff"},
-            //{17,"aol"},
-            //{18,"eeu"},
-            //{19,"kkr"},
-            //{20,"yui"},
-            //{21,"yyd"},
-            //{22,"hdi"},
-            //{23,"ddb"},
-            //{24,"iir"},
-            //{25,"ihi"},
-            //{26,"heh"},
-            //{27,"xaa"},
-            //{28,"nim"},
-            //{29,"omp"},
-            //{30,"eez"},
-            //{31,"rpx"},
-            //{32,"cxq"},
-            //{33,"typ"},
-            //{34,"amv"},
-            //{35,"rlv"},
-            //{36,"xnx"},
-            //{37,"vro"},
-            //{38,"pfg"}
+            { 1, "cco" },
+            { 2, "aea" },
+            { 3, "oea" },
+            { 4, "aoa" },
+            { 5, "cee" },
+            { 6, "coe" },
+            { 7, "oca" },
+            { 8, "caa" },
+            { 9, "eae" },
+            { 10, "oce" },
+            { 11, "eao" },
+            { 12, "oco" },
+            { 13, "eoo" },
+            { 14, "coc" },
+            { 15, "aco" },
+            { 16, "aae" },
+            { 17, "coo" },
+            { 18, "ooa" },
+            { 19, "cao" },
+            { 20, "aoe" },
+            { 21, "oeo" },
+            { 22, "ece" },
+            { 23, "eeo" },
+            { 24, "oac" },
+            { 25, "eec" },
+            { 26, "oec" },
+            { 27, "eoe" },
+            { 28, "eaa" },
+            { 29, "eoa" },
+            { 30, "ecc" },
+            { 31, "cec" },
+            { 32, "ceo" },
+            { 33, "aee" },
+            { 34, "cae" },
+            { 35, "eoc" },
+            { 36, "oae" },
+            { 37, "cce" },
+            { 38, "ooe" },
+            { 39, "aao" },
+            { 40, "aec" }
         };
 
-        private string _serverName = "x.wywx.xyz";
+        private bool _serverNotFoundYet = false;
 
-        public YtMp3DownloadService(IDownloader downloader)
+        public YtMp3DownloadService(IDownloader downloader,IScriptIdEncoder encoder)
         {
             _downloader = downloader;
+            _encoder = encoder;
         }
 
         public event EventHandler<int> OnProgressChanged;
@@ -125,20 +89,59 @@ namespace YoutubeMusicPlayer.Services
                 throw new Exception($"Could not find server with id '{info.Item1}' in dictionary.");
             }
 
-            var downloadUrl = $"https://{_servers[info.Item1]}.wywx.xyz/{info.Item2}/{musicIdFromYoutube}";
+            var hash = info.Item2;
+            if (_serverNotFoundYet)
+            {
+                hash = await Progress(hash: info.Item2);
+            }
+
+            var downloadUrl = $"https://{_servers[info.Item1]}.oeaa.cc/{hash}/{musicIdFromYoutube}";
 
             return await DownloadAsync(downloadUrl, onProgressChanged);
+        }
+
+        private async Task<string> Progress(string hash)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
+            client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.1.5");
+            var url = $"https://a.oeaa.cc/progress.php?callback=jQuery33109514798167395044_1532263442793&id={hash}&_1532263442795";
+            var maxTime = TimeSpan.FromSeconds(30);
+            var startTime = DateTime.Now;
+            while (true && DateTime.Now - startTime <= maxTime)
+            {
+                var response = await client.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+
+                var beg = content.IndexOf('{');
+
+                var end = content.LastIndexOf('}');
+
+                if (beg == -1 || end == -1)
+                {
+                    //Means server couldn't handle request as we expected.
+                    throw new Exception($"ytmp3.cc server couldn\'t handle our request.\nReturned error:{content}");
+                }
+
+                var json = content.Substring(beg, end - beg + 1);
+                var info = JsonConvert.DeserializeAnonymousType(json, new { sid = "", progress = "" });
+
+                if (info.progress == "3")
+                    return info.sid;
+                await Task.Delay(3000);
+            }
+            throw new Exception("Exceeded limit of time for download.");
         }
 
         private async Task<HttpResponseMessage> GetResponseAsync(string musicIdFromYoutube)
         {
             var scriptId = await GetScriptId();
 
-            scriptId = "dd0zFSQ4HGd2d04SF4pFQ80SHFzpd404";
+            scriptId = await _encoder.EncodeAsync(scriptId);
 
-            var url = $"https://{_serverName}/check.php?/check.php?callback=jQuery33103506909994451777_1530813313782&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=1530813313784";
-             
-            url = $"https://x.wywx.xyz/check.php?callback=jQuery33103506909994451777_1530813313782&v={musicIdFromYoutube}&f=mp3&k=dd0zFSQ4HGd2d04SF4pFQ80SHFzpd404&_=1530813313784";
+            var url = $"https://a.oeaa.cc/check.php?callback=jQuery33109514798167395044_1532263442793&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=1532263442795";
+            //url =
+            //    $"https://a.oeaa.cc/check.php?callback=jQuery331019847539517625412_1541932876760&v=QHHoM55B9fM&f=mp3&k=QMetuZt9HB8tMhh6sQpSMu&_=154193287676295";
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
@@ -158,8 +161,7 @@ namespace YoutubeMusicPlayer.Services
 
             var doc = new HtmlDocument();
             doc.LoadHtml(responseAsString);
-            var tmp = doc.DocumentNode.Descendants("script")
-                .Where(e => e.Attributes["src"].Value.Contains("js/converter")).Take(1);
+
             var srcValue = doc.DocumentNode.Descendants("script").ElementAt(1)
                 ?.Attributes["src"].Value;
                        
@@ -189,6 +191,9 @@ namespace YoutubeMusicPlayer.Services
             var info = JsonConvert.DeserializeAnonymousType(json, new { sid = "", hash = "" });
 
             var sid = Convert.ToInt32(info.sid);
+
+            if (sid == 0)
+                _serverNotFoundYet = true;
 
             return new Tuple<int, string>(sid != 0 ? sid : 1, info.hash);                           
         }

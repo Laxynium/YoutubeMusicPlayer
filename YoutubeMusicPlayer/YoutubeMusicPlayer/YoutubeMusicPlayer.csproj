@@ -39,6 +39,7 @@
     <Compile Include="AbstractLayer\IFileManager.cs" />
     <Compile Include="AbstractLayer\IFileOpener.cs" />
     <Compile Include="AbstractLayer\IMusicPlayer.cs" />
+    <Compile Include="AbstractLayer\IScriptIdEncoder.cs" />
     <Compile Include="AbstractLayer\ISqlConnection.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
