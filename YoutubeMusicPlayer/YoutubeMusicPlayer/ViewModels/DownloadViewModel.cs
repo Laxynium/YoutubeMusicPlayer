@@ -117,7 +117,7 @@ namespace YoutubeMusicPlayer.ViewModels
                 {
                     throw new Exception("Music is already downloaded.");
                 }
-                    
+
                 Songs.Add(music);
 
                 var song = new Music
@@ -165,6 +165,8 @@ namespace YoutubeMusicPlayer.ViewModels
 
             //Checks if music is already downloaded
             if (music?.FilePath == null) return;
+
+            MessagingCenter.Send(this,GlobalNames.MusicSelected,new MusicEventArgs(){Music = music});
 
             await _tabbedPageService.ChangePage(0);
         }

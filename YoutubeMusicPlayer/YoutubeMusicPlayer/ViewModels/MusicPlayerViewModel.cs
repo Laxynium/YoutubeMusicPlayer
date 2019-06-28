@@ -33,6 +33,8 @@ namespace YoutubeMusicPlayer.ViewModels
 
         private bool IsInitialized { get; set; }
 
+        private MusicViewModel _nextMusicToPlay;
+
         public MusicViewModel CurrentSong
         {
             get => _currentSong;
@@ -99,6 +101,10 @@ namespace YoutubeMusicPlayer.ViewModels
                 {
                     await UpdateMusicAsync();
                 });
+            MessagingCenter.Subscribe<DownloadViewModel, MusicEventArgs>(this, GlobalNames.MusicSelected, (s, a) =>
+                {
+                    _nextMusicToPlay = a.Music;
+                });
         }
 
         private async void _musicPlayer_ProgressChanged(object sender, int e)
@@ -127,9 +133,14 @@ namespace YoutubeMusicPlayer.ViewModels
                 }));
 
                 CurrentSong = Songs.Any() ? Songs.First() : null;
-
-                return;
             }
+
+            if (_nextMusicToPlay != null)
+            {
+                CurrentSong = Songs.Single(x => x.VideoId == _nextMusicToPlay.VideoId);
+                _nextMusicToPlay = null;
+            }
+
         }
 
         private async Task UpdateMusicAsync()

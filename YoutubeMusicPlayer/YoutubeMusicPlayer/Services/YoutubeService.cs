@@ -15,13 +15,17 @@ namespace YoutubeMusicPlayer.Services
         {
             var client = new HttpClient();
             var uri = $"https://www.youtube.com/results?search_query={title}&pbj=1";
+            client.DefaultRequestHeaders.Add("Host", "www.youtube.com");
+            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
             client.DefaultRequestHeaders.Add("X-YouTube-Client-Name", "1");
-            client.DefaultRequestHeaders.Add("X-YouTube-Client-Version", "2.20170919");
+            client.DefaultRequestHeaders.Add("X-YouTube-Client-Version", "2.20190626");
+            client.DefaultRequestHeaders.Add("Cookie", "VISITOR_INFO1_LIVE=cIdr9kyAxzo; YSC=uiQyEuiTVYU; PREF=f1=50000000; GPS=1; CONSENT=WP.27b70d; ST-13r0l79=oq=nadchodzi%20lato&gs_l=youtube.3..0i71k1l10.0.0.1.431792.0.0.0.0.0.0.0.0..0.0....0...1ac..64.youtube..0.0.0....0.HCy0eUqhZUA&feature=web-masthead-search&itct=CB4Q7VAiEwjau5D-oorjAhWOOZsKHX10AT0o9CQ%3D&csn=bAgVXdrVCI7z7AT96IXoAw");
             client.DefaultRequestHeaders.Add("Accept", @"*/*");
 
 
             var response = await client.GetAsync(String.Format(_url,title));
             var result = await response.Content.ReadAsStringAsync();
+
 
             var type = new[]
             {
@@ -59,7 +63,10 @@ namespace YoutubeMusicPlayer.Services
                                                                 },
                                                                 title=new
                                                                 {
-                                                                    simpleText=""
+                                                                    runs=new[]
+                                                                    {
+                                                                        new {text=""}
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -87,7 +94,7 @@ namespace YoutubeMusicPlayer.Services
             {
                 var item = new Music
                 {
-                    Title = content?.videoRenderer?.title?.simpleText,
+                    Title = content?.videoRenderer?.title?.runs[0]?.text,
                     VideoId = content?.videoRenderer?.videoId,
                     ImageSource = content?.videoRenderer?.thumbnail?.thumbnails[0]?.url
                 };

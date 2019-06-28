@@ -5,18 +5,19 @@ namespace YoutubeMusicPlayer.Services
 {
     public class TabbedPageService : ITabbedPageService
     {
-        public async Task ChangePage(int index)
+        public Task ChangePage(int index)
         {
-            //await Task.Run(() =>
-            //{
                 var mainPage = (Application.Current.MainPage as MainPage);
 
-                if (mainPage == null) return;
+                if (mainPage == null)
+                    return Task.FromResult<object>(null);
 
-                if (index < 0 || index >= mainPage.Children.Count) return;
+                if (index < 0 || index >= mainPage.Children.Count)
+                    return Task.FromResult<object>(null);
 
                 mainPage.CurrentPage = mainPage.Children[index];
-           // });                     
+
+                return Task.FromResult<object>(null);
         }
     }
 }

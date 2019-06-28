@@ -58,7 +58,9 @@ namespace YoutubeMusicPlayer.Services
             { 37, "cce" },
             { 38, "ooe" },
             { 39, "aao" },
-            { 40, "aec" }
+            { 40, "aec" },
+            { 41, "cca" },
+            { 42, "oaa" }
         };
 
         private bool _serverNotFoundYet = false;
@@ -139,9 +141,7 @@ namespace YoutubeMusicPlayer.Services
 
             scriptId = await _encoder.EncodeAsync(scriptId);
 
-            var url = $"https://a.oeaa.cc/check.php?callback=jQuery33109514798167395044_1532263442793&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=1532263442795";
-            //url =
-            //    $"https://a.oeaa.cc/check.php?callback=jQuery331019847539517625412_1541932876760&v=QHHoM55B9fM&f=mp3&k=QMetuZt9HB8tMhh6sQpSMu&_=154193287676295";
+            var url = $"https://a.oeaa.cc/check.php?callback=jQuery3310147368603350448_1558729784771&v={musicIdFromYoutube}&f=mp3&k={scriptId}&_=1558729784773";
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
@@ -168,9 +168,7 @@ namespace YoutubeMusicPlayer.Services
             if(srcValue==null)
                 throw new Exception($"Error occured while getting scriptId");
 
-            var scriptId=Regex.Match(input:srcValue,pattern:@"[a-z]{1}\=[a-zA-Z0-9\-\\_]{4,32}").ToString().Substring(2);
-
-            return scriptId;
+            return Regex.Match(input: srcValue, pattern: @"[a-z]{1}\=[a-zA-Z0-9\-\\_]{16,40}").ToString().Substring(2);
         }
 
         private async Task<Tuple<int, string>> ParseResponseAsync(HttpResponseMessage response)
