@@ -35,9 +35,9 @@ namespace YoutubeMusicPlayer.Services
       
         public async Task<string> DownloadFileAsync(Music music)
         {         
-            var downloadedFileStream=await _downloadService.DownloadMusicAsync(music.VideoId,music);
+            var downloadedFileStream = await _downloadService.DownloadMusicAsync(music.VideoId,music);
 
-            var filePath=await _fileManager.CreateFileAsync(music, downloadedFileStream);
+            var filePath = await _fileManager.CreateFileAsync(music, downloadedFileStream);
 
             return filePath;
         }

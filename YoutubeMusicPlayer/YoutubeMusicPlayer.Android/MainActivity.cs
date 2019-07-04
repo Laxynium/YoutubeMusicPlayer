@@ -26,10 +26,9 @@ namespace YoutubeMusicPlayer.Droid
            
             NinjectInitializer.Initialize();
 
-            var app= NinjectInitializer.Kernel.Get<App>();
 
+            var app = NinjectInitializer.Kernel.Get<App>();
             LoadApplication(app);
-
         }
     }
 }

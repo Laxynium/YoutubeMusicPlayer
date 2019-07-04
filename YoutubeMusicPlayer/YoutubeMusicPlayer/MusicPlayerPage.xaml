@@ -5,7 +5,7 @@
              x:Class="YoutubeMusicPlayer.MusicPlayerPage" Title="MusicPlayer">
     <ContentPage.Content>
         <RelativeLayout>
-            <ListView  x:Name="listView" ItemSelected="ListView_OnItemSelected" 
+            <ListView  x:Name="ListView" ItemSelected="ListView_OnItemSelected" 
                        ItemsSource="{Binding Songs,Mode=TwoWay}"
                        SelectedItem="{Binding CurrentSong,Mode=TwoWay}"
                       RelativeLayout.YConstraint ="{ConstraintExpression 
@@ -23,11 +23,11 @@
                              Property=Width,
                              Factor=1
                              }">
-                <ListView.ItemTemplate >
+                <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                         <ViewCell.ContextActions>
-                                <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference listView},Path=BindingContext.DeleteSongCommand}"
+                                <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView},Path=BindingContext.DeleteSongCommand}"
                                           IsDestructive="True"/>
                         </ViewCell.ContextActions>   
                             <StackLayout Orientation="Horizontal">
@@ -37,7 +37,7 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-            </ListView >
+            </ListView>
             <customs:CustomSlider  ProgressArranged="Slider_ProgressArranged" 
                                    Value="{Binding MusicTimestamp}" Minimum="0" Maximum="100" 
                     RelativeLayout.YConstraint ="{ConstraintExpression 
