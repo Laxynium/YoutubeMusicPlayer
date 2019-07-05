@@ -11,29 +11,24 @@ namespace YoutubeMusicPlayer.Domain.MusicDownloading
         public string ImageSource { get; private set; }
         public string FilePath { get; private set; }
 
-        public Song(string youtubeId, string title)
+        public Song(string youtubeId, string title, string imageSource, string filePath)
         {
             Id = Guid.NewGuid();
             YoutubeId = youtubeId;
             Title = title;
+            ImageSource = imageSource;
+            FilePath = filePath;
         }
 
-        public Song(Guid id, string youtubeId, string title)
+        public Song(Guid id, string youtubeId, string title, string imageSource, string filePath)
         {
             Id = id;
             YoutubeId = youtubeId;
             Title = title;
-        }
-
-        public void SetImageSource(string imageSource)
-        {
             ImageSource = imageSource;
-        }
-
-        public void SetFilePath(string filePath)
-        {
             FilePath = filePath;
         }
+
 
         public void UpdateProgress(double newProgress)
         {

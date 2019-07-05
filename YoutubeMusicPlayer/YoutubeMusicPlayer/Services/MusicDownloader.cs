@@ -19,25 +19,25 @@ namespace YoutubeMusicPlayer.Services
     {
         private readonly IFileManager _fileManager;
 
-        private readonly IDownloadService _downloadService;
+        private readonly IDownloadLinkGenerator _downloadLinkGenerator;
 
 
         public event EventHandler<int> OnProgressChanged;
 
-        public MusicDownloader(IFileManager fileManager,IDownloadService downloadService)
+        public MusicDownloader(IFileManager fileManager,IDownloadLinkGenerator downloadLinkGenerator)
         {
             _fileManager = fileManager;
 
-            _downloadService = downloadService;
+            _downloadLinkGenerator = downloadLinkGenerator;
 
-            _downloadService.OnProgressChanged += (o, v) => OnProgressChanged?.Invoke(o, v);
+            _downloadLinkGenerator.OnProgressChanged += (o, v) => OnProgressChanged?.Invoke(o, v);
         }
       
         public async Task<string> DownloadFileAsync(Music music)
         {         
-            var downloadedFileStream = await _downloadService.DownloadMusicAsync(music.VideoId,music);
+            var downloadedFileStream = await _downloadLinkGenerator.GenerateLinkAsync(music.VideoId);
 
-            var filePath = await _fileManager.CreateFileAsync(music, downloadedFileStream);
+            var filePath = await _fileManager.CreateFileAsync(TODO, downloadedFileStream);
 
             return filePath;
         }

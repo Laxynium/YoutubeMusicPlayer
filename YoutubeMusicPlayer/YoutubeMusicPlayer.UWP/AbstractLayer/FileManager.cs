@@ -11,7 +11,7 @@ namespace YoutubeMusicPlayer.UWP.AbstractLayer
 {
     public class FileManager:IFileManager
     {
-        public async Task<string> CreateFileAsync(Music music, Stream stream)
+        public async Task<string> CreateFileAsync(string fileName, Stream stream)
         {
             throw new NotImplementedException();
         }

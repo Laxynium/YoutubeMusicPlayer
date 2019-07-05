@@ -8,10 +8,10 @@ using YoutubeMusicPlayer.Models;
 
 namespace YoutubeMusicPlayer.Services
 {
-    public interface IDownloadService
+    public interface IDownloadLinkGenerator
     {
         event EventHandler<int> OnProgressChanged;
         
-        Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged);
+        Task<string> GenerateLinkAsync(string musicIdFromYoutube);
     }
 }

@@ -18,14 +18,14 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
         {
             
         }
-        public async Task<Stream> GetStreamAsync(string url,INotifyProgressChanged onProgressChanged)
+        public async Task<Stream> GetStreamAsync(string url, Action<int> onProgress)
         {
-           var webClient=new WebClient();
+            var webClient=new WebClient();
 
-           webClient.DownloadProgressChanged += (o, ea) =>
-           {
-               onProgressChanged.OnProgressChanged(ea.ProgressPercentage);
-           };
+            webClient.DownloadProgressChanged += (o, ea) =>
+            {
+                onProgress?.Invoke(ea.ProgressPercentage);
+            };
             try
             {
                 var result = await webClient.DownloadDataTaskAsync(new Uri(url));

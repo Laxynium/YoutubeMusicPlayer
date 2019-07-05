@@ -5,6 +5,7 @@ namespace YoutubeMusicPlayer.Domain.MusicDownloading
 {
     public interface ISongDownloader
     {
-        Task<SongDto> DownloadMusic(string youtubeId);
+        Task<SongPath> DownloadMusic(string youtubeId, string title);
+        event EventHandler<(string ytId, double progress)> OnDownloadProgress;
     }
 }

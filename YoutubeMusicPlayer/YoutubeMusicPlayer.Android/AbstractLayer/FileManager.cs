@@ -10,9 +10,9 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
 {
     public class FileManager:IFileManager
     {
-        public async Task<string> CreateFileAsync(Music music, Stream stream)
+        public async Task<string> CreateFileAsync(string fileName, Stream stream)
         {
-            var fileName = music.Title.Replace(" ", "").Replace(":","");
+            fileName = fileName.Replace(" ", "").Replace(":","");
 
             var folderPath=Android.OS.Environment.ExternalStorageDirectory.AbsolutePath+"/music";
 
@@ -34,13 +34,13 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
             return File.Exists(filePath);
         }
 
-        public async Task<bool> DeleteFileAsync(Music music)
+        public async Task<bool> DeleteFileAsync(string filePath)
         {
             return await Task.Run(() =>
             {
-                if (!Exists(music.FilePath)) return false;
+                if (!Exists(filePath)) return false;
 
-                File.Delete(music.FilePath);
+                File.Delete(filePath);
 
                 return true;
             });

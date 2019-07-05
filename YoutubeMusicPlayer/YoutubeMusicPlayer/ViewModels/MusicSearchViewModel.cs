@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Plugin.MediaManager.Abstractions.Implementations;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.EventArgs;
 using YoutubeMusicPlayer.MessangingCenter;
 using YoutubeMusicPlayer.Services;
@@ -20,7 +21,7 @@ namespace YoutubeMusicPlayer.ViewModels
     {
         private readonly IYoutubeService _youtubeService;
         private readonly IMusicLoader _musicLoader;
-
+        private readonly ISongService _songService;
 
         public string ImageSource { get; set; }
 
@@ -56,10 +57,11 @@ namespace YoutubeMusicPlayer.ViewModels
         public ICommand TextChangeCommand { get; }
 
         public ICommand LoadMusicCommand { get; }
-        public MusicSearchViewModel(IYoutubeService youtubeService,IMusicLoader musicLoader)
+        public MusicSearchViewModel(IYoutubeService youtubeService,IMusicLoader musicLoader, ISongService songService)
         {
             _youtubeService = youtubeService;
             _musicLoader = musicLoader;
+            _songService = songService;
 
             MusicSearchCommand = new Command(SearchMusic);
             SelectItemCommand = new Command<MusicViewModel>(SelectItem);
@@ -80,23 +82,17 @@ namespace YoutubeMusicPlayer.ViewModels
 
             var foundMusics = await _youtubeService.FindMusicAsync(title);
 
-            var musicViewModels = new ObservableCollection<MusicViewModel>();
-
-            foreach (var music in foundMusics)
+            var musicViewModels = new ObservableCollection<MusicViewModel>(foundMusics.Select(music => new MusicViewModel
             {
-                musicViewModels.Add(new MusicViewModel
-                {
-                    Title = music.Title,
-                    VideoId = music.VideoId,
-                    ImageSource = music.ImageSource
-                });
-            }
+                Title = music.Title,
+                VideoId = music.VideoId,
+                ImageSource = music.ImageSource
+            }));
 
             MusicListView = musicViewModels;
 
 
             IsSearching = false;
-          
         }
 
         private async void SelectItem(MusicViewModel music)
@@ -104,14 +100,11 @@ namespace YoutubeMusicPlayer.ViewModels
             if (music == null) return;
 
             SelectedMusic = null;
-  
-            await Task.Run(() =>
-            {
-                MessagingCenter.Send(this, GlobalNames.DownloadMusic, new MusicEventArgs { Music = music });
-            });
-     
+
+            await _songService.DownloadAndSaveMusic(music.VideoId, music.Title, music.ImageSource);
         }
 
+        //TODO this method was used to load music from device, but this required further rethinking
         private async void LoadFiles()
         {
             await _musicLoader.LoadMusic();

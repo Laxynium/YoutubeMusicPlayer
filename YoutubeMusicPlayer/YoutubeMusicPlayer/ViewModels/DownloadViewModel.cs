@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.EventArgs;
 using YoutubeMusicPlayer.MessangingCenter;
 using YoutubeMusicPlayer.Models;
@@ -19,6 +20,7 @@ namespace YoutubeMusicPlayer.ViewModels
     public class DownloadViewModel : ViewModelBase
     {
         private readonly IMusicRepository _musicRepository;
+        private readonly ISongService _songService;
 
         private readonly IMusicDownloader _musicDownloader;
         private readonly ITabbedPageService _tabbedPageService;
@@ -57,23 +59,53 @@ namespace YoutubeMusicPlayer.ViewModels
             set => SetValue(ref _errorMessage, value);
         }
 
-        public DownloadViewModel(IMusicRepository musicRepository, IMusicDownloader musicDownloader,
+        public DownloadViewModel(IMusicRepository musicRepository, ISongService songService,
             ITabbedPageService tabbedPageService)
         {
             _musicRepository = musicRepository;
-            _musicDownloader = musicDownloader;
+            _songService = songService;
             _tabbedPageService = tabbedPageService;
 
 
-            DownloadFileCommand = new Command<MusicViewModel>(async (m) => await DownloadFileAsync(m));
+            //DownloadFileCommand = new Command<MusicViewModel>(async (m) => await DownloadFileAsync(m));
             UpdateDataCommand = new Command(async () => await UpdateData());
             SelectItemCommand = new Command<MusicViewModel>(async (m) => await SelectItem(m));
             HideErrorCommand = new Command(() =>
             {
                 ErrorOccured = false;
             });
+
+            _songService.OnDownloadStart += OnDownloadStart;
+            _songService.OnDownloadProgress += OnProgress;
+            _songService.OnDownloadFinished += OnDownloadFinished;
+            _songService.OnDownloadFailed += OnDownloadFailed;
+
             MessagingCenter.Subscribe<MusicSearchViewModel, MusicEventArgs>(this, GlobalNames.DownloadMusic,
                 (s, a) => { DownloadFileCommand.Execute(a.Music); });
+        }
+
+        private void OnDownloadFailed(object sender, (string ytId, string msg) e)
+        {
+            Songs.Remove(Songs.Single(x=>x.VideoId == e.ytId));
+            ErrorOccured = true;
+            ErrorMessage = e.msg;
+        }
+
+        private void OnDownloadFinished(object sender, MusicDto music)
+        {
+            var vM = Songs.Single(x => x.VideoId == music.YoutubeId);
+            vM.FilePath = music.FilePath;
+        }
+
+        private void OnProgress(object sender, (string ytId, double progress) e)
+        {
+            var song = Songs.Single(x => x.VideoId == e.ytId);
+            song.Value = e.progress;
+        }
+
+        private void OnDownloadStart(object sender, (string ytId, string title, string imageSource) e)
+        {
+            Songs.Add(new MusicViewModel {ImageSource = e.imageSource, Title = e.title, VideoId = e.ytId});
         }
 
         private async Task UpdateData()
@@ -109,61 +141,10 @@ namespace YoutubeMusicPlayer.ViewModels
             }
         }
 
-        private async Task DownloadFileAsync(MusicViewModel music)
-        {
-            try
-            {
-                if (Songs.SingleOrDefault(x => x.VideoId == music.VideoId) != null)
-                {
-                    throw new Exception("Music is already downloaded.");
-                }
-
-                Songs.Add(music);
-
-                var song = new Music
-                {
-                    VideoId = music.VideoId,
-                    Title = music.Title,
-                    Value = music.Value,
-                    ImageSource = music.ImageSource
-                };
-
-                song.ProgressChanged += (s, v) =>
-                {
-                    music.Value = v / 100f;
-                    song.Value = v / 100f;
-                };
-
-                var filePath = await _musicDownloader.DownloadFileAsync(song);
-         
-                if (String.IsNullOrEmpty(filePath))
-                {
-                    throw new Exception("Could not retrive music path.");
-                }
-
-                music.FilePath = filePath;
-
-                song.FilePath = filePath;
-
-                await _musicRepository.AddAsync(song);
-
-                MessagingCenter.Send(this, GlobalNames.DownloadFinished,
-                    new MusicEventArgs {Music = music});
-            }
-            catch (Exception e)
-            {
-                ErrorOccured = true;
-                ErrorMessage = e.Message;
-                Debug.WriteLine(e);
-            }
-           
-        }
-
         private async Task SelectItem(MusicViewModel music)
         {
             SelectedMusic = null;
 
-            //Checks if music is already downloaded
             if (music?.FilePath == null) return;
 
             MessagingCenter.Send(this,GlobalNames.MusicSelected,new MusicEventArgs(){Music = music});

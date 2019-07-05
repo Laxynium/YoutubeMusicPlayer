@@ -228,7 +228,7 @@ namespace YoutubeMusicPlayer.ViewModels
 
             await _musicRepository.DeleteAsync(musicToDel);
 
-            await _fileManager.DeleteFileAsync(musicToDel);         
+            await _fileManager.DeleteFileAsync(TODO);         
         }
 
     }

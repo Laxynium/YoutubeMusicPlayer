@@ -12,9 +12,8 @@ using YoutubeMusicPlayer.Models;
 
 namespace YoutubeMusicPlayer.Services
 {
-    public class YtMp3DownloadService:IDownloadService
+    public class YtMp3DownloadLinkGenerator:IDownloadLinkGenerator
     {
-        private readonly IDownloader _downloader;
         private readonly IScriptIdEncoder _encoder;
 
         private readonly Dictionary<int, string> _servers=new Dictionary<int, string>
@@ -65,15 +64,14 @@ namespace YoutubeMusicPlayer.Services
 
         private bool _serverNotFoundYet = false;
 
-        public YtMp3DownloadService(IDownloader downloader,IScriptIdEncoder encoder)
-        {
-            _downloader = downloader;
+        public YtMp3DownloadLinkGenerator(IScriptIdEncoder encoder)
+        { 
             _encoder = encoder;
         }
 
         public event EventHandler<int> OnProgressChanged;
 
-        public async Task<Stream> DownloadMusicAsync(string musicIdFromYoutube,INotifyProgressChanged onProgressChanged)
+        public async Task<string> GenerateLinkAsync(string musicIdFromYoutube)
         {
             var response = await GetResponseAsync(musicIdFromYoutube);
 
@@ -99,7 +97,7 @@ namespace YoutubeMusicPlayer.Services
 
             var downloadUrl = $"https://{_servers[info.Item1]}.oeaa.cc/{hash}/{musicIdFromYoutube}";
 
-            return await DownloadAsync(downloadUrl, onProgressChanged);
+            return downloadUrl;
         }
 
         private async Task<string> Progress(string hash)
@@ -194,13 +192,6 @@ namespace YoutubeMusicPlayer.Services
                 _serverNotFoundYet = true;
 
             return new Tuple<int, string>(sid != 0 ? sid : 1, info.hash);                           
-        }
-
-        private async Task<Stream> DownloadAsync(string downloadUrl,INotifyProgressChanged onProgressChanged)
-        {
-            var result = await _downloader.GetStreamAsync(downloadUrl, onProgressChanged);
-            
-            return result;
         }
     }
 }

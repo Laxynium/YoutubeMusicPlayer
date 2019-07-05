@@ -10,10 +10,10 @@ namespace YoutubeMusicPlayer.AbstractLayer
 {
     public interface IFileManager
     {
-        Task<string> CreateFileAsync(Music music,Stream stream);
+        Task<string> CreateFileAsync(string fileName, Stream stream);
 
         bool Exists(string filePath);
 
-        Task<bool> DeleteFileAsync(Music music);
+        Task<bool> DeleteFileAsync(string filePath);
     }
 }
