@@ -1,68 +1,27 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Java.IO;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Domain.MusicDownloading;
+using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Droid.AbstractLayer;
-using YoutubeMusicPlayer.Models;
-using YoutubeMusicPlayer.Repositories;
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;
 
 [assembly: Dependency(typeof(MusicLoader))]
 namespace YoutubeMusicPlayer.Droid.AbstractLayer
 {
-    //public class MusicFilesFilter : IFileFilter
-    //{
-    //    private readonly IList<string> _fileExtensions = new List<string>
-    //    {
-    //        "mp3"
-    //    };
-    //    public bool Accept(File pathname)
-    //    {
-    //        string extension = Path.GetExtension(pathname.Name);
-    //        if (pathname.IsFile && _fileExtensions.Contains(extension))
-    //            return true;
-    //        return false;
-    //    }
-
-    //    public void Dispose()
-    //    {
-
-    //    }
-
-    //    public IntPtr Handle { get; }
-    //}
-
-    //public class DirectoryFilter : IFileFilter
-    //{
-    //    public bool Accept(File pathname)
-    //    {
-    //        if (pathname.IsDirectory)
-    //            return true;
-    //        return false;
-    //    }
-    //    public void Dispose()
-    //    {
-
-    //    }
-
-    //    public IntPtr Handle { get; }
-
-    //}
-
+    //TODO remove
     public class MusicLoader : IMusicLoader
     {
-        private readonly IMusicRepository _repository;
+        private readonly ISongRepository _repository;
 
-        public MusicLoader(IMusicRepository repository)
+        public MusicLoader(ISongRepository repository)
         {
             _repository = repository;
-            _repository.InitializeAsync();
         }
         private readonly IList<string> _fileExtensions = new List<string>
         {
@@ -103,13 +62,12 @@ namespace YoutubeMusicPlayer.Droid.AbstractLayer
                 musicFiles = musicFiles.Distinct().ToList();
                 musicFiles.ForEach(async x =>
                 {
-                    var music = new Music
+                    var music = new Song
                     {
                         FilePath = x.AbsolutePath,
                         ImageSource = "",
                         Title = x.Name,
-                        VideoId = "lM"+x.AbsolutePath.GetHashCode().ToString(),
-                        Value = 1
+                        Id = Guid.NewGuid()
                     };
                     await _repository.AddAsync(music);
                 });

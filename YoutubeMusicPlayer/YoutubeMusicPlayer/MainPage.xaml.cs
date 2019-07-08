@@ -1,22 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Plugin.MediaManager.Abstractions.Implementations;
+﻿using System.Linq;
 using Xamarin.Forms;
-using YoutubeMusicPlayer.AbstractLayer;
-using YoutubeMusicPlayer.Models;
-using YoutubeMusicPlayer.Repositories;
-using YoutubeMusicPlayer.Services;
-using YoutubeMusicPlayer.ViewModels;
+using YoutubeMusicPlayer.MusicSearching.ViewModels;
 
 namespace YoutubeMusicPlayer
 {
-    public partial class MainPage 
+    public partial class MainPage : TabbedPage
     {
         public MainPage(ContentPage[]pages)
         {
             InitializeComponent();
-            Children.AddRange(pages);
+            pages.ToList().ForEach(p=>Children.Add(p));
             CurrentPage = Children.ToList().OfType<MusicSearchPage>().First();
         }
     }

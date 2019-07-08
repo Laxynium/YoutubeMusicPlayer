@@ -2,10 +2,18 @@
 using SQLite;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Domain.MusicDownloading;
+using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
+using YoutubeMusicPlayer.Domain.MusicSearching;
 using YoutubeMusicPlayer.Droid.AbstractLayer;
-using YoutubeMusicPlayer.Repositories;
-using YoutubeMusicPlayer.Services;
-using YoutubeMusicPlayer.ViewModels;
+using YoutubeMusicPlayer.Droid.MusicDownloading;
+using YoutubeMusicPlayer.Framework;
+using YoutubeMusicPlayer.MusicDownloading;
+using YoutubeMusicPlayer.MusicDownloading.Repositories;
+using YoutubeMusicPlayer.MusicDownloading.ViewModels;
+using YoutubeMusicPlayer.MusicPlaying;
+using YoutubeMusicPlayer.MusicSearching;
+using YoutubeMusicPlayer.MusicSearching.ViewModels;
 
 namespace YoutubeMusicPlayer.Droid.Ninject
 {
@@ -31,7 +39,7 @@ namespace YoutubeMusicPlayer.Droid.Ninject
            
             Bind<DownloadViewModel>().ToSelf().InSingletonScope();
           
-            //todo refactor this if it is possible, becouse below mappings are simlar 
+            //todo refactor this if it is possible, because below mappings are similar 
             Bind<IFileManager>().ToMethod(x=> DependencyService.Get<IFileManager>()).InSingletonScope();
             Bind<IDownloader>().ToMethod(x => DependencyService.Get<IDownloader>()).InThreadScope();
             Bind<IFileOpener>().ToMethod(x => DependencyService.Get<IFileOpener>()).InSingletonScope();
@@ -40,11 +48,12 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<IScriptIdEncoder>().To<ScriptIdEncoder>().InTransientScope();
             Bind<SQLiteAsyncConnection>().ToMethod(x => DependencyService.Get<ISqlConnection>().GetConnection());
 
-            Bind<IMusicRepository>().To<MusicRepository>().InSingletonScope();
-            Bind<IDownloadService>().To<YtMp3DownloadService>().InSingletonScope();
-            Bind<IMusicDownloader>().To<MusicDownloader>().InSingletonScope();
+            Bind<ISongRepository>().To<SongRepository>().InSingletonScope();
+            Bind<IDownloadLinkGenerator>().To<YtMp3DownloadLinkGenerator>().InSingletonScope();
             Bind<ITabbedPageService>().To<TabbedPageService>().InSingletonScope();
-            Bind<IYoutubeService>().To<YoutubeService>().InSingletonScope();
+            Bind<IMusicSearchingService>().To<YoutubeMusicSearchingService>().InSingletonScope();
+            Bind<ISongService>().To<SongService>().InSingletonScope();
+            Bind<ISongDownloader>().To<SongDownloader>().InSingletonScope();
         }
     }
 }

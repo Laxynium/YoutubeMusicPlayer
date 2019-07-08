@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.iOS.AbstractLayer;
-using YoutubeMusicPlayer.Models;
+using YoutubeMusicPlayer.MusicDownloading;
 
 [assembly:Dependency(typeof(FileManager))]
 namespace YoutubeMusicPlayer.iOS.AbstractLayer

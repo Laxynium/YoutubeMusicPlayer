@@ -2,45 +2,29 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using YoutubeMusicPlayer.Models;
-using YoutubeMusicPlayer.Services;
-using YoutubeMusicPlayer.ViewModels;
+using YoutubeMusicPlayer.Domain.MusicSearching;
+using YoutubeMusicPlayer.MusicSearching;
+using YoutubeMusicPlayer.MusicSearching.ViewModels;
 
 namespace Tests
 {
     [TestFixture]
     public class MusicSearchViewModelTests
     {
-        private Mock<IYoutubeService> _youtubeService;
+        private Mock<IMusicSearchingService> _youtubeService;
 
         private MusicSearchViewModel _viewModel;
 
         [SetUp]
         public void Setup()
         {
-            _youtubeService=new Mock<IYoutubeService>();
+            _youtubeService=new Mock<IMusicSearchingService>();
 
-            _youtubeService.Setup(x => x.FindMusicAsync("Music")).ReturnsAsync(new List<Music>
+            _youtubeService.Setup(x => x.FindMusicAsync("Music")).ReturnsAsync(new List<MusicDto>
             {
-                new Music
-                {
-                    ImageSource = "imgs1",
-                    Title = "titl1",
-                    VideoId = "1"
-                },
-                new Music
-                {
-                    ImageSource = "imgs2",
-                    Title = "titl2",
-                    VideoId = "2"
-                },
-                new Music
-                {
-                    ImageSource = "imgs3",
-                    Title = "titl3",
-                    VideoId = "3"
-                },
-
+                new MusicDto("1","titl1","imgs1"),
+                new MusicDto("2","titl2","imgs2"),
+                new MusicDto("3","titl3","imgs3"),
             });
 
             //_viewModel=new MusicSearchViewModel(_youtubeService.Object);

@@ -62,13 +62,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\YoutubeMusicPlayer.Domain\YoutubeMusicPlayer.Domain.csproj">
+      <Project>{B47CC450-4948-4EB3-801A-DADD8255D894}</Project>
+      <Name>YoutubeMusicPlayer.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YoutubeMusicPlayer\YoutubeMusicPlayer\YoutubeMusicPlayer.csproj">
       <Project>{4523b2a8-6f23-4a48-9f8c-7a73264ddbd6}</Project>
       <Name>YoutubeMusicPlayer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

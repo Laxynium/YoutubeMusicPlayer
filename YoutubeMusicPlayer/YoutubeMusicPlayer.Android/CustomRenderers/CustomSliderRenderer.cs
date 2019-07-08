@@ -1,8 +1,8 @@
 ﻿using Android.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
-using YoutubeMusicPlayer.Customs;
 using YoutubeMusicPlayer.Droid.CustomRenderers;
+using YoutubeMusicPlayer.MusicPlaying;
 
 [assembly:ExportRenderer(typeof(CustomSlider),typeof(CustomSliderRenderer))]
 namespace YoutubeMusicPlayer.Droid.CustomRenderers

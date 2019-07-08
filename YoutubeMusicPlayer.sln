@@ -5,15 +5,21 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.Android", "YoutubeMusicPlayer\YoutubeMusicPlayer.Android\YoutubeMusicPlayer.Android.csproj", "{1BBCBA2A-0481-4402-B67E-17F92862B873}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer", "YoutubeMusicPlayer\YoutubeMusicPlayer\YoutubeMusicPlayer.csproj", "{4523B2A8-6F23-4A48-9F8C-7A73264DDBD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer", "YoutubeMusicPlayer\YoutubeMusicPlayer\YoutubeMusicPlayer.csproj", "{4523B2A8-6F23-4A48-9F8C-7A73264DDBD6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B47CC450-4948-4EB3-801A-DADD8255D894} = {B47CC450-4948-4EB3-801A-DADD8255D894}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.UWP", "YoutubeMusicPlayer\YoutubeMusicPlayer.UWP\YoutubeMusicPlayer.UWP.csproj", "{9C70E13A-CE9E-4234-AB52-A4C90266DBE9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.iOS", "YoutubeMusicPlayer\YoutubeMusicPlayer.iOS\YoutubeMusicPlayer.iOS.csproj", "{83455613-C6B7-4797-92D9-DF388659BC08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{89D842D4-A419-43CD-BE45-7FAE28B29EA2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B47CC450-4948-4EB3-801A-DADD8255D894} = {B47CC450-4948-4EB3-801A-DADD8255D894}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.Domain", "YoutubeMusicPlayer.Domain\YoutubeMusicPlayer.Domain.csproj", "{B47CC450-4948-4EB3-801A-DADD8255D894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer.Domain", "YoutubeMusicPlayer.Domain\YoutubeMusicPlayer.Domain.csproj", "{B47CC450-4948-4EB3-801A-DADD8255D894}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
