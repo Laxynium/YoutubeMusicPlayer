@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.Media;
 using Java.IO;
 using YoutubeMusicPlayer.Droid.MusicPlaying;
 using YoutubeMusicPlayer.MusicPlaying;
 using Uri = Android.Net.Uri;
-
 [assembly: Xamarin.Forms.Dependency(typeof(MusicPlayer))]
 namespace YoutubeMusicPlayer.Droid.MusicPlaying
 {
     public class MusicPlayer:IMusicPlayer
     {
+        private enum PlayerAction
+        {
+            Play,Pause,Stop
+        }
+        
         private readonly MediaPlayer _mediaPlayer;
 
         private bool IsPrepared { get; set; }
 
-        private List<EventHandler> Actions { get; set; }
+        private IDictionary<PlayerAction, EventHandler> Actions { get; set; }
 
         public event EventHandler PlaybackCompleted;
 
@@ -26,25 +31,25 @@ namespace YoutubeMusicPlayer.Droid.MusicPlaying
         {
             _mediaPlayer = new MediaPlayer();
 
-            Actions = new List<EventHandler>
+            Actions = new Dictionary<PlayerAction, EventHandler>
             {
-                (s, a) =>
+                [PlayerAction.Play] = (s, a) =>
                 {
                     _mediaPlayer.Start();
                     Task.Run(() => OnProgressChanged(0));
                 },
-                (s, a) =>_mediaPlayer.Pause(),
-                (s, a) =>_mediaPlayer.Stop()
+                [PlayerAction.Pause] = (s, a) =>_mediaPlayer.Pause(),
+                [PlayerAction.Stop] = (s, a) =>_mediaPlayer.Stop()
             };
 
-            _mediaPlayer.Prepared += _mediaPlayer_Prepared;
+            _mediaPlayer.Prepared += OnPrepared;
 
-            _mediaPlayer.Completion += _mediaPlayer_Completion;
+            _mediaPlayer.Completion += OnComplete;
        
         }
 
 
-        private void _mediaPlayer_Completion(object sender, System.EventArgs e)
+        private void OnComplete(object sender, EventArgs e)
         {
             PlaybackCompleted?.Invoke(sender,e);
         }
@@ -63,11 +68,11 @@ namespace YoutubeMusicPlayer.Droid.MusicPlaying
         {
             _mediaPlayer.Reset();
 
-            await _mediaPlayer.SetDataSourceAsync(Xamarin.Forms.Forms.Context,Uri.FromFile(new File(fileUrl)));
+            await _mediaPlayer.SetDataSourceAsync(Xamarin.Forms.Forms.Context, Uri.FromFile(new File(fileUrl)));
 
             IsPrepared = false;
            
-            Actions.ForEach(x => _mediaPlayer.Prepared -= x);
+            Actions.Values.ToList().ForEach(x => _mediaPlayer.Prepared -= x);
 
             _mediaPlayer.PrepareAsync();
         }
@@ -81,14 +86,15 @@ namespace YoutubeMusicPlayer.Droid.MusicPlaying
             {
                 _mediaPlayer.Start();
                 Task.Run(() => OnProgressChanged(0));
-            }, Actions[0]);
+            }, Actions[PlayerAction.Play]);
         }
+
         public async Task Pause()
         {
             if (!_mediaPlayer.IsPlaying)
                 return;
 
-            PrepareAction(_mediaPlayer.Pause, Actions[1]);
+            PrepareAction(_mediaPlayer.Pause, Actions[PlayerAction.Pause]);
         }
 
         public async Task Stop()
@@ -96,7 +102,7 @@ namespace YoutubeMusicPlayer.Droid.MusicPlaying
             if (!_mediaPlayer.IsPlaying)
                 return;
 
-            PrepareAction(_mediaPlayer.Stop, Actions[2]);
+            PrepareAction(_mediaPlayer.Stop, Actions[PlayerAction.Stop]);
         }
 
         private void PrepareAction(Action action, EventHandler handler)
@@ -106,7 +112,7 @@ namespace YoutubeMusicPlayer.Droid.MusicPlaying
             else
                 _mediaPlayer.Prepared += handler;
         }
-        private void _mediaPlayer_Prepared(object sender, System.EventArgs e)
+        private void OnPrepared(object sender, EventArgs e)
         {
             IsPrepared = true;
         }
@@ -129,7 +135,5 @@ namespace YoutubeMusicPlayer.Droid.MusicPlaying
 
             OnProgressChanged(0);
         }
-
-        public double Value { get; set; }
     }
 }

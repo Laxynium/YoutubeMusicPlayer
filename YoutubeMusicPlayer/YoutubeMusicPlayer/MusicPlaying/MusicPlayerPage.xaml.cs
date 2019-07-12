@@ -1,6 +1,7 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YoutubeMusicPlayer.MusicDownloading.ViewModels;
+using YoutubeMusicPlayer.MusicPlaying.ViewModels;
 
 namespace YoutubeMusicPlayer.MusicPlaying
 {

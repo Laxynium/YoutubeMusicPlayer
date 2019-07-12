@@ -33,8 +33,6 @@ namespace YoutubeMusicPlayer.Droid
 
             var app = NinjectInitializer.Kernel.Get<App>();
             LoadApplication(app);
-
-            
         }
 
         private void AskForPermissions()

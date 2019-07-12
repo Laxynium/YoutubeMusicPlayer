@@ -12,6 +12,7 @@ using YoutubeMusicPlayer.MusicDownloading;
 using YoutubeMusicPlayer.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.MusicDownloading.ViewModels;
 using YoutubeMusicPlayer.MusicPlaying;
+using YoutubeMusicPlayer.MusicPlaying.ViewModels;
 using YoutubeMusicPlayer.MusicSearching;
 using YoutubeMusicPlayer.MusicSearching.ViewModels;
 
