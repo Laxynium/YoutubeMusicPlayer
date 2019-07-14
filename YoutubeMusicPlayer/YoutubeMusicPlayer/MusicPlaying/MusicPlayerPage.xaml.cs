@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using YoutubeMusicPlayer.MusicDownloading.ViewModels;
+using YoutubeMusicPlayer.MusicPlaying.ViewModels;
 
 namespace YoutubeMusicPlayer.MusicPlaying
 {
@@ -29,7 +29,7 @@ namespace YoutubeMusicPlayer.MusicPlaying
         
         private void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            _viewModel.SelectSongCommand.Execute(e.SelectedItem as MusicViewModel);
+            _viewModel.SelectSongCommand.Execute(e.SelectedItem as SongViewModel);
         }
     }
 }

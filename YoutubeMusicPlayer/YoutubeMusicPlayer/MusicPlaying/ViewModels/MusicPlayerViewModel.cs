@@ -6,16 +6,15 @@ using Xamarin.Forms;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Framework;
-using YoutubeMusicPlayer.MusicDownloading.ViewModels;
 
-namespace YoutubeMusicPlayer.MusicPlaying
+namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
 {
     public class MusicPlayerViewModel:ViewModelBase
     {
         private const string PlayTag = "Play";
         private const string PauseTag = "Pause";
 
-        private MusicViewModel _currentSong;
+        private SongViewModel _currentSong;
 
         private readonly IMusicPlayer _musicPlayer;
         private readonly ISongService _songService;
@@ -24,9 +23,9 @@ namespace YoutubeMusicPlayer.MusicPlaying
 
         private bool IsPlaying { get; set; }
 
-        private MusicViewModel _nextMusicToPlay;
+        private SongViewModel _nextMusicToPlay;
 
-        public MusicViewModel CurrentSong
+        public SongViewModel CurrentSong
         {
             get => _currentSong;
             set => SetValue(ref _currentSong, value);
@@ -39,9 +38,9 @@ namespace YoutubeMusicPlayer.MusicPlaying
             set => SetValue(ref _playButtonText, value);
         }
 
-        private ObservableCollection<MusicViewModel> _songs= new ObservableCollection<MusicViewModel>();
+        private ObservableCollection<SongViewModel> _songs= new ObservableCollection<SongViewModel>();
 
-        public ObservableCollection<MusicViewModel> Songs
+        public ObservableCollection<SongViewModel> Songs
         {
             get => _songs;
             set => SetValue(ref _songs, value);
@@ -49,12 +48,14 @@ namespace YoutubeMusicPlayer.MusicPlaying
 
 
         private double _musicTimestamp;
+        private bool _isInitialized;
+
         public double MusicTimestamp
         {
             get => _musicTimestamp;
             set => SetValue(ref _musicTimestamp, value);
         }
-        public ICommand InitializeCommand { get; private set; }
+
         public ICommand SelectSongCommand { get; private set; }
         public ICommand PreviousSongCommand { get; private set; }
         public ICommand NextSongCommand { get; private set; }
@@ -77,21 +78,20 @@ namespace YoutubeMusicPlayer.MusicPlaying
 
             _musicPlayer.ProgressChanged += _musicPlayer_ProgressChanged;
 
-            InitializeCommand = new Command(async()=> await UpdateData());
-            SelectSongCommand = new Command<MusicViewModel>(async(m)=>await SelectMusic(m));
+            SelectSongCommand = new Command<SongViewModel>(async(m)=>await SelectMusic(m));
             PreviousSongCommand = new Command(PreviousSong);
             NextSongCommand = new Command(NextSong);
             PlayPauseSongCommand = new Command(async()=>await StartPauseSong());
             SetMusicPositionCommand = new Command(async()=>await SetMusicPosition());
             UpdateDataCommand = new Command(async()=>await UpdateData());
-            DeleteSongCommand= new Command<MusicViewModel>(async (x)=>await DeleteSong(x));
+            DeleteSongCommand= new Command<SongViewModel>(async (x)=>await DeleteSong(x));
 
             _songService.OnDownloadFinished += OnDownloadFinished;
         }
 
-        private void OnDownloadFinished(object sender, Domain.MusicDownloading.MusicDto e)
+        private void OnDownloadFinished(object sender, MusicDto e)
         {
-            Songs.Add(new MusicViewModel{FilePath = e.FilePath,ImageSource = e.ImageSource, Title = e.Title,Value = 1D, YtVideoId = e.YoutubeId});
+            Songs.Add(new SongViewModel(e.Id, e.Title, e.ImageSource, e.FilePath));
         }
 
         private async void _musicPlayer_ProgressChanged(object sender, int e)
@@ -104,26 +104,24 @@ namespace YoutubeMusicPlayer.MusicPlaying
 
         private async Task UpdateData()
         {
-            var songs = (await _songRepository.GetAllAsync())
-                .ToList().Select((x) => new MusicViewModel
-                {
-                    FilePath = x.FilePath,
-                    YtVideoId = x.YoutubeId,
-                    Title = x.Title,
-                    ImageSource = x.ImageSource,
-                    Value = 1D
-                }).ToList();
-
-            songs.ForEach(x =>
+            if (!_isInitialized)
             {
-                if (Songs.SingleOrDefault(y => y.YtVideoId == x.YtVideoId) is null)
-                    Songs.Add(x);
-            });
+                _isInitialized = true;
+                var songs = (await _songRepository.GetAllAsync())//TODO think about ViewModel data directly from database
+                    .ToList().Select((x) => new SongViewModel(x.Id, x.Title, x.ImageSource, x.FilePath)).ToList();
 
-            CurrentSong = Songs.Any() ? Songs.First() : null;
+                songs.ForEach(x =>
+                {
+                    if (Songs.SingleOrDefault(y => y.Id == x.Id) is null)
+                        Songs.Add(x);
+                });
+
+                CurrentSong = Songs.Any() ? Songs.First() : null;
+            }
+            
             if (_nextMusicToPlay != null)
             {
-                CurrentSong = Songs.Single(x => x.YtVideoId == _nextMusicToPlay.YtVideoId);
+                CurrentSong = Songs.Single(x => x.Id == _nextMusicToPlay.Id);
                 _nextMusicToPlay = null;
             }
         }
@@ -164,7 +162,7 @@ namespace YoutubeMusicPlayer.MusicPlaying
             IsPlaying = !IsPlaying;
         }
 
-        private async Task SelectMusic(MusicViewModel selectedMusic)
+        private async Task SelectMusic(SongViewModel selectedMusic)
         {
             if (selectedMusic == null) return;
 
@@ -179,20 +177,16 @@ namespace YoutubeMusicPlayer.MusicPlaying
             await StartPauseSong();
         }
 
-        private async Task DeleteSong(MusicViewModel music)
+        private async Task DeleteSong(SongViewModel music)
         {
-            //if (CurrentSong.YtVideoId == music.YtVideoId && IsPlaying)
-            //{
-            //    NextSong();
-            //}
-               
-            //var musicToDel = new MusicDto {YoutubeId = music.YtVideoId,FilePath = music.FilePath};
+            if (CurrentSong.Id == music.Id && IsPlaying)
+            {
+                NextSong();
+            }
 
-            //Songs.Remove(music);
+            Songs.Remove(music);
 
-            //await _songRepository.DeleteAsync(musicToDel);
-
-            //await _fileManager.DeleteFileAsync(musicToDel.FilePath);         
+            await _songService.RemoveMusic(music.Id);
         }
 
     }

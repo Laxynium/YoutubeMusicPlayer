@@ -1,6 +1,14 @@
-﻿namespace YoutubeMusicPlayer.Domain.MusicPlaying
+﻿using System;
+
+namespace YoutubeMusicPlayer.Domain.MusicPlaying
 {
-    internal class Song
+    public class Song
     {
+        public Guid Id { get; }
+
+        public Song(Guid id)
+        {
+            Id = id;
+        }
     }
 }

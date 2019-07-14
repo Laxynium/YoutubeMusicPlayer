@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,40 +13,25 @@ namespace YoutubeMusicPlayer.Droid.MusicDownloading
 {
     public class Downloader:IDownloader
     {
-        public Downloader()
-        {
-            
-        }
         public async Task<Stream> GetStreamAsync(string url, Action<int> onProgress)
         {
-            int receivedBytes = 0;
-            int totalBytes = 0;
-            WebClient client = new WebClient();
+            var webClient = new WebClient();
 
-            using (var stream = await client.OpenReadTaskAsync(url))
+            webClient.DownloadProgressChanged += (o, ea) =>
             {
-                byte[] buffer = new byte[4096];
-                totalBytes = Int32.Parse(client.ResponseHeaders[HttpResponseHeader.ContentLength]);
+                var contentLength = double.Parse(webClient.ResponseHeaders[HttpRequestHeader.ContentLength]);
+                onProgress?.Invoke((int)((ea.BytesReceived / contentLength) * 100));
+            };
+            try
+            {
+                var result = await webClient.DownloadDataTaskAsync(new Uri(url));
 
-                using (var memoryStream = new MemoryStream())
-                {
-                    for (; ; )
-                    {
-                        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                        await memoryStream.WriteAsync(buffer, 0, buffer.Length);
-                        if (bytesRead == 0)
-                        {
-                            await Task.Yield();
-                            break;
-                        }
-
-                        receivedBytes += bytesRead;
-                        double percentage = (double)receivedBytes / totalBytes * 100D;
-                        onProgress?.Invoke((int)percentage);
-                    }
-                    return new MemoryStream(memoryStream.ToArray());
-                }
-
+                return new MemoryStream(result);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Something has gone wrong in request{url}");
+                throw new Exception("Some error occured while downloading music.", e);
             }
 
         }
