@@ -6,7 +6,12 @@ namespace YoutubeMusicPlayer.PlaylistManagement.ViewModels
     public class PlaylistViewModel : ViewModelBase
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set => SetValue(ref _name, value);
+        }
 
         public PlaylistViewModel(Guid id, string name)
         {

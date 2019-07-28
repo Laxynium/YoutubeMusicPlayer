@@ -21,6 +21,7 @@ namespace YoutubeMusicPlayer.PlaylistManagement.ViewModels
         public ICommand RemovePlaylist { get; }
         public ICommand AddSongToPlaylist { get; }
         public ICommand RemoveSongFromPlaylist { get; }
+        public ICommand RenamePlaylist { get; }
 
         private ObservableCollection<PlaylistViewModel> _playlists = new ObservableCollection<PlaylistViewModel>();
 
@@ -45,8 +46,26 @@ namespace YoutubeMusicPlayer.PlaylistManagement.ViewModels
             RemovePlaylist = new Command<PlaylistViewModel>(async (vM) => await OnRemovePlaylist(vM));
             AddSongToPlaylist = new Command<PlaylistViewModel>(async(vM)=>await OnAddSongToPlaylist(vM));
             RemoveSongFromPlaylist = new Command<PlaylistViewModel>(async(vM)=>await OnRemoveSongFromPlaylist(vM));
+            RenamePlaylist = new Command<PlaylistViewModel>(async(vM)=>await OnRenamePlaylist(vM));
         }
+
+
         private PlaylistViewModel _playlistViewModel;
+
+        private async Task OnRenamePlaylist(PlaylistViewModel playlist)
+        {
+            _playlistViewModel = playlist;
+            var vM = new RenamePlaylistViewModel(playlist.Name);
+            vM.OnSubmit += OnRenameSubmit;
+            await _popupNavigation.PushAsync(new RenamePlaylistPopup(vM));
+        }
+
+        private async void OnRenameSubmit(object sender, string newName)
+        {
+            await _popupNavigation.PopAsync();
+            await _playlistService.UpdateName(_playlistViewModel.Id, newName);
+            _playlistViewModel.Name = newName;
+        }
 
         private async Task OnRemoveSongFromPlaylist(PlaylistViewModel playlist)
         {

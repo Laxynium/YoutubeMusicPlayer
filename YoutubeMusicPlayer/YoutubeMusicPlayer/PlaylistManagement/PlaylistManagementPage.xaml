@@ -27,11 +27,13 @@
                             <ViewCell.ContextActions>
                                 <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView},Path=BindingContext.RemovePlaylist}"
                                           IsDestructive="True"></MenuItem>
+                                <MenuItem Text="Rename" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RenamePlaylist}"></MenuItem>
                                 <MenuItem Text="Add songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.AddSongToPlaylist}"></MenuItem>
                                 <MenuItem Text="Remove songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RemoveSongFromPlaylist}"></MenuItem>
+                                
                             </ViewCell.ContextActions>
                             <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Name}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
+                                <Label Text="{Binding Name, Mode=TwoWay}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
