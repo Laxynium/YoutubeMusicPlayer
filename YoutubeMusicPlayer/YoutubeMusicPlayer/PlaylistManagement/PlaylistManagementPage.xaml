@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="YoutubeMusicPlayer.PlaylistManagement.PlaylistManagementPage" Title ="Playlists">
+    <ContentPage.Content>
+        <RelativeLayout>
+            <ListView  x:Name="ListView" ItemSelected="OnPlaylistSelected" 
+                       ItemsSource="{Binding Playlists,Mode=TwoWay}"
+                       RelativeLayout.YConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0
+                             }"
+                      RelativeLayout.HeightConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.9
+                             }"
+                      RelativeLayout.WidthConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Width,
+                             Factor=1
+                             }">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.ContextActions>
+                                <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView},Path=BindingContext.RemovePlaylist}"
+                                          IsDestructive="True"></MenuItem>
+                                <MenuItem Text="Add songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.AddSongToPlaylist}"></MenuItem>
+                                <MenuItem Text="Remove songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RemoveSongFromPlaylist}"></MenuItem>
+                            </ViewCell.ContextActions>
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding Name}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackLayout Orientation="Horizontal" Opacity="0.4" 
+                         
+                         RelativeLayout.YConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.90
+                             }"
+                         RelativeLayout.HeightConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.10
+                             }"
+                         RelativeLayout.WidthConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Width,
+                             Factor=1
+                             }"
+                         
+                         BackgroundColor="CornflowerBlue">
+                <Button Text="Create new" 
+                        HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Command="{Binding CreatePlaylist}"/>
+            </StackLayout>
+        </RelativeLayout>
+    </ContentPage.Content>
+
+</ContentPage>

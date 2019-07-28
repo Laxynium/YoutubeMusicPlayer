@@ -30,10 +30,10 @@
                                 <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView},Path=BindingContext.DeleteSongCommand}"
                                           IsDestructive="True"/>
                         </ViewCell.ContextActions>   
-                            <StackLayout Orientation="Horizontal">
-                                <Image Source="{Binding ImageSource}"  VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
-                                <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
-                            </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Image Source="{Binding ImageSource}"  VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
+                            <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
+                        </StackLayout>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>

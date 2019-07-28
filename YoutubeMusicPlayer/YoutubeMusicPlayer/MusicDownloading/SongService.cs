@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Domain.Framework;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
+using YoutubeMusicPlayer.Domain.SharedKernel;
 
 namespace YoutubeMusicPlayer.MusicDownloading
 {
@@ -12,11 +12,13 @@ namespace YoutubeMusicPlayer.MusicDownloading
         private readonly ISongDownloader _songDownloader;
         private readonly ISongRepository _songRepository;
         private readonly IFileManager _fileManager;
+        private readonly IEventDispatcher _dispatcher;
 
-        public SongService(ISongDownloader songDownloader, ISongRepository songRepository, IFileManager fileManager)
+        public SongService(ISongDownloader songDownloader, ISongRepository songRepository, IFileManager fileManager, IEventDispatcher dispatcher)
         {
             _songRepository = songRepository;
             _fileManager = fileManager;
+            _dispatcher = dispatcher;
             _songDownloader = songDownloader;
         }
 
@@ -28,7 +30,7 @@ namespace YoutubeMusicPlayer.MusicDownloading
         public async Task DownloadAndSaveMusic(string youtubeId, string title, string imageSource)
         {
             if (await _songRepository.Exists(youtubeId))
-                return;//TODO think what shold be displayed to user when he wants to download again same music
+                return;
 
             OnDownloadStart?.Invoke(this, (youtubeId,title,imageSource));
             _songDownloader.OnDownloadProgress += OnDownloadProgress;
@@ -39,6 +41,8 @@ namespace YoutubeMusicPlayer.MusicDownloading
                 var song = new Song(youtubeId, title, imageSource, path);
 
                 await _songRepository.AddAsync(song);
+
+                await _dispatcher.DispatchAsync(new MusicDownloaded(song.Id, song.FilePath, song.ImageSource));
 
                 OnDownloadFinished?.Invoke(this, new MusicDto(song.Id,song.YoutubeId,song.Title,song.ImageSource,song.FilePath));
             }
@@ -54,11 +58,11 @@ namespace YoutubeMusicPlayer.MusicDownloading
 
         public async Task RemoveMusic(Guid musicId)
         {
-            var song = await _songRepository.GetAsync(musicId);
+            var song = await _songRepository.GetAsync(SongId.FromGuid(musicId));
             if (song != null)
             {
                 await _fileManager.DeleteFileAsync(song.FilePath);
-                await _songRepository.RemoveAsync(musicId);
+                await _songRepository.RemoveAsync(SongId.FromGuid(musicId));
             }
         }
     }

@@ -4,7 +4,6 @@ using YoutubeMusicPlayer.MusicPlaying.ViewModels;
 
 namespace YoutubeMusicPlayer.MusicPlaying
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MusicPlayerPage : ContentPage
     {
         private readonly MusicPlayerViewModel _viewModel;

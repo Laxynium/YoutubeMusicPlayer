@@ -5,6 +5,8 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
+using YoutubeMusicPlayer.Domain.MusicPlaying;
+using YoutubeMusicPlayer.Domain.SharedKernel;
 using YoutubeMusicPlayer.Framework;
 
 namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
@@ -24,6 +26,8 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
         private bool IsPlaying { get; set; }
 
         private SongViewModel _nextMusicToPlay;
+
+        private SongCoordinator _songCoordinator;
 
         public SongViewModel CurrentSong
         {
@@ -76,7 +80,7 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
 
             _musicPlayer.PlaybackCompleted += (s, e) => NextSong();
 
-            _musicPlayer.ProgressChanged += _musicPlayer_ProgressChanged;
+            _musicPlayer.ProgressChanged += OnSongProgressChanged;
 
             SelectSongCommand = new Command<SongViewModel>(async(m)=>await SelectMusic(m));
             PreviousSongCommand = new Command(PreviousSong);
@@ -94,7 +98,7 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
             Songs.Add(new SongViewModel(e.Id, e.Title, e.ImageSource, e.FilePath));
         }
 
-        private async void _musicPlayer_ProgressChanged(object sender, int e)
+        private async void OnSongProgressChanged(object sender, int e)
         {
             await Task.Run(() =>
             {
@@ -108,7 +112,7 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
             {
                 _isInitialized = true;
                 var songs = (await _songRepository.GetAllAsync())//TODO think about ViewModel data directly from database
-                    .ToList().Select((x) => new SongViewModel(x.Id, x.Title, x.ImageSource, x.FilePath)).ToList();
+                    .Select((x) => new SongViewModel(x.Id, x.Title, x.ImageSource, x.FilePath)).ToList();
 
                 songs.ForEach(x =>
                 {
@@ -116,13 +120,10 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
                         Songs.Add(x);
                 });
 
-                CurrentSong = Songs.Any() ? Songs.First() : null;
-            }
-            
-            if (_nextMusicToPlay != null)
-            {
-                CurrentSong = Songs.Single(x => x.Id == _nextMusicToPlay.Id);
-                _nextMusicToPlay = null;
+                _songCoordinator = new SongCoordinator(songs.Select(x=>SongId.FromGuid(x.Id)));
+
+                if(Songs.Count != 0)
+                    CurrentSong = Songs.First(x => x.Id == _songCoordinator.CurrentlySelected);
             }
         }
 
@@ -133,18 +134,16 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
 
         private  void PreviousSong()
         {
-            var prevIndex = Songs.IndexOf(CurrentSong) - 1;
+            _songCoordinator.GoToPrevious();
 
-            if (prevIndex < 0) return;
-
-            CurrentSong = Songs[prevIndex];
+            CurrentSong = Songs.First(x => x.Id == _songCoordinator.CurrentlySelected);
         }
 
         private void NextSong()
         {
-            var nextIndex = (Songs.IndexOf(CurrentSong) + 1) % Songs.Count;
+            _songCoordinator.GoToNext();
 
-            CurrentSong = Songs[nextIndex];
+            CurrentSong = Songs.First(x => x.Id == _songCoordinator.CurrentlySelected);
         }
 
         private async Task StartPauseSong()

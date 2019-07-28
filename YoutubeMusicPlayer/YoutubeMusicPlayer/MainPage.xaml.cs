@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Xamarin.Forms;
-using YoutubeMusicPlayer.MusicSearching.ViewModels;
+using YoutubeMusicPlayer.MusicSearching;
 
 namespace YoutubeMusicPlayer
 {

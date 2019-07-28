@@ -3,7 +3,6 @@ using Xamarin.Forms.Xaml;
 
 namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DownloadsPage : ContentPage
     {
         private readonly DownloadViewModel _viewModel;

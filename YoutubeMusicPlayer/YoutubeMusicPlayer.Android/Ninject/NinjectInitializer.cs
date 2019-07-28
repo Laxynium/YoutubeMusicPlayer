@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using YoutubeMusicPlayer.Persistence;
 
 namespace YoutubeMusicPlayer.Droid.Ninject
 {
@@ -7,7 +8,8 @@ namespace YoutubeMusicPlayer.Droid.Ninject
         public static IKernel Kernel { get; private set; }
         public static void Initialize()
         {
-            Kernel = new StandardKernel(new YoutubeMusicPlayerModule());
+            var settings = new NinjectSettings{LoadExtensions = false};
+            Kernel = new StandardKernel(settings, new YoutubeMusicPlayerModule(), new DatabaseModule());
         }
     }
 }

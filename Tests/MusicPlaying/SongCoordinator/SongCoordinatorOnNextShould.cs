@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using YoutubeMusicPlayer.Domain.MusicPlaying;
+using YoutubeMusicPlayer.Domain.SharedKernel;
 
 namespace Tests.MusicPlaying.SongCoordinator
 {
@@ -12,12 +13,12 @@ namespace Tests.MusicPlaying.SongCoordinator
         [Test]
         public void WhenQueueNotEmptyGoToNextSongInQueue()
         {
-            var song1 = new Song(Guid.NewGuid());
-            var song2 = new Song(Guid.NewGuid());
-            var song3 = new Song(Guid.NewGuid());
-            var song4 = new Song(Guid.NewGuid());
+            var song1 = SongId.FromGuid(Guid.NewGuid());
+            var song2 = SongId.FromGuid(Guid.NewGuid());
+            var song3 = SongId.FromGuid(Guid.NewGuid());
+            var song4 = SongId.FromGuid(Guid.NewGuid());
 
-            var coordinator = new YoutubeMusicPlayer.Domain.MusicPlaying.SongCoordinator(new List<Song>{song1,song2});
+            var coordinator = new YoutubeMusicPlayer.Domain.MusicPlaying.SongCoordinator(new List<SongId>{song1,song2});
             coordinator.Enqueue(song3);
             coordinator.Enqueue(song4);
 
@@ -29,10 +30,10 @@ namespace Tests.MusicPlaying.SongCoordinator
         [Test]
         public void WhenQueueEmptyGoToNextSongInPlaylist()
         {
-            var song1 = new Song(Guid.NewGuid());
-            var song2 = new Song(Guid.NewGuid());
+            var song1 = SongId.FromGuid(Guid.NewGuid());
+            var song2 = SongId.FromGuid(Guid.NewGuid());
 
-            var coordinator = new YoutubeMusicPlayer.Domain.MusicPlaying.SongCoordinator(new List<Song> { song1, song2 });
+            var coordinator = new YoutubeMusicPlayer.Domain.MusicPlaying.SongCoordinator(new List<SongId> { song1, song2 });
 
             coordinator.GoToNext();
 
@@ -42,10 +43,10 @@ namespace Tests.MusicPlaying.SongCoordinator
         [Test]
         public void WhenQueueEmptyAndCurrentSelectIsLastGoToFirstElement()
         {
-            var song1 = new Song(Guid.NewGuid());
-            var song2 = new Song(Guid.NewGuid());
+            var song1 = SongId.FromGuid(Guid.NewGuid());
+            var song2 = SongId.FromGuid(Guid.NewGuid());
 
-            var coordinator = new YoutubeMusicPlayer.Domain.MusicPlaying.SongCoordinator(new List<Song> { song1, song2 });
+            var coordinator = new YoutubeMusicPlayer.Domain.MusicPlaying.SongCoordinator(new List<SongId> { song1, song2 });
 
             coordinator.GoToNext(); //go to song 2
             coordinator.GoToNext();

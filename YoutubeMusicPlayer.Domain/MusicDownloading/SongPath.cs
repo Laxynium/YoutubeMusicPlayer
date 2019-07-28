@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using YoutubeMusicPlayer.Domain.Framework;
 
 namespace YoutubeMusicPlayer.Domain.MusicDownloading
 {
-    public class SongPath
+    public class SongPath : ValueObject<SongPath>
     {
         public string Value { get; }
 
@@ -21,6 +23,11 @@ namespace YoutubeMusicPlayer.Domain.MusicDownloading
         public override string ToString()
         {
             return Value;
+        }
+
+        protected override IEnumerable<object> GetProperties()
+        {
+            yield return Value;
         }
     }
 }

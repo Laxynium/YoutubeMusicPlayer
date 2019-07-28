@@ -43,6 +43,7 @@
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,6 +61,12 @@
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ardalis.GuardClauses, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ardalis.GuardClauses.1.2.9\lib\netstandard1.1\Ardalis.GuardClauses.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Core.4.4.0\lib\netstandard1.5\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.4.1.0.555618\lib\MonoAndroid81\FormsViewGroup.dll</HintPath>
       <Private>True</Private>
@@ -83,13 +90,11 @@
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ninject, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ninject.3.3.0\lib\netstandard2.0\Ninject.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.3.4\lib\netstandard2.0\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject.Extensions.Interception, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ninject.Extensions.Interception.3.3.0\lib\netstandard2.0\Ninject.Extensions.Interception.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.Extensions.Factory.3.3.2\lib\netstandard2.0\Ninject.Extensions.Factory.dll</HintPath>
     </Reference>
     <Reference Include="PCLStorage, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.dll</HintPath>
@@ -107,9 +112,21 @@
       <HintPath>..\..\packages\Xam.Plugin.FilePicker.1.1.0\lib\MonoAndroid10\Plugin.FilePicker.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Rg.Plugins.Popup, Version=1.1.5.188, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.5.188\lib\MonoAndroid\Rg.Plugins.Popup.dll</HintPath>
+    </Reference>
+    <Reference Include="Rg.Plugins.Popup.Droid, Version=1.1.5.188, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rg.Plugins.Popup.1.1.5.188\lib\MonoAndroid\Rg.Plugins.Popup.Droid.dll</HintPath>
+    </Reference>
     <Reference Include="SQLite-net, Version=1.5.231.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\sqlite-net-pcl.1.5.231\lib\netstandard1.1\SQLite-net.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLiteNetExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SQLiteNetExtensions.2.1.0\lib\netstandard1.1\SQLiteNetExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLiteNetExtensionsAsync, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SQLiteNetExtensions.Async.2.1.0\lib\netstandard1.1\SQLiteNetExtensionsAsync.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.batteries_green, Version=1.1.14.520, Culture=neutral, PublicKeyToken=a84b7dcfb1391f7f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SQLitePCLRaw.bundle_green.1.1.14\lib\MonoAndroid\SQLitePCLRaw.batteries_green.dll</HintPath>
@@ -224,6 +241,9 @@
       <HintPath>..\..\packages\Xamarin.Forms.4.1.0.555618\lib\MonoAndroid81\Xamarin.Forms.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Xamarin.Forms.HotReload.Reloader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.HotReload.1.4.15\lib\netstandard2.0\Xamarin.Forms.HotReload.Reloader.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Forms.Platform, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.4.1.0.555618\lib\MonoAndroid81\Xamarin.Forms.Platform.dll</HintPath>
       <Private>True</Private>
@@ -254,7 +274,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
@@ -277,6 +299,10 @@
     <ProjectReference Include="..\..\YoutubeMusicPlayer.Domain\YoutubeMusicPlayer.Domain.csproj">
       <Project>{B47CC450-4948-4EB3-801A-DADD8255D894}</Project>
       <Name>YoutubeMusicPlayer.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\YoutubeMusicPlayer.Persistence\YoutubeMusicPlayer.Persistence.csproj">
+      <Project>{FFB1F142-617B-4E2F-A0CB-B8CEA5B46606}</Project>
+      <Name>YoutubeMusicPlayer.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\YoutubeMusicPlayer\YoutubeMusicPlayer.csproj">
       <Project>{4523b2a8-6f23-4a48-9f8c-7a73264ddbd6}</Project>

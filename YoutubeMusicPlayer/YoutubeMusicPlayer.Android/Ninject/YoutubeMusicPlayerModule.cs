@@ -1,25 +1,32 @@
-﻿using Ninject.Modules;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Ninject.Modules;
 using SQLite;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.AbstractLayer;
+using YoutubeMusicPlayer.Domain.Framework;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
-using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
+using YoutubeMusicPlayer.Domain.MusicManagement;
 using YoutubeMusicPlayer.Domain.MusicSearching;
 using YoutubeMusicPlayer.Droid.AbstractLayer;
+using YoutubeMusicPlayer.Droid.Framework;
 using YoutubeMusicPlayer.Droid.MusicDownloading;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.MusicDownloading;
-using YoutubeMusicPlayer.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.MusicDownloading.ViewModels;
 using YoutubeMusicPlayer.MusicPlaying;
 using YoutubeMusicPlayer.MusicPlaying.ViewModels;
 using YoutubeMusicPlayer.MusicSearching;
 using YoutubeMusicPlayer.MusicSearching.ViewModels;
+using YoutubeMusicPlayer.PlaylistManagement;
 
 namespace YoutubeMusicPlayer.Droid.Ninject
 {
     class YoutubeMusicPlayerModule:NinjectModule
     {
+
         public override void Load()
         {
             Bind<string>().ToMethod(x => "");
@@ -30,6 +37,8 @@ namespace YoutubeMusicPlayer.Droid.Ninject
 
             Bind<ContentPage>().To<MusicPlayerPage>().InSingletonScope();
 
+            Bind<ContentPage>().To<PlaylistManagementPage>().InSingletonScope();
+
             Bind<ContentPage>().To<MusicSearchPage>().InSingletonScope();
 
             Bind<ContentPage>().To<DownloadsPage>().InSingletonScope();
@@ -39,7 +48,11 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<MusicSearchViewModel>().ToSelf().InSingletonScope();
            
             Bind<DownloadViewModel>().ToSelf().InSingletonScope();
-          
+
+            Bind<SelectSongsPopup>().ToSelf().InTransientScope();
+
+            Bind<SelectableItemsView>().ToSelf().InTransientScope();
+
             //todo refactor this if it is possible, because below mappings are similar 
             Bind<IFileManager>().ToMethod(x=> DependencyService.Get<IFileManager>()).InSingletonScope();
             Bind<IDownloader>().ToMethod(x => DependencyService.Get<IDownloader>()).InThreadScope();
@@ -49,12 +62,45 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<IScriptIdEncoder>().To<ScriptIdEncoder>().InTransientScope();
             Bind<SQLiteAsyncConnection>().ToMethod(x => DependencyService.Get<ISqlConnection>().GetConnection());
 
-            Bind<ISongRepository>().To<SongRepository>().InSingletonScope();
             Bind<IDownloadLinkGenerator>().To<YtMp3DownloadLinkGenerator>().InSingletonScope();
             Bind<ITabbedPageService>().To<TabbedPageService>().InSingletonScope();
+            Bind<IPopupNavigation>().To<PopupNavigation>().InSingletonScope();
             Bind<IMusicSearchingService>().To<YoutubeMusicSearchingService>().InSingletonScope();
             Bind<ISongService>().To<SongService>().InSingletonScope();
             Bind<ISongDownloader>().To<SongDownloader>().InSingletonScope();
+            Bind<ISelectSongsViewModelFactory>().To<SelectSongsViewModelFactory>().InSingletonScope();
+            Bind<IPlaylistService>().To<PlaylistService>().InSingletonScope();
+
+            Bind<IEventDispatcher>().To<EventDispatcher>().InSingletonScope();
+            var eventHandlers = new List<Type>
+                {
+                    typeof(IEvent),
+                    typeof(App),
+                    typeof(MainActivity)
+                }
+                .SelectMany(
+                    t => Assembly.GetAssembly(t)
+                        .GetTypes()
+                )
+                .Where(
+                    x => x.GetInterfaces()
+                        .Any(IsHandlerInterface)
+                )
+                .ToList();
+
+            eventHandlers.ForEach(
+                t => Bind(typeof(IEventHandler<>))
+                    .To(t)
+            );
+        }
+        private static bool IsHandlerInterface(Type type)
+        {
+            if (!type.IsGenericType)
+                return false;
+
+            Type typeDefinition = type.GetGenericTypeDefinition();
+
+            return typeDefinition == typeof(IEventHandler<>);
         }
     }
 }

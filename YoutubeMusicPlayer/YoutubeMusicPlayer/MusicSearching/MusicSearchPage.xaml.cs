@@ -1,10 +1,9 @@
 ﻿using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using YoutubeMusicPlayer.MusicDownloading.ViewModels;
+using YoutubeMusicPlayer.MusicSearching.ViewModels;
+using MusicViewModel = YoutubeMusicPlayer.MusicSearching.ViewModels.MusicViewModel;
 
-namespace YoutubeMusicPlayer.MusicSearching.ViewModels
+namespace YoutubeMusicPlayer.MusicSearching
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MusicSearchPage : ContentPage
     {
         protected override void OnAppearing()

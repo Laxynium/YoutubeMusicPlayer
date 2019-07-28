@@ -1,10 +1,16 @@
 ﻿using System.Linq;
 using SQLite;
 using Xamarin.Forms;
-using YoutubeMusicPlayer.AbstractLayer;
-using YoutubeMusicPlayer.Domain.MusicDownloading;
+using Xamarin.Forms.Xaml;
 using YoutubeMusicPlayer.MusicDownloading;
 
+using YoutubeMusicPlayer.Persistence;
+
+#if !DEBUG
+[assembly:XamlCompilation(XamlCompilationOptions.Compile)]
+#else
+[assembly: XamlCompilation(XamlCompilationOptions.Skip)]
+#endif
 namespace YoutubeMusicPlayer
 {
     public partial class App : Application
@@ -17,16 +23,22 @@ namespace YoutubeMusicPlayer
             _connection = connection;
             _fileManager = fileManager;
             InitializeComponent();
+
+#if DEBUG
+            HotReloader.Current.Run(this);
+#endif
+
             MainPage = page;
         }
 
 
         protected override async void OnStart()
         {
-            await _connection.CreateTableAsync<Song>();
+            await Database.Initialize(_connection);
             _fileManager.CreateFolder();
             var files = _fileManager.ListMusicFiles().ToList();
-            await _connection.Table<Song>().DeleteAsync(x => !files.Contains(x.FilePath));
+            await Database.Synchronize(_connection, files);
+            
         }
 
         protected override void OnSleep()
