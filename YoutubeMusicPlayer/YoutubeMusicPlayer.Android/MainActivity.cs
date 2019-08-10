@@ -40,6 +40,7 @@ namespace YoutubeMusicPlayer.Droid
         {
             if (Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed))
             {
+
                 // Do something if there are some pages in the `PopupStack`
             }
             else

@@ -18,6 +18,7 @@ namespace YoutubeMusicPlayer.PlaylistManagement
 
 		private void OnPlaylistSelected(object sender, SelectedItemChangedEventArgs e)
 		{
+            _playlistManagementViewModel.OpenAddSongs?.Execute(e.SelectedItem);
 		}
 
         protected override void OnAppearing()

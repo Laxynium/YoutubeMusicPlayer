@@ -102,7 +102,7 @@ namespace YoutubeMusicPlayer.MusicDownloading
             client.DefaultRequestHeaders.Add("Referer", "https://ytmp3.cc/");
             client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.1.5");
             var url = $"https://a.oeaa.cc/progress.php?callback=jQuery33109514798167395044_1532263442793&id={hash}&_1532263442795";
-            var maxTime = TimeSpan.FromSeconds(30);
+            var maxTime = TimeSpan.FromSeconds(60);
             var startTime = DateTime.Now;
             while (true && DateTime.Now - startTime <= maxTime)
             {

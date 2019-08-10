@@ -24,7 +24,7 @@ namespace YoutubeMusicPlayer.Persistence.Repositories
         }
 
         public async Task<Song> GetAsync(SongId musicId)
-            => ToSong(await _connection.FindAsync<SongDb>(musicId));
+            => ToSong(await _connection.FindAsync<SongDb>(musicId.Value));
 
         public async Task<IEnumerable<Song>> GetAllAsync()
             => (await _connection.Table<SongDb>().ToListAsync()).Select(ToSong);
@@ -33,7 +33,13 @@ namespace YoutubeMusicPlayer.Persistence.Repositories
             => await _connection.FindAsync<SongDb>(x => x.YoutubeId == youtubeId) != null;
 
         public async Task RemoveAsync(SongId musicId)
-            => await _connection.DeleteAsync<SongDb>(musicId.Value);
+        {
+            await _connection.RunInTransactionAsync(c =>
+            {
+                c.Delete<SongDb>(musicId.Value);
+                c.Table<PlaylistSongDb>().Delete(x => x.SongId == musicId.Value);
+            });
+        }
 
         private static SongDb FromSong(Song song)
             => new SongDb

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
              xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
-             x:Class="YoutubeMusicPlayer.PlaylistManagement.DeleteSongsPopup">
+             x:Class="YoutubeMusicPlayer.PlaylistManagement.AddSongsPopupPage">
     <pages:PopupPage.Animation>
         <animations:ScaleAnimation 
             PositionIn="Center"
@@ -18,7 +18,7 @@
     </pages:PopupPage.Animation>
     <!--You can use any elements here which are extended from Xamarin.Forms.View-->
     <pages:PopupPage.Content>
-        <RelativeLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Opacity="1" BackgroundColor="Teal">
+        <RelativeLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Opacity="1" BackgroundColor="AntiqueWhite">
             <StackLayout Orientation="Horizontal" Opacity="1" 
                          
                          RelativeLayout.YConstraint ="{ConstraintExpression 
@@ -37,8 +37,8 @@
                              Factor=1
                              }"
                          
-                         BackgroundColor="CornflowerBlue">
-                <Label Text="Which song do you want to remove?"></Label>
+                         >
+                <Label Text="Which song do you want to pick?"></Label>
             </StackLayout>
             <ListView  x:Name="ListView" 
                        ItemsSource="{Binding Songs,Mode=TwoWay}"
@@ -60,7 +60,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal" Opacity="1" BackgroundColor="Cornsilk">
+                            <StackLayout Orientation="Horizontal" Opacity="1">
                                 <Image Source="{Binding ImageSource}"  VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
                                 <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
                                 <CheckBox IsChecked="{Binding IsPicked}" Color="DeepSkyBlue"></CheckBox>
@@ -86,8 +86,7 @@
                              Property=Width,
                              Factor=1
                              }"
-                         
-                         BackgroundColor="CornflowerBlue">
+            >
                 <Button Text="Approve picked" 
                         HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Command="{Binding ApprovePickedSongs}"/>
             </StackLayout>

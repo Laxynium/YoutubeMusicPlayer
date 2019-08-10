@@ -1,50 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:YoutubeMusicPlayer.Framework.Converters"
              x:Class="YoutubeMusicPlayer.PlaylistManagement.PlaylistManagementPage" Title ="Playlists">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertBoolConverter x:Key="InvertBool"/>
+            <converters:IsStringNotEmptyConverter x:Key="IsStringNotEmpty"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <RelativeLayout>
-            <ListView  x:Name="ListView" ItemSelected="OnPlaylistSelected" 
-                       ItemsSource="{Binding Playlists,Mode=TwoWay}"
-                       RelativeLayout.YConstraint ="{ConstraintExpression 
-                             Type=RelativeToParent,
-                             Property=Height,
-                             Factor=0
-                             }"
-                      RelativeLayout.HeightConstraint ="{ConstraintExpression 
-                             Type=RelativeToParent,
-                             Property=Height,
-                             Factor=0.9
-                             }"
-                      RelativeLayout.WidthConstraint ="{ConstraintExpression 
-                             Type=RelativeToParent,
-                             Property=Width,
-                             Factor=1
-                             }">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <ViewCell.ContextActions>
-                                <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView},Path=BindingContext.RemovePlaylist}"
-                                          IsDestructive="True"></MenuItem>
-                                <MenuItem Text="Rename" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RenamePlaylist}"></MenuItem>
-                                <MenuItem Text="Add songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.AddSongToPlaylist}"></MenuItem>
-                                <MenuItem Text="Remove songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RemoveSongFromPlaylist}"></MenuItem>
-                                
-                            </ViewCell.ContextActions>
-                            <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Name, Mode=TwoWay}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
             <StackLayout Orientation="Horizontal" Opacity="0.4" 
                          
                          RelativeLayout.YConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Height,
-                             Factor=0.90
+                             Factor=0.0
                              }"
                          RelativeLayout.HeightConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
@@ -56,11 +28,76 @@
                              Property=Width,
                              Factor=1
                              }"
-                         
-                         BackgroundColor="CornflowerBlue">
+                         > 
                 <Button Text="Create new" 
-                        HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Command="{Binding CreatePlaylist}"/>
+                        HorizontalOptions="StartAndExpand" VerticalOptions="Center" Command="{Binding StartCreatingPlaylist}"
+                        IsVisible="{Binding IsAddPlaylistState, Converter={StaticResource InvertBool}}"
+                        />
+                <Editor Placeholder="Enter playlist name" HorizontalOptions="StartAndExpand" VerticalOptions="Center"
+                        IsVisible="{Binding IsAddPlaylistState}" Text="{Binding NewPlaylistName,Mode=TwoWay}"/>
+                <Button Text="Save" FlowDirection="RightToLeft" HorizontalOptions="End" VerticalOptions="Center"
+                        IsVisible="{Binding IsAddPlaylistState}" Command="{Binding CreatePlaylist}" IsEnabled="{Binding NewPlaylistName, Converter={StaticResource IsStringNotEmpty}}"/>
+                <Button Text="Cancel" FlowDirection="RightToLeft" HorizontalOptions="End" VerticalOptions="Center"
+                        IsVisible="{Binding IsAddPlaylistState}" Command="{Binding CancelCreatingPlaylist}"/>
+
             </StackLayout>
+            <ListView  x:Name="ListView" ItemSelected="OnPlaylistSelected" SelectedItem="{Binding SelectedPlaylist,Mode=TwoWay}"
+                       ItemsSource="{Binding Playlists,Mode=TwoWay}"
+                       RelativeLayout.YConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.1
+                             }"
+                       RelativeLayout.HeightConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Height,
+                             Factor=0.9
+                             }"
+                       RelativeLayout.WidthConstraint ="{ConstraintExpression 
+                             Type=RelativeToParent,
+                             Property=Width,
+                             Factor=1
+                             }"
+                       >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.ContextActions>
+
+                                <MenuItem Text="Delete" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView},Path=BindingContext.RemovePlaylist}"
+                                          IsDestructive="True"></MenuItem>
+
+                                <MenuItem Text="Rename" Command="{Binding StartRenamingPlaylist}"></MenuItem>
+
+                                <MenuItem Text="Add songs" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.AddSongToPlaylist}"></MenuItem>
+
+
+                            </ViewCell.ContextActions>
+                            <StackLayout Orientation="Horizontal">
+
+                                <Label Text="{Binding Name, Mode=TwoWay}" VerticalOptions="Center" VerticalTextAlignment="Center" 
+                                       LineBreakMode="TailTruncation"
+                                       IsVisible="{Binding IsChangeNameState, Converter={StaticResource InvertBool}}"/>
+
+                                <Editor Placeholder="{Binding Name, Mode=TwoWay}" HorizontalOptions="StartAndExpand" VerticalOptions="Center"
+                                        IsVisible="{Binding IsChangeNameState}"
+                                        Text="{Binding NewName, Mode=TwoWay}"/>
+
+                                <Button Text="Save" FlowDirection="RightToLeft" HorizontalOptions="End" VerticalOptions="Center"
+                                        IsVisible="{Binding IsChangeNameState}"
+                                        CommandParameter="{Binding .}"
+                                        Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RenamePlaylist}" 
+                                        IsEnabled="{Binding NewName, Converter={StaticResource IsStringNotEmpty}}"/>
+
+                                <Button Text="Cancel" FlowDirection="RightToLeft" HorizontalOptions="End" VerticalOptions="Center"
+                                        IsVisible="{Binding IsChangeNameState}" 
+                                        Command="{Binding CancelRenamingPlaylist}"/>
+
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </RelativeLayout>
     </ContentPage.Content>
 

@@ -59,10 +59,12 @@ namespace YoutubeMusicPlayer.Domain.MusicManagement
             _songs.Add(song);
         }
 
-        public void RemoveSong(SongId id, int position)
+        public void RemoveSong(SongId id)
         {
-            if(_songs.ElementAtOrDefault(position)?.Id == id)
-                _songs.RemoveAt(position);
+            var song = _songs.SingleOrDefault(x => x.Id == id);
+            if (song is null)
+                return;
+            _songs.Remove(song);
         }
 
 

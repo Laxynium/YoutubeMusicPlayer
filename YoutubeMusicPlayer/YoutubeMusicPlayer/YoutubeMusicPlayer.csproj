@@ -4,11 +4,6 @@
     <PackageTargetFallback>$(PackageTargetFallback);portable-win+net45+wp8+win81+wpa8</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Framework\NewFolder\**" />
-    <EmbeddedResource Remove="Framework\NewFolder\**" />
-    <None Remove="Framework\NewFolder\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Ardalis.GuardClauses" Version="1.2.9" />
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.8</Version>
@@ -39,10 +34,10 @@
     <PackageReference Include="Xamarin.Forms">
       <Version>4.1.0.555618</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.HotReload" Version="1.4.15" />
     <PackageReference Include="Xamarin.Insights">
       <Version>1.12.3</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.LiveReload" Version="0.3.27" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\YoutubeMusicPlayer.Domain\YoutubeMusicPlayer.Domain.csproj" />
@@ -51,6 +46,12 @@
   <ItemGroup>
     <Compile Update="PlaylistManagement\PlaylistManagementPage.xaml.cs">
       <DependentUpon>PlaylistManagementPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="PlaylistManagement\PlaylistSongsPopupPage.xaml.cs">
+      <DependentUpon>PlaylistSongsPopupPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="PlaylistManagement\AddSongsPopupPage.xaml.cs">
+      <DependentUpon>AddSongsPopupPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -71,19 +72,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="PlaylistManagement\CreatePlaylistPopup.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="PlaylistManagement\DeleteSongsPopup.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="PlaylistManagement\PlaylistManagementPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="PlaylistManagement\RenamePlaylistPopup.xaml">
+    <EmbeddedResource Update="PlaylistManagement\PlaylistSongsPopupPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="PlaylistManagement\SelectSongsPopup.xaml">
+    <EmbeddedResource Update="PlaylistManagement\AddSongsPopupPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

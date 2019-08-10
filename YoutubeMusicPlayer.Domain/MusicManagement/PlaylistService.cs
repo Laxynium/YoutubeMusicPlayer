@@ -55,11 +55,11 @@ namespace YoutubeMusicPlayer.Domain.MusicManagement
             await _playlistRepository.SaveAsync(playlist);
         }
 
-        public async Task RemoveSongFromExisting(Guid playlistId, Guid songId, int position)
+        public async Task RemoveSongFromExisting(Guid playlistId, Guid songId)
         {
             Playlist playlist = await _playlistRepository.GetAsync(playlistId) 
                                 ?? throw new Exception($"Invalid {nameof(playlistId)}");
-            playlist.RemoveSong(SongId.FromGuid(songId), position);
+            playlist.RemoveSong(SongId.FromGuid(songId));
             await _playlistRepository.SaveAsync(playlist);
         }
 

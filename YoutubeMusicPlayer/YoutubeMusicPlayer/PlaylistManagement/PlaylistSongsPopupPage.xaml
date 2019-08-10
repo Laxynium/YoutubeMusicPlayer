@@ -3,7 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
              xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
-             x:Class="YoutubeMusicPlayer.PlaylistManagement.SelectSongsPopup">
+             xmlns:converters="clr-namespace:YoutubeMusicPlayer.Framework.Converters;assembly=YoutubeMusicPlayer"
+             x:Class="YoutubeMusicPlayer.PlaylistManagement.PlaylistSongsPopupPage" 
+             Title="Playlist songs"
+             HasSystemPadding="True">
+    <pages:PopupPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertBoolConverter x:Key="InvertBool"></converters:InvertBoolConverter>
+        </ResourceDictionary>
+    </pages:PopupPage.Resources>
     <pages:PopupPage.Animation>
         <animations:ScaleAnimation 
             PositionIn="Center"
@@ -18,8 +26,8 @@
     </pages:PopupPage.Animation>
     <!--You can use any elements here which are extended from Xamarin.Forms.View-->
     <pages:PopupPage.Content>
-        <RelativeLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Opacity="1" BackgroundColor="Teal">
-            <StackLayout Orientation="Horizontal" Opacity="1" 
+        <RelativeLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Opacity="1" BackgroundColor="AntiqueWhite">
+            <StackLayout Orientation="Horizontal"
                          
                          RelativeLayout.YConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
@@ -29,19 +37,21 @@
                          RelativeLayout.HeightConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Height,
-                             Factor=0.10
+                             Factor=0.1
                              }"
                          RelativeLayout.WidthConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Width,
                              Factor=1
                              }"
-                         
-                         BackgroundColor="CornflowerBlue">
-                <Label Text="Which song do you want to pick?"></Label>
+            >
+                <Button Text="Add songs" HorizontalOptions="StartAndExpand" Command="{Binding AddSongs}" IsVisible="{Binding Path=IsVisible,Source={x:Reference SaveBtn}, Converter={StaticResource InvertBool}}"/>
+                <Button x:Name="RemoveBtn" Command="{Binding ChangeState}" Text="Remove songs" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsNormalState}"></Button>
+                <Button x:Name="CancelBtn" Command="{Binding ChangeState}" Text="Cancel" HorizontalOptions="StartAndExpand" IsVisible="{Binding Path=IsVisible,Source={x:Reference RemoveBtn},Converter={StaticResource InvertBool}}"/>
+                <Button x:Name="SaveBtn" Command="{Binding RemoveSongs}" Text="Save" HorizontalOptions="EndAndExpand" IsVisible="{Binding Path=IsVisible,Source={x:Reference RemoveBtn},Converter={StaticResource InvertBool}}"/>
             </StackLayout>
-            <ListView  x:Name="ListView" 
-                       ItemsSource="{Binding Songs,Mode=TwoWay}"
+            <ListView  x:Name="ListView"
+                       ItemsSource="{Binding Songs, Mode=TwoWay}"
                        RelativeLayout.YConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Height,
@@ -60,21 +70,30 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal" Opacity="1" BackgroundColor="Cornsilk">
+                            <!--<ViewCell.ContextActions>
+                                <MenuItem Text="Remove" CommandParameter="{Binding .}" Command="{Binding Source={x:Reference ListView}, Path=BindingContext.RemoveSong}" IsDestructive="True"/>
+                            </ViewCell.ContextActions>-->
+                            <StackLayout Orientation="Horizontal" Opacity="1">
                                 <Image Source="{Binding ImageSource}"  VerticalOptions="Center" Aspect="Fill" HorizontalOptions="StartAndExpand"/>
-                                <Label Text="{Binding Title}" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
-                                <CheckBox IsChecked="{Binding IsPicked}" Color="DeepSkyBlue"></CheckBox>
+                                <Label Text="{Binding Title}" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" VerticalTextAlignment="Center" LineBreakMode="TailTruncation"/>
+                                <CheckBox 
+                                    IsChecked="{Binding IsPicked, Mode=TwoWay}" 
+                                    Color="DeepSkyBlue" 
+                                    IsVisible="{Binding Source={x:Reference RemoveBtn},Path=IsVisible, 
+                                    Converter={StaticResource InvertBool}} "
+                                    />
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
             <StackLayout Orientation="Horizontal" Opacity="1" 
                          
                          RelativeLayout.YConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
                              Property=Height,
-                             Factor=0.90
+                             Factor=0.9
                              }"
                          RelativeLayout.HeightConstraint ="{ConstraintExpression 
                              Type=RelativeToParent,
@@ -86,11 +105,11 @@
                              Property=Width,
                              Factor=1
                              }"
-                         
-                         BackgroundColor="CornflowerBlue">
-                <Button Text="Approve picked" 
-                        HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Command="{Binding ApprovePickedSongs}"/>
+            >
+                <Button Text="Go back" 
+                        HorizontalOptions="StartAndExpand" VerticalOptions="Center" Command="{Binding GoBack}"/>
             </StackLayout>
+
         </RelativeLayout>
 
     </pages:PopupPage.Content>

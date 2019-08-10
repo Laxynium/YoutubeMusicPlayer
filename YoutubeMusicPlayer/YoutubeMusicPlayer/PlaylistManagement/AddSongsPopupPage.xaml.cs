@@ -4,11 +4,11 @@ using YoutubeMusicPlayer.PlaylistManagement.ViewModels;
 
 namespace YoutubeMusicPlayer.PlaylistManagement
 {
-    public partial class SelectSongsPopup : PopupPage
+    public partial class AddSongsPopupPage : PopupPage
     {
-        private readonly SelectSongsViewModel _viewModel;
+        private readonly AddSongsViewModel _viewModel;
 
-        public SelectSongsPopup (SelectSongsViewModel viewModel)
+        public AddSongsPopupPage (AddSongsViewModel viewModel)
         {
             _viewModel = viewModel;
             InitializeComponent ();
@@ -19,5 +19,6 @@ namespace YoutubeMusicPlayer.PlaylistManagement
         {
             _viewModel.Initialize?.Execute(null);
         }
+
     }
 }

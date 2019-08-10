@@ -25,7 +25,7 @@ namespace YoutubeMusicPlayer
             InitializeComponent();
 
 #if DEBUG
-            HotReloader.Current.Run(this);
+            LiveReload.Init();
 #endif
 
             MainPage = page;

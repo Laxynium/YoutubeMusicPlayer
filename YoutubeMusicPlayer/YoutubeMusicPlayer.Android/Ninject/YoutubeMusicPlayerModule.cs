@@ -13,6 +13,7 @@ using YoutubeMusicPlayer.Domain.MusicSearching;
 using YoutubeMusicPlayer.Droid.AbstractLayer;
 using YoutubeMusicPlayer.Droid.Framework;
 using YoutubeMusicPlayer.Droid.MusicDownloading;
+using YoutubeMusicPlayer.Droid.PlaylistManagement;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.MusicDownloading;
 using YoutubeMusicPlayer.MusicDownloading.ViewModels;
@@ -21,6 +22,8 @@ using YoutubeMusicPlayer.MusicPlaying.ViewModels;
 using YoutubeMusicPlayer.MusicSearching;
 using YoutubeMusicPlayer.MusicSearching.ViewModels;
 using YoutubeMusicPlayer.PlaylistManagement;
+using YoutubeMusicPlayer.PlaylistManagement.Factories;
+using YoutubeMusicPlayer.PlaylistManagement.ViewModels;
 
 namespace YoutubeMusicPlayer.Droid.Ninject
 {
@@ -49,9 +52,11 @@ namespace YoutubeMusicPlayer.Droid.Ninject
            
             Bind<DownloadViewModel>().ToSelf().InSingletonScope();
 
-            Bind<SelectSongsPopup>().ToSelf().InTransientScope();
+            Bind<AddSongsPopupPage>().ToSelf().InSingletonScope();
 
-            Bind<SelectableItemsView>().ToSelf().InTransientScope();
+            Bind<PlaylistSongsViewModel>().ToSelf().InSingletonScope();
+
+            Bind<PlaylistManagementViewModel>().ToSelf().InSingletonScope();
 
             //todo refactor this if it is possible, because below mappings are similar 
             Bind<IFileManager>().ToMethod(x=> DependencyService.Get<IFileManager>()).InSingletonScope();
@@ -68,7 +73,8 @@ namespace YoutubeMusicPlayer.Droid.Ninject
             Bind<IMusicSearchingService>().To<YoutubeMusicSearchingService>().InSingletonScope();
             Bind<ISongService>().To<SongService>().InSingletonScope();
             Bind<ISongDownloader>().To<SongDownloader>().InSingletonScope();
-            Bind<ISelectSongsViewModelFactory>().To<SelectSongsViewModelFactory>().InSingletonScope();
+            Bind<IAddSongsViewModelFactor>().To<AddSongsViewModelFactor>().InSingletonScope();
+            Bind<IPlaylistSongsViewModelFactor>().To<PlaylistSongsViewModelFactor>().InSingletonScope();
             Bind<IPlaylistService>().To<PlaylistService>().InSingletonScope();
 
             Bind<IEventDispatcher>().To<EventDispatcher>().InSingletonScope();
