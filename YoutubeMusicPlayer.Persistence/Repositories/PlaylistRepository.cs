@@ -36,7 +36,7 @@ namespace YoutubeMusicPlayer.Persistence.Repositories
             var dbPlaylist = FromPlaylist(playlist);
             await _connection.RunInTransactionAsync(c =>
             {
-                var playlistDb = c.GetWithChildren<PlaylistDb>(playlist.Id, true);
+                var playlistDb = c.FindWithChildren<PlaylistDb>(playlist.Id, true);
                 if(playlistDb != null)
                     c.Delete(playlistDb, true);
                 c.InsertOrReplaceWithChildren(dbPlaylist, true);
