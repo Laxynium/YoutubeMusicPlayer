@@ -27,6 +27,6 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             set => SetValue(ref _imageSource, value);
         }
 
-        public string FilePath { get; set; }
+        public string SongPath { get; set; }
     }
 }

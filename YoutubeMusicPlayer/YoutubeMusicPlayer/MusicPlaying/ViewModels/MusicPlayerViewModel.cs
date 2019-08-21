@@ -1,17 +1,19 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Forms;
+using YoutubeMusicPlayer.Domain.Framework;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
+using YoutubeMusicPlayer.Domain.MusicDownloading.Events;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Domain.MusicPlaying;
 using YoutubeMusicPlayer.Domain.SharedKernel;
 using YoutubeMusicPlayer.Framework;
+using ICommand = System.Windows.Input.ICommand;
 
 namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
 {
-    public class MusicPlayerViewModel:ViewModelBase
+    public class MusicPlayerViewModel:ViewModelBase, IEventHandler<SongCreated>
     {
         private const string PlayTag = "Play";
         private const string PauseTag = "Pause";
@@ -69,7 +71,6 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
         public ICommand DeleteSongCommand { get; private set; }
 
 
-
         public MusicPlayerViewModel(ISongRepository songRepository, IMusicPlayer musicPlayer, ISongService songService)
         {
             _songRepository = songRepository;
@@ -89,13 +90,12 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
             SetMusicPositionCommand = new Command(async()=>await SetMusicPosition());
             UpdateDataCommand = new Command(async()=>await UpdateData());
             DeleteSongCommand= new Command<SongViewModel>(async (x)=>await DeleteSong(x));
-
-            _songService.OnDownloadFinished += OnDownloadFinished;
         }
 
-        private void OnDownloadFinished(object sender, MusicDto e)
+        public Task HandleAsync(SongCreated @event)
         {
-            Songs.Add(new SongViewModel(e.Id, e.Title, e.ImageSource, e.FilePath));
+            Songs.Add(new SongViewModel(@event.Id,@event.Title,@event.ImageSource,@event.FilePath));
+            return Task.CompletedTask;
         }
 
         private async void OnSongProgressChanged(object sender, int e)
@@ -112,7 +112,7 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
             {
                 _isInitialized = true;
                 var songs = (await _songRepository.GetAllAsync())//TODO think about ViewModel data directly from database
-                    .Select((x) => new SongViewModel(x.Id, x.Title, x.ImageSource, x.FilePath)).ToList();
+                    .Select((x) => new SongViewModel(x.Id, x.Title, x.ImageSource, x.SongPath)).ToList();
 
                 songs.ForEach(x =>
                 {
@@ -187,6 +187,5 @@ namespace YoutubeMusicPlayer.MusicPlaying.ViewModels
 
             await _songService.RemoveMusic(music.Id);
         }
-
     }
 }

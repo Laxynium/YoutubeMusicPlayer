@@ -48,9 +48,9 @@ namespace YoutubeMusicPlayer.Persistence.Repositories
                 YoutubeId = song.YoutubeId,
                 Title = song.Title,
                 ImageSource = song.ImageSource,
-                FilePath = song.FilePath
+                FilePath = song.SongPath
             };
         private static Song ToSong(SongDb db)
-            => new Song(SongId.FromGuid(db.Id), db.YoutubeId, db.Title, db.ImageSource, db.FilePath);
+            => new Song(SongId.FromGuid(db.Id), new SongPath(db.FilePath), db.YoutubeId, db.Title, db.ImageSource);
     }
 }

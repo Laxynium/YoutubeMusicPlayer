@@ -1,9 +1,13 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using YoutubeMusicPlayer.Domain.Framework;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
+using YoutubeMusicPlayer.Domain.MusicDownloading.Events;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Domain.SharedKernel;
+using Song = YoutubeMusicPlayer.Domain.MusicDownloading.Song;
 
 namespace YoutubeMusicPlayer.MusicDownloading
 {
@@ -22,37 +26,35 @@ namespace YoutubeMusicPlayer.MusicDownloading
             _songDownloader = songDownloader;
         }
 
-        public event EventHandler<(string ytId, string title, string imageSource)> OnDownloadStart;
-        public event EventHandler<MusicDto> OnDownloadFinished;
-        public event EventHandler<(string ytId, string errorMessage)> OnDownloadFailed;
-        public event EventHandler<(string ytId,double progress)> OnDownloadProgress;
-
-        public async Task DownloadAndSaveMusic(string youtubeId, string title, string imageSource)
+        public async Task DownloadAndCreateSong(string youtubeId, string title, string imageSource)
         {
             if (await _songRepository.Exists(youtubeId))
                 return;
 
-            OnDownloadStart?.Invoke(this, (youtubeId,title,imageSource));
-            _songDownloader.OnDownloadProgress += OnDownloadProgress;
+            await _dispatcher.DispatchAsync(new DownloadStarted(youtubeId,title,imageSource));
+
+            async void OnProgress(object _, (string ytId, double progress) x) => await _dispatcher.DispatchAsync(new DownloadProgressed(x.ytId, x.progress));
+
+            _songDownloader.OnDownloadProgress += OnProgress;
             try
             {
-                var path = await _songDownloader.DownloadMusic(youtubeId, title);
+                var fileStream = await _songDownloader.DownloadMusic(youtubeId);
 
-                var song = new Song(youtubeId, title, imageSource, path);
+                var filePath = await SaveFile(title, fileStream);
+
+                var song = new Song(filePath,youtubeId,title,imageSource);
 
                 await _songRepository.AddAsync(song);
 
-                await _dispatcher.DispatchAsync(new MusicDownloaded(song.Id, song.FilePath, song.ImageSource));
-
-                OnDownloadFinished?.Invoke(this, new MusicDto(song.Id,song.YoutubeId,song.Title,song.ImageSource,song.FilePath));
+                await _dispatcher.DispatchAsync(song.Events.ToArray());
             }
             catch (Exception e)
             {
-                OnDownloadFailed?.Invoke(this, (youtubeId, e.Message));
+                await _dispatcher.DispatchAsync(new DownloadFailed(youtubeId, e.Message));
             }
             finally
             {
-                _songDownloader.OnDownloadProgress -= OnDownloadProgress;
+                _songDownloader.OnDownloadProgress -= OnProgress;
             }
         }
 
@@ -61,9 +63,24 @@ namespace YoutubeMusicPlayer.MusicDownloading
             var song = await _songRepository.GetAsync(SongId.FromGuid(musicId));
             if (song != null)
             {
-                await _fileManager.DeleteFileAsync(song.FilePath);
-                await _songRepository.RemoveAsync(SongId.FromGuid(musicId));
+                await _fileManager.DeleteFileAsync(song.SongPath);
+                await _songRepository.RemoveAsync(song.Id);
+                await _dispatcher.DispatchAsync(new SongRemoved(song.Id));
             }
+        }
+
+        private async Task<SongPath> SaveFile(string title, Stream fileStream)
+        {
+            var filePath = _fileManager.GeneratePath(title);
+
+            if (_fileManager.Exists(filePath))
+            {
+                await _fileManager.DeleteFileAsync(filePath);
+            }
+
+            await _fileManager.CreateFileAsync(title, fileStream);
+
+            return new SongPath(filePath);
         }
     }
 }

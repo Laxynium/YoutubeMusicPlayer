@@ -4,6 +4,6 @@ namespace YoutubeMusicPlayer.Domain.Framework
 {
     public interface IEventDispatcher
     {
-        Task DispatchAsync<T> (T @event) where T: IEvent;
+        Task DispatchAsync<T> (params T[] @event) where T: IEvent;
     }
 }

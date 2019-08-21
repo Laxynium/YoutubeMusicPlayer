@@ -305,6 +305,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\CommandDispatcher.cs" />
     <Compile Include="MusicDownloading\Downloader.cs" />
     <Compile Include="MusicDownloading\FileManager.cs" />
     <Compile Include="AbstractLayer\FileOpener.cs" />

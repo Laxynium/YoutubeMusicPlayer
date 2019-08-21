@@ -85,7 +85,7 @@ namespace YoutubeMusicPlayer.MusicSearching.ViewModels
 
             SelectedMusic = null;
 
-            await _songService.DownloadAndSaveMusic(music.YtVideoId, music.Title, music.ImageSource);
+            await _songService.DownloadAndCreateSong(music.YtVideoId, music.Title, music.ImageSource);
         }
 
         private void ChangeText()

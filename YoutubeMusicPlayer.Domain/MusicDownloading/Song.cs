@@ -1,29 +1,28 @@
 ﻿using System;
-using SQLite;
+using YoutubeMusicPlayer.Domain.Framework;
+using YoutubeMusicPlayer.Domain.MusicDownloading.Events;
+using YoutubeMusicPlayer.Domain.MusicPlayingNew;
 using YoutubeMusicPlayer.Domain.SharedKernel;
 
 namespace YoutubeMusicPlayer.Domain.MusicDownloading
 {
-    public class Song
+    public class Song : Entity<SongId>
     {
-        public SongId Id { get; }
         public string YoutubeId { get; }
         public string Title { get; }
         public string ImageSource { get; }
-        public string FilePath { get; }
+        public SongPath SongPath { get; }
 
-        public Song(string youtubeId, string title, string imageSource, string filePath)
-            :this(SongId.FromGuid(Guid.NewGuid()),youtubeId,title,imageSource,filePath)
+        public Song(SongPath songPath, string youtubeId, string title, string imageSource) : this(SongId.FromGuid(Guid.NewGuid()), songPath, youtubeId, title, imageSource)
         {
         }
-
-        public Song(SongId id, string youtubeId, string title, string imageSource, string filePath)
+        public Song(SongId id, SongPath songPath, string youtubeId, string title, string imageSource) : base(id)
         {
-            Id = id;
+            SongPath = songPath;
             YoutubeId = youtubeId;
             Title = title;
             ImageSource = imageSource;
-            FilePath = filePath;
+            Apply(new SongCreated(Id,youtubeId,songPath,title,imageSource));
         }
     }
 }

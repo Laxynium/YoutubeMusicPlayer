@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using YoutubeMusicPlayer.Domain.Framework;
 
-namespace YoutubeMusicPlayer.Domain.MusicDownloading
+namespace YoutubeMusicPlayer.Domain.SharedKernel
 {
     public class SongPath : ValueObject<SongPath>
     {

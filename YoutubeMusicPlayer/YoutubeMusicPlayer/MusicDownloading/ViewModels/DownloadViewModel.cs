@@ -1,16 +1,24 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Forms;
+using YoutubeMusicPlayer.Domain.Framework;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
+using YoutubeMusicPlayer.Domain.MusicDownloading.Events;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.MessangingCenter;
+using ICommand = System.Windows.Input.ICommand;
 
 namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 {
-    public class DownloadViewModel : ViewModelBase
+    public class DownloadViewModel : ViewModelBase,
+        IEventHandler<DownloadStarted>, 
+        IEventHandler<DownloadProgressed>,
+        IEventHandler<SongCreated>,
+        IEventHandler<DownloadFailed>
+
+
     {
         private readonly ISongService _songService;
         private readonly ITabbedPageService _tabbedPageService;
@@ -63,35 +71,34 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             {
                 ErrorOccured = false;
             });
-
-            _songService.OnDownloadStart += OnDownloadStart;
-            _songService.OnDownloadProgress += OnProgress;
-            _songService.OnDownloadFinished += OnDownloadFinished;
-            _songService.OnDownloadFailed += OnDownloadFailed;
         }
 
-        private void OnDownloadFailed(object sender, (string ytId, string msg) e)
+        public Task HandleAsync(SongCreated @event)
         {
-            Songs.Remove(Songs.Single(x=>x.YtVideoId == e.ytId));
+            var vM = Songs.Single(x => x.YtVideoId == @event.YoutubeId);
+            vM.SongPath = @event.FilePath;
+            return Task.CompletedTask;
+        }
+
+        public Task HandleAsync(DownloadProgressed e)
+        {
+            var song = Songs.Single(x => x.YtVideoId == e.YoutubeId);
+            song.Value = e.Progress;
+            return Task.CompletedTask;;
+        }
+
+        public Task HandleAsync(DownloadStarted e)
+        {
+            Songs.Add(new MusicViewModel { ImageSource = e.ImageSource, Title = e.Title, YtVideoId = e.YoutubeId });
+            return Task.CompletedTask;
+        }
+
+        public Task HandleAsync(DownloadFailed e)
+        {
+            Songs.Remove(Songs.Single(x => x.YtVideoId == e.YoutubeId));
             ErrorOccured = true;
-            ErrorMessage = e.msg;
-        }
-
-        private void OnDownloadFinished(object sender, MusicDto music)
-        {
-            var vM = Songs.Single(x => x.YtVideoId == music.YoutubeId);
-            vM.FilePath = music.FilePath;
-        }
-
-        private void OnProgress(object sender, (string ytId, double progress) e)
-        {
-            var song = Songs.Single(x => x.YtVideoId == e.ytId);
-            song.Value = e.progress;
-        }
-
-        private void OnDownloadStart(object sender, (string ytId, string title, string imageSource) e)
-        {
-            Songs.Add(new MusicViewModel {ImageSource = e.imageSource, Title = e.title, YtVideoId = e.ytId});
+            ErrorMessage = e.Message;
+            return Task.CompletedTask;
         }
 
         private async Task UpdateData()
@@ -99,7 +106,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             var songs = (await _songRepository.GetAllAsync())
                 .ToList().Select((x) => new MusicViewModel
                 {
-                    FilePath = x.FilePath,
+                    SongPath = x.SongPath,
                     YtVideoId = x.YoutubeId,
                     Title = x.Title,
                     ImageSource = x.ImageSource,
@@ -117,7 +124,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
         {
             SelectedMusic = null;
 
-            if (music?.FilePath == null) return;
+            if (music?.SongPath == null) return;
 
             MessagingCenter.Send(this,GlobalNames.MusicSelected, new MusicEventArgs(){Music = music});
 

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
+using YoutubeMusicPlayer.Domain.SharedKernel;
 
 namespace YoutubeMusicPlayer.MusicDownloading
 {
@@ -19,23 +21,14 @@ namespace YoutubeMusicPlayer.MusicDownloading
         }
         public event EventHandler<(string ytId, double progress)> OnDownloadProgress;
 
-        public async Task<SongPath> DownloadMusic(string youtubeId, string title)
+        public async Task<Stream> DownloadMusic(string youtubeId)
         {
             var downloadLink = await _downloadLinkGenerator.GenerateLinkAsync(youtubeId);
 
             var downloadedFileStream = await _downloader.GetStreamAsync(downloadLink, p=>OnDownloadProgress
                 ?.Invoke(this, (youtubeId, p / 100D)));
 
-            var filePath = _fileManager.GeneratePath(title);
-
-            if (_fileManager.Exists(filePath))
-            {
-                await _fileManager.DeleteFileAsync(filePath);
-            }
-
-            await _fileManager.CreateFileAsync(title, downloadedFileStream);
-
-            return new SongPath(filePath);
+            return downloadedFileStream;
         }
     }
 }
