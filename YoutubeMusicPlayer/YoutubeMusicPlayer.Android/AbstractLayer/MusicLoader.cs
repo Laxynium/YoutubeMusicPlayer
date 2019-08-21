@@ -8,7 +8,6 @@ using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Domain.MusicPlaying;
-using YoutubeMusicPlayer.Domain.MusicPlayingNew;
 using YoutubeMusicPlayer.Droid.AbstractLayer;
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;

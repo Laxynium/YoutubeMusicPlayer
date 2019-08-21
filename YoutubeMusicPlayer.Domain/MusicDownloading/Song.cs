@@ -1,7 +1,6 @@
 ﻿using System;
 using YoutubeMusicPlayer.Domain.Framework;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Events;
-using YoutubeMusicPlayer.Domain.MusicPlayingNew;
 using YoutubeMusicPlayer.Domain.SharedKernel;
 
 namespace YoutubeMusicPlayer.Domain.MusicDownloading

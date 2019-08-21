@@ -2,8 +2,6 @@
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Domain.MusicManagement;
 using YoutubeMusicPlayer.Domain.MusicManagement.Queries;
-using YoutubeMusicPlayer.Domain.MusicPlaying;
-using YoutubeMusicPlayer.Domain.MusicPlayingNew;
 using YoutubeMusicPlayer.Persistence.Queries;
 using YoutubeMusicPlayer.Persistence.Repositories;
 
