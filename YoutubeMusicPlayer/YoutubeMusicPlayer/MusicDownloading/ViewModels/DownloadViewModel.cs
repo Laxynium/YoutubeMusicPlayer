@@ -20,7 +20,6 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 
 
     {
-        private readonly ISongService _songService;
         private readonly ITabbedPageService _tabbedPageService;
         private readonly ISongRepository _songRepository;
 
@@ -56,12 +55,10 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
         }
 
         public DownloadViewModel(
-            ISongService songService,
             ITabbedPageService tabbedPageService,
             ISongRepository songRepository
         )
         {
-            _songService = songService;
             _tabbedPageService = tabbedPageService;
             _songRepository = songRepository;
 
