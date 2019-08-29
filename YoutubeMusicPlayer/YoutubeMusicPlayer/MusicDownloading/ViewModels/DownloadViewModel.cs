@@ -72,14 +72,14 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 
         public Task HandleAsync(SongCreated @event)
         {
-            var vM = Songs.Single(x => x.YtVideoId == @event.YoutubeId);
+            var vM = Songs.First(x => x.YtVideoId == @event.YoutubeId);
             vM.SongPath = @event.FilePath;
             return Task.CompletedTask;
         }
 
         public Task HandleAsync(DownloadProgressed e)
         {
-            var song = Songs.Single(x => x.YtVideoId == e.YoutubeId);
+            var song = Songs.First(x => x.YtVideoId == e.YoutubeId);
             song.Value = e.Progress;
             return Task.CompletedTask;;
         }
@@ -92,7 +92,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 
         public Task HandleAsync(DownloadFailed e)
         {
-            Songs.Remove(Songs.Single(x => x.YtVideoId == e.YoutubeId));
+            Songs.Remove(Songs.First(x => x.YtVideoId == e.YoutubeId));
             ErrorOccured = true;
             ErrorMessage = e.Message;
             return Task.CompletedTask;

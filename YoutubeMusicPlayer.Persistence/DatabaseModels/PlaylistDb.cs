@@ -11,6 +11,7 @@ namespace YoutubeMusicPlayer.Persistence.DatabaseModels
         [PrimaryKey]
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string Type { get; set; }
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public List<PlaylistSongDb> Songs { get; set; }
     }

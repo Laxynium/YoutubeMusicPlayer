@@ -5,9 +5,10 @@ namespace YoutubeMusicPlayer.Domain.MusicManagement
 {
     public interface IPlaylistRepository
     {
-        Task RemoveAsync(Guid playlistId);
+        Task<AllSongsPlaylist> GetAsync();
         Task<Playlist> GetAsync(Guid playlistId);
-        Task SaveAsync(Playlist playlist);
         Task<bool> ExistsAsync(Guid playlistId);
+        Task SaveAsync(PlaylistBase playlist);
+        Task RemoveAsync(Guid playlistId);
     }
 }

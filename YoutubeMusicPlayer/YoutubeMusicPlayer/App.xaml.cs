@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using SQLite;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.Xaml;
 using YoutubeMusicPlayer.MusicDownloading;
 
@@ -38,7 +40,7 @@ namespace YoutubeMusicPlayer
             _fileManager.CreateFolder();
             var files = _fileManager.ListMusicFiles().ToList();
             await Database.Synchronize(_connection, files);
-            
+            await Database.Seed(_connection);
         }
 
         protected override void OnSleep()
