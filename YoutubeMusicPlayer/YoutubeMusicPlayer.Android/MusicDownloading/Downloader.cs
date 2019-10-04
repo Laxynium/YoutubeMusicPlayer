@@ -16,6 +16,7 @@ namespace YoutubeMusicPlayer.Droid.MusicDownloading
         public async Task<Stream> GetStreamAsync(string url, Action<int> onProgress)
         {
             var webClient = new WebClient();
+            webClient.Headers.Add("user-agent", "PostmanRuntime/7.15.0'");
 
             webClient.DownloadProgressChanged += (o, ea) =>
             {
