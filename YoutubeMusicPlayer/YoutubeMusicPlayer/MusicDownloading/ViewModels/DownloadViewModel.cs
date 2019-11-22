@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Domain.Framework;
-using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Events;
 using YoutubeMusicPlayer.Domain.MusicDownloading.Repositories;
 using YoutubeMusicPlayer.Framework;

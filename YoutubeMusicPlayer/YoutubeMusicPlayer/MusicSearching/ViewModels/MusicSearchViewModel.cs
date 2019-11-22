@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
-using YoutubeMusicPlayer.AbstractLayer;
 using YoutubeMusicPlayer.Domain.MusicDownloading;
 using YoutubeMusicPlayer.Domain.MusicSearching;
 using YoutubeMusicPlayer.Framework;
