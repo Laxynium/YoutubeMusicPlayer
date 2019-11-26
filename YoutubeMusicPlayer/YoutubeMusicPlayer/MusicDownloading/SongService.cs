@@ -69,18 +69,5 @@ namespace YoutubeMusicPlayer.MusicDownloading
             }
         }
 
-        private async Task<SongPath> SaveFile(string title, Stream fileStream)
-        {
-            var filePath = _fileManager.GeneratePath(title);
-
-            if (_fileManager.Exists(filePath))
-            {
-                await _fileManager.DeleteFileAsync(filePath);
-            }
-
-            await _fileManager.CreateFileAsync(title, fileStream);
-
-            return new SongPath(filePath);
-        }
     }
 }
