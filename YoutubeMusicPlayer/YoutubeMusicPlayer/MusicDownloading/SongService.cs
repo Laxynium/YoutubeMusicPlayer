@@ -69,5 +69,10 @@ namespace YoutubeMusicPlayer.MusicDownloading
             }
         }
 
+        private Task<SongPath> SaveFile(string title, Stream stream)
+        {
+            return Task.FromResult(new SongPath(title));
+        }
+
     }
 }

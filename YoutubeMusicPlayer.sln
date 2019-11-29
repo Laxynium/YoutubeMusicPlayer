@@ -26,20 +26,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer.Persiste
 		{B47CC450-4948-4EB3-801A-DADD8255D894} = {B47CC450-4948-4EB3-801A-DADD8255D894}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.Application", "YoutubeMusicPlayer.Application\YoutubeMusicPlayer.Application.csproj", "{489437AD-7D12-438E-809B-DC1A9C620702}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer.Application", "YoutubeMusicPlayer.Application\YoutubeMusicPlayer.Application.csproj", "{489437AD-7D12-438E-809B-DC1A9C620702}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MusicDownloading", "MusicDownloading", "{DEED1827-7E7E-40C2-966F-E01D81E96055}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.MusicDownloading", "YoutubeMusicPlayer.MusicDownloading\YoutubeMusicPlayer.MusicDownloading.csproj", "{4077582F-0B0C-4BF5-B0EB-1C447525FBBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer.MusicDownloading", "YoutubeMusicPlayer.MusicDownloading\YoutubeMusicPlayer.MusicDownloading.csproj", "{4077582F-0B0C-4BF5-B0EB-1C447525FBBA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F22C501A-7864-42AA-B476-B2096D711E81} = {F22C501A-7864-42AA-B476-B2096D711E81}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{59C65009-1045-46B3-A000-7D9AEA08E2BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.Framework", "YoutubeMusicPlayer.Framework\YoutubeMusicPlayer.Framework.csproj", "{F22C501A-7864-42AA-B476-B2096D711E81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer.Framework", "YoutubeMusicPlayer.Framework\YoutubeMusicPlayer.Framework.csproj", "{F22C501A-7864-42AA-B476-B2096D711E81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeMusicPlayer.MusicDownloading.Tests", "YoutubeMusicPlayer.MusicDownloading.Tests\YoutubeMusicPlayer.MusicDownloading.Tests.csproj", "{8380FA35-42FE-40E5-8931-075189D582B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeMusicPlayer.MusicDownloading.Tests", "YoutubeMusicPlayer.MusicDownloading.Tests\YoutubeMusicPlayer.MusicDownloading.Tests.csproj", "{8380FA35-42FE-40E5-8931-075189D582B9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4077582F-0B0C-4BF5-B0EB-1C447525FBBA} = {4077582F-0B0C-4BF5-B0EB-1C447525FBBA}
 	EndProjectSection

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Transactions;
 using ChinhDo.Transactions.FileManager;
 using CSharpFunctionalExtensions;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.MusicDownloading.Domain;
 using YoutubeMusicPlayer.MusicDownloading.Events;
 using YoutubeMusicPlayer.MusicDownloading.Repositories;
+using YoutubeMusicPlayer.MusicDownloading.Services;
 
-namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
+namespace YoutubeMusicPlayer.MusicDownloading.Commands
 {
     internal class DownloadSongCommandHandler : ICommandHandler<DownloadSongCommand>
     {
@@ -36,33 +36,27 @@ namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
         }
         public async Task HandleAsync(DownloadSongCommand command)
         {
-            using (var transaction = new TransactionScope())
-            { 
-                if (await _songRepository.Exists(command.YtId))
-                    return;
+            if (await _songRepository.Exists(command.YtId))
+                return;
 
-                await _eventDispatcher.DispatchAsync(new DownloadStarted(command.YtId, command.SongTitle, command.ImageSource));
+            await _eventDispatcher.DispatchAsync(new DownloadStarted(command.YtId, command.SongTitle, command.ImageSource));
 
-                var (_, isFailure, value, error) = await DownloadMusic(command.YtId);
+            var (_, isFailure, value, error) = await DownloadMusic(command.YtId);
 
-                if (isFailure)
-                {
-                    await _eventDispatcher.DispatchAsync(new DownloadFailed(command.YtId, error.msg));
+            if (isFailure)
+            {
+                await _eventDispatcher.DispatchAsync(new DownloadFailed(command.YtId, error.msg));
 
-                    transaction.Complete();
-                    return;
-                }
-
-                var filePath = await SaveFile(command.SongTitle, value);
-
-                var song = new Song(filePath, command.YtId, command.SongTitle, command.ImageSource);
-
-                await _songRepository.AddAsync(song);
-
-                await _eventDispatcher.DispatchAsync(new DownloadFinished(song.Id, song.YtId, song.FilePath, song.Title, song.ImageSource));
-
-                transaction.Complete();
+                return;
             }
+
+            var filePath = await SaveFile(command.SongTitle, value);
+
+            var song = new Song(filePath, command.YtId, command.SongTitle, command.ImageSource);
+
+            await _songRepository.AddAsync(song);
+
+            await _eventDispatcher.DispatchAsync(new DownloadFinished(song.Id, song.YtId, song.FilePath, song.Title, song.ImageSource));
 
         }
 
@@ -79,6 +73,9 @@ namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
 
         private async Task<string> SaveFile(string title, byte[] fileStream)
         {
+            if(!_fileManager.DirectoryExists(_options.MusicDirectory))
+                _fileManager.CreateDirectory(_options.MusicDirectory);
+
             var fileName = title.Replace(" ", "_").Replace(":", "_");
             var savePath = Path.Combine(_options.MusicDirectory, fileName+".mp3");
 
@@ -87,16 +84,6 @@ namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
             _fileManager.WriteAllBytes(savePath, fileStream);
             await Task.CompletedTask;
             return savePath;
-            //var filePath = _fileManager.GeneratePath(title);
-
-            //if (_fileManager.Exists(filePath))
-            //{
-            //    await _fileManager.DeleteFileAsync(filePath);
-            //}
-
-            //await _fileManager.CreateFileAsync(title, fileStream);
-
-            //return new SongPath(filePath);
         }
     }
 }

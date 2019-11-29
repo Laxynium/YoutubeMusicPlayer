@@ -1,6 +1,6 @@
 ﻿using YoutubeMusicPlayer.Framework;
 
-namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
+namespace YoutubeMusicPlayer.MusicDownloading.Commands
 {
     public class DownloadSongCommand : ICommand
     {

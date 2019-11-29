@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 
-namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
+namespace YoutubeMusicPlayer.MusicDownloading.Services
 {
-    public class YtMp3DownloadLinkGenerator
+    internal class YtMp3DownloadLinkGenerator
     {
-        private readonly IScriptIdEncoder _encoder;
+        private readonly ScriptIdEncoder _encoder;
 
         private readonly Dictionary<int, string> _servers=new Dictionary<int, string>
         {
@@ -61,12 +61,12 @@ namespace YoutubeMusicPlayer.MusicDownloading.Commands.Download
 
         private bool _serverNotFoundYet = false;
 
-        public YtMp3DownloadLinkGenerator(IScriptIdEncoder encoder)
+        public YtMp3DownloadLinkGenerator()
         { 
-            _encoder = encoder;
+            _encoder = new ScriptIdEncoder();
         }
 
-        public async Task<string> GenerateLinkAsync(string musicIdFromYoutube)
+        internal async Task<string> GenerateLinkAsync(string musicIdFromYoutube)
         {
             var response = await GetResponseAsync(musicIdFromYoutube);
 
