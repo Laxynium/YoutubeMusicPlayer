@@ -12,9 +12,14 @@ namespace YoutubeMusicPlayer.MusicDownloading.Domain
 
         private Song() { }
 
-        public Song(string filePath, string ytId, string title, string imageSource)
+        public Song(string filePath, string ytId, string title, string imageSource):
+            this(Guid.NewGuid(), filePath, ytId, title, imageSource)
         {
-            Id = Guid.NewGuid();
+        }
+
+        private Song(Guid id,string filePath, string ytId, string title, string imageSource)
+        {
+            Id = id;
             FilePath = filePath;
             YtId = ytId;
             Title = title;

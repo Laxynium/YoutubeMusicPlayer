@@ -1,34 +1,40 @@
-﻿using System;
-using ChinhDo.Transactions.FileManager;
+﻿using ChinhDo.Transactions.FileManager;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using SimpleInjector;
-using YoutubeMusicPlayer.Framework;
-using YoutubeMusicPlayer.MusicDownloading.Repositories;
-using YoutubeMusicPlayer.MusicDownloading.Services;
+using YoutubeMusicPlayer.Framework.Decorators;
+using YoutubeMusicPlayer.Framework.Messaging;
+using YoutubeMusicPlayer.MusicDownloading.Application;
+using YoutubeMusicPlayer.MusicDownloading.Application.Repositories;
+using YoutubeMusicPlayer.MusicDownloading.Application.Services;
+using YoutubeMusicPlayer.MusicDownloading.Infrastructure;
 
 namespace YoutubeMusicPlayer.MusicDownloading
 {
     public class MusicDownloadingStartup
     {
-        public static void Initialize(Container container, string databaseFileName, string musicDirectoryPath)
+        public static void Initialize(Container container, string connectionString, string musicDirectoryPath)
         {
-            InitializeIocContainer(container, databaseFileName, musicDirectoryPath);
-            InitializeDatabase();
+            InitializeIocContainer(container, connectionString, musicDirectoryPath);
+            InitializeDatabase(connectionString);
+            InitializeFilesystem(musicDirectoryPath);
         }
 
-        private static void InitializeIocContainer(Container container, string databaseFileName, string musicDirectoryPath)
+        private static void InitializeIocContainer(Container container, string connectionString, string musicDirectoryPath)
         {
+            container.Register(()=>new SqliteConnection(connectionString), Lifestyle.Scoped);
             container.Register(
                 () =>
                 {
                     var builder = new DbContextOptionsBuilder();
-                    builder.UseSqlite($"Filename={databaseFileName}");
+                    builder.UseSqlite(container.GetInstance<SqliteConnection>())
+                        .ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
                     var dbContext = new MusicDownloadingDbContext(builder.Options);
-                    dbContext.Database.Migrate();
                     return dbContext;
                 },Lifestyle.Scoped);
 
-            container.Register<UnitOfWork>(Lifestyle.Scoped);
+            container.Register<DbContext>(container.GetInstance<MusicDownloadingDbContext>,Lifestyle.Scoped);
 
             container.Register<IFileManager, TxFileManager>(Lifestyle.Scoped);
 
@@ -46,18 +52,25 @@ namespace YoutubeMusicPlayer.MusicDownloading
 
             container.RegisterSingleton<Downloader>();
 
-            container.Collection.Register(typeof(IEventHandler<>), typeof(MusicDownloadingPackage).Assembly);
+            container.Collection.Register(typeof(IEventHandler<>), typeof(MusicDownloadingStartup).Assembly);
 
-            container.Register(typeof(ICommandHandler<>), typeof(MusicDownloadingPackage).Assembly, Lifestyle.Scoped);
+            container.Register(typeof(ICommandHandler<>), typeof(MusicDownloadingStartup).Assembly, Lifestyle.Scoped);
 
             container.RegisterDecorator(typeof(ICommandHandler<>), typeof(UnitOfWorkCommandHandlerDecorator<>), Lifestyle.Scoped);
 
             container.RegisterDecorator(typeof(ICommandHandler<>), typeof(TransactionScopeCommandHandlerDecorator<>), Lifestyle.Singleton);
         }
 
-        private static void InitializeDatabase()
+        private static void InitializeDatabase(string connectionString)
         {
-            
+            DbMigrator.SetupDb(connectionString);
+        }
+
+        private static void InitializeFilesystem(string musicDirectoryPath)
+        {
+            var manager = new TxFileManager();
+            if(!manager.DirectoryExists(musicDirectoryPath))
+                manager.CreateDirectory(musicDirectoryPath);
         }
     }
 }

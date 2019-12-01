@@ -1,0 +1,7 @@
+﻿CREATE TABLE Songs(
+	Id TEXT PRIMARY KEY,
+	FilePath TEXT NOT NULL,
+	YtId TEXT NOT NULL,
+	Title TEXT NOT NULL,
+	ImageSource TEXT NOT NULL
+)

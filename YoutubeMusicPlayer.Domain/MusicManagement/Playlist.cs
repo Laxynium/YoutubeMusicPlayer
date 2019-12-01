@@ -6,7 +6,7 @@ namespace YoutubeMusicPlayer.Domain.MusicManagement
 {
     public class Playlist : PlaylistBase
     {
-        public Playlist(PlaylistName name, IEnumerable<Song> songs = null):this(PlaylistId.FromGuid(new Guid()), name,songs)
+        public Playlist(PlaylistName name, IEnumerable<Song> songs = null):this(PlaylistId.FromGuid(Guid.NewGuid()), name,songs)
         {
         }
 
