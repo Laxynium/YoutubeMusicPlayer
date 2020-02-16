@@ -7,7 +7,7 @@
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Rg.Plugins.Popup" Version="1.2.0.223" />
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.4.0.991265</Version>
+      <Version>4.4.0.991640</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

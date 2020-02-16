@@ -1,9 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
-using System.Transactions;
-using ChinhDo.Transactions.FileManager;
 using CSharpFunctionalExtensions;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.Messaging;

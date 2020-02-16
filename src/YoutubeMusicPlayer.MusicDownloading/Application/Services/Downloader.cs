@@ -22,7 +22,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.Application.Services
                 }
                 catch (Exception e)
                 {
-                    //
+                    //skip
                 }
                 
             };

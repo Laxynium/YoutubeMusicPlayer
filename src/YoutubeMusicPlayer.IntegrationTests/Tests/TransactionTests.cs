@@ -2,12 +2,10 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Transactions;
-using ChinhDo.Transactions.FileManager;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using YoutubeMusicPlayer.Framework;
-using YoutubeMusicPlayer.MusicDownloading.Application.Services;
 using YoutubeMusicPlayer.MusicDownloading.Domain;
 using YoutubeMusicPlayer.MusicDownloading.Infrastructure;
 

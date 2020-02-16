@@ -1,5 +1,4 @@
 ﻿using System;
-using YoutubeMusicPlayer.MusicDownloading.Domain;
 
 namespace YoutubeMusicPlayer.MusicDownloading.ReadModel
 {

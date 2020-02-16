@@ -28,7 +28,7 @@ namespace YoutubeMusicPlayer.Framework.Decorators
 
                 await _dbContext.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 await _fileManager.Rollback();
                 throw;

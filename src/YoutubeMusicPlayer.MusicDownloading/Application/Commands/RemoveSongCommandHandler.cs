@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using ChinhDo.Transactions.FileManager;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.Messaging;
 using YoutubeMusicPlayer.MusicDownloading.Application.Events;
