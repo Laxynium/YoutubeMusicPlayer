@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using SimpleInjector;
 
 namespace YoutubeMusicPlayer.Framework.Messaging
@@ -17,11 +20,25 @@ namespace YoutubeMusicPlayer.Framework.Messaging
             {
                 var type = typeof(IEventHandler<>);
                 var genericType = type.MakeGenericType(@event.GetType());
-                var handlers = _container.GetAllInstances(genericType);
+                var handlers = TryGetAllInstances(genericType);
                 foreach (dynamic handler in handlers)
                 {
                     await handler.HandleAsync((dynamic)@event);
                 }
+            }
+        }
+
+        //for some reason simple injector throws exception when there are no handlers
+        private IEnumerable<object> TryGetAllInstances(Type genericType)
+        {
+            try
+            {
+                return _container.GetAllInstances(genericType);
+            }
+            catch (ActivationException e)
+            {
+                //TODO log missing handlers
+                return Enumerable.Empty<object>();
             }
         }
     }
