@@ -2,7 +2,7 @@
 
 namespace YoutubeMusicPlayer.MusicDownloading.Application.Events
 {
-    internal class DownloadProgressed : IEvent
+    public class DownloadProgressed : IEvent
     {
         public string YoutubeId { get; }
         public double Progress { get; }

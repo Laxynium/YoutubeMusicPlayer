@@ -33,10 +33,9 @@ namespace YoutubeMusicPlayer.MusicDownloading
                     var dbContext = new MusicDownloadingDbContext(builder.Options);
                     return dbContext;
                 },Lifestyle.Scoped);
+            container.Register(()=>new DbContextOptionsBuilder().UseSqlite(connectionString).Options,Lifestyle.Singleton);
 
             container.Register<DbContext>(container.GetInstance<MusicDownloadingDbContext>, Lifestyle.Scoped);
-
-            //container.Register<IFileManager, TxFileManager>(Lifestyle.Scoped);
 
             container.Register<ISongRepository, SongRepository>(Lifestyle.Scoped);
 
@@ -48,9 +47,10 @@ namespace YoutubeMusicPlayer.MusicDownloading
 
             container.RegisterSingleton<Downloader>();
 
-            container.Collection.Register(typeof(IEventHandler<>), typeof(MusicDownloadingStartup).Assembly);
-
             container.Register(typeof(ICommandHandler<>), typeof(MusicDownloadingStartup).Assembly, Lifestyle.Scoped);
+
+            //Read model
+            container.Register(typeof(IQueryHandler<,>),typeof(MusicDownloadingStartup).Assembly,Lifestyle.Singleton);
         }
 
         private static void InitializeDatabase(string connectionString)

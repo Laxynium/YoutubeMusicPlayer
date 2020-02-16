@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.Messaging;
@@ -47,14 +48,14 @@ namespace YoutubeMusicPlayer.MusicSearching.ViewModels
         {
             _commandDispatcher = commandDispatcher;
             _queryDispatcher = queryDispatcher;
-            MusicSearchCommand = new Command(SearchMusic);
-            SelectItemCommand = new Command<MusicViewModel>(SelectItem);
+            MusicSearchCommand = new Command(async()=>{await SearchMusic();});
+            SelectItemCommand = new Command<MusicViewModel>(async (x) => { await SelectItem(x);});
             TextChangeCommand = new Command(ChangeText);
         }
 
-        private async void SearchMusic()
+        private async Task SearchMusic()
         {
-
+            
             var title = SearchText;
 
             if (String.IsNullOrWhiteSpace(title)) 
@@ -76,7 +77,7 @@ namespace YoutubeMusicPlayer.MusicSearching.ViewModels
             IsSearching = false;
         }
 
-        private async void SelectItem(MusicViewModel music)
+        private async Task SelectItem(MusicViewModel music)
         {
             if (music == null) return;
 

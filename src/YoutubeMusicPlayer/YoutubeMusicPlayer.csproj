@@ -4,6 +4,7 @@
     <PackageTargetFallback>$(PackageTargetFallback);portable-win+net45+wp8+win81+wpa8</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Rg.Plugins.Popup" Version="1.2.0.223" />
     <PackageReference Include="Xamarin.Forms">
       <Version>4.4.0.991265</Version>
@@ -51,6 +52,9 @@
     <EmbeddedResource Update="PlaylistManagement\AddSongsPopupPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MusicDownloading\Queries\" />
   </ItemGroup>
 
 </Project>

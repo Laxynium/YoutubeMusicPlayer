@@ -5,9 +5,7 @@ using ChinhDo.Transactions.FileManager;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Logging;
 using Xunit;
-using YoutubeMusicPlayer.MusicDownloading.Application.Repositories;
 using YoutubeMusicPlayer.MusicDownloading.Domain;
 using YoutubeMusicPlayer.MusicDownloading.Infrastructure;
 

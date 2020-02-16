@@ -57,7 +57,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.Application.Commands
 
             await _songRepository.AddAsync(song);
 
-            await _eventDispatcher.DispatchAsync(new DownloadFinished(song.Id, song.YtId, song.FilePath, song.Title, song.ImageSource));
+            await _eventDispatcher.DispatchAsync(new SongDownloaded(song.Id, song.YtId, song.FilePath, song.Title, song.ImageSource));
         }
 
         private async Task<Result<byte[]>> DownloadMusic(string ytId)

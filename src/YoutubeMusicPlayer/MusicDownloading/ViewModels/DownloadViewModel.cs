@@ -1,16 +1,24 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Framework;
-using YoutubeMusicPlayer.Framework.MessangingCenter;
+using YoutubeMusicPlayer.Framework.Messaging;
+using YoutubeMusicPlayer.MusicDownloading.Application.Events;
+using YoutubeMusicPlayer.MusicDownloading.ReadModel;
 using ICommand = System.Windows.Input.ICommand;
 
 namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 {
-    public class DownloadViewModel : ViewModelBase
+    public class DownloadViewModel : ViewModelBase,
+        IEventHandler<DownloadStarted>,
+        IEventHandler<DownloadProgressed>,
+        IEventHandler<SongDownloaded>,
+        IEventHandler<DownloadFailed>
 
     {
         private readonly ITabbedPageService _tabbedPageService;
+        private readonly IQueryDispatcher _queryDispatcher;
 
         public ICommand UpdateDataCommand;
 
@@ -44,12 +52,14 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
         }
 
         public DownloadViewModel(
-            ITabbedPageService tabbedPageService
+            ITabbedPageService tabbedPageService,
+            IQueryDispatcher queryDispatcher
         )
         {
             _tabbedPageService = tabbedPageService;
+            _queryDispatcher = queryDispatcher;
 
-            //UpdateDataCommand = new Command(async () => await UpdateData());
+            UpdateDataCommand = new Command(async () => await UpdateData());
             SelectItemCommand = new Command<MusicViewModel>(async (m) => await SelectItem(m));
             HideErrorCommand = new Command(() =>
             {
@@ -57,52 +67,51 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             });
         }
 
-        //public Task HandleAsync(SongCreated @event)
-        //{
-        //    var vM = Songs.First(x => x.YtVideoId == @event.YoutubeId);
-        //    vM.SongPath = @event.FilePath;
-        //    return Task.CompletedTask;
-        //}
+        public Task HandleAsync(SongDownloaded @event)
+        {
+            var vM = Songs.First(x => x.YtVideoId == @event.YoutubeId);
+            vM.SongPath = @event.FilePath;
+            return Task.CompletedTask;
+        }
 
-        //public Task HandleAsync(DownloadProgressed e)
-        //{
-        //    var song = Songs.First(x => x.YtVideoId == e.YoutubeId);
-        //    song.Value = e.Progress;
-        //    return Task.CompletedTask;;
-        //}
+        public Task HandleAsync(DownloadProgressed e)
+        {
+            var song = Songs.First(x => x.YtVideoId == e.YoutubeId);
+            song.Value = e.Progress;
+            return Task.CompletedTask;
+        }
 
-        //public Task HandleAsync(DownloadStarted e)
-        //{
-        //    Songs.Add(new MusicViewModel { ImageSource = e.ImageSource, Title = e.Title, YtVideoId = e.YoutubeId });
-        //    return Task.CompletedTask;
-        //}
+        public Task HandleAsync(DownloadStarted e)
+        {
+            Songs.Add(new MusicViewModel { ImageSource = e.ImageSource, Title = e.SongTitle, YtVideoId = e.YoutubeId });
+            return Task.CompletedTask;
+        }
 
-        //public Task HandleAsync(DownloadFailed e)
-        //{
-        //    Songs.Remove(Songs.First(x => x.YtVideoId == e.YoutubeId));
-        //    ErrorOccured = true;
-        //    ErrorMessage = e.Message;
-        //    return Task.CompletedTask;
-        //}
+        public Task HandleAsync(DownloadFailed e)
+        {
+            Songs.Remove(Songs.First(x => x.YtVideoId == e.YoutubeId));
+            ErrorOccured = true;
+            ErrorMessage = e.Message;
+            return Task.CompletedTask;
+        }
 
-        //private async Task UpdateData()
-        //{
-        //    var songs = (await _songRepository.GetAllAsync())
-        //        .ToList().Select((x) => new MusicViewModel
-        //        {
-        //            SongPath = x.SongPath,
-        //            YtVideoId = x.YoutubeId,
-        //            Title = x.Title,
-        //            ImageSource = x.ImageSource,
-        //            Value = 1D
-        //        }).ToList();
-        
-        //    songs.ForEach(x =>
-        //    {
-        //        if(Songs.SingleOrDefault(y=>y.YtVideoId == x.YtVideoId) is null)
-        //            Songs.Add(x);
-        //    });
-        //}
+        private async Task UpdateData()
+        {
+            var songs = (await _queryDispatcher.DispatchAsync(new GetAllDownloadedSongsQuery()))
+                .ToList().Select((x) => new MusicViewModel
+                {
+                    YtVideoId = x.YtId,
+                    Title = x.Title,
+                    ImageSource = x.ImageSource,
+                    Value = 1D
+                }).ToList();
+
+            songs.ForEach(x =>
+            {
+                if (Songs.SingleOrDefault(y => y.YtVideoId == x.YtVideoId) is null)
+                    Songs.Add(x);
+            });
+        }
 
         private async Task SelectItem(MusicViewModel music)
         {
@@ -110,9 +119,9 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 
             if (music?.SongPath == null) return;
 
-            MessagingCenter.Send(this,GlobalNames.MusicSelected, new MusicEventArgs(){Music = music});
+            //MessagingCenter.Send(this,GlobalNames.MusicSelected, new MusicEventArgs(){Music = music});
 
-            await _tabbedPageService.ChangePage(0);
+            //await _tabbedPageService.ChangePage(0);
         }
     }
 }

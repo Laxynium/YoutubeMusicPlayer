@@ -56,7 +56,11 @@ namespace YoutubeMusicPlayer.MusicDownloading.Application.Services
             {39, "tft"},
             {40, "tjj"},
             {41, "tlf"},
-            {42, "ttj"}
+            {42, "ttj"},
+            {43, "tif"},
+            {44,"ftt" },
+            {45,"llt" },
+            {46,"jrr" },
         };
 
         private bool _serverNotFoundYet = false;

@@ -1,5 +1,5 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 {
@@ -14,15 +14,15 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             BindingContext = _viewModel = viewModel;
         }
         
-        protected override  void OnAppearing()
+        protected override async void OnAppearing()
         {
-              base.OnAppearing();
-             //_viewModel.UpdateDataCommand.Execute(null);
+            base.OnAppearing();
+            await Task.Run(()=> _viewModel.UpdateDataCommand.Execute(null));
         }
 
-        private void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        private async void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            _viewModel.SelectItemCommand.Execute(e.SelectedItem as MusicViewModel);
+            await Task.Run(()=> _viewModel.SelectItemCommand.Execute(e.SelectedItem as MusicViewModel));
         }
     }
 }

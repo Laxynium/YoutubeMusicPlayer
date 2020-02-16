@@ -24,13 +24,9 @@ namespace YoutubeMusicPlayer.Framework.Decorators
         {
             try
             {
-                await _connection.OpenAsync();
-                var dbTransaction = await _connection.BeginTransactionAsync();
-
                 await _innerHandler.HandleAsync(command);
 
                 await _dbContext.SaveChangesAsync();
-                await dbTransaction.CommitAsync();
             }
             catch (Exception)
             {

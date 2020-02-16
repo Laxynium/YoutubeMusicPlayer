@@ -9,7 +9,6 @@ namespace YoutubeMusicPlayer.MusicDownloading.Infrastructure
         public DbSet<Song> Songs { get; set; }
         public MusicDownloadingDbContext(DbContextOptions options):base(options)
         {
-            Database.AutoTransactionsEnabled = false;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

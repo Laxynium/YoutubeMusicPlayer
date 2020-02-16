@@ -3,7 +3,7 @@ using YoutubeMusicPlayer.Framework.Messaging;
 
 namespace YoutubeMusicPlayer.MusicDownloading.Application.Events
 {
-    internal class DownloadFinished : IEvent
+    public class SongDownloaded : IEvent
     {
         public Guid Id { get; }
         public string YoutubeId { get; }
@@ -11,7 +11,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.Application.Events
         public string Title { get; }
         public string ImageSource { get; }
 
-        public DownloadFinished(Guid id , string youtubeId, string filePath, string title, string imageSource)
+        public SongDownloaded(Guid id , string youtubeId, string filePath, string title, string imageSource)
         {
             Id = id;
             YoutubeId = youtubeId;

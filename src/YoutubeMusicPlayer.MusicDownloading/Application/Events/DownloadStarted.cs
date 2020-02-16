@@ -2,7 +2,7 @@
 
 namespace YoutubeMusicPlayer.MusicDownloading.Application.Events
 {
-    internal class DownloadStarted : IEvent
+    public class DownloadStarted : IEvent
     {
         public string YoutubeId { get; }
         public string SongTitle { get; }

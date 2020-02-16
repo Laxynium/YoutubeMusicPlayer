@@ -3,7 +3,7 @@ using YoutubeMusicPlayer.Framework.Messaging;
 
 namespace YoutubeMusicPlayer.MusicDownloading.Application.Events
 {
-    internal class SongRemoved : IEvent
+    public class SongRemoved : IEvent
     {
         public Guid SongId { get; }
 

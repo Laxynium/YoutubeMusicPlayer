@@ -12,7 +12,7 @@ namespace YoutubeMusicPlayer.Framework
 
             container.Register<IEventDispatcher, EventDispatcher>(Lifestyle.Singleton);
 
-            container.Register<IQueryDispatcher,QueryDispatcher>(Lifestyle.Singleton);
+            container.Register<IQueryDispatcher, QueryDispatcher>(Lifestyle.Singleton);
 
             container.RegisterDecorator(typeof(ICommandHandler<>), typeof(UnitOfWorkCommandHandlerDecorator<>), Lifestyle.Scoped);
 
