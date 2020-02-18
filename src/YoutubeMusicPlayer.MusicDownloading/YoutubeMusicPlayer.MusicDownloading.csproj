@@ -11,14 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Infrastructure\Scripts\0001_Create_Table_Songs.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Infrastructure\Scripts\0001_Create_Table_Songs.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
     <PackageReference Include="dbup-sqlite" Version="4.3.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.18" />

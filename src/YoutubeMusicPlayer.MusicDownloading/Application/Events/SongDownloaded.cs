@@ -6,18 +6,18 @@ namespace YoutubeMusicPlayer.MusicDownloading.Application.Events
     public class SongDownloaded : IEvent
     {
         public Guid Id { get; }
-        public string YoutubeId { get; }
-        public string FilePath { get; }
+        public string YtId { get; }
+        public byte[] SongData { get; }
         public string Title { get; }
-        public string ImageSource { get; }
+        public string ThumbnailUrl { get; }
 
-        public SongDownloaded(Guid id , string youtubeId, string filePath, string title, string imageSource)
+        public SongDownloaded(Guid id , string ytId, byte[] songData, string title, string thumbnailUrl)
         {
             Id = id;
-            YoutubeId = youtubeId;
+            YtId = ytId;
             Title = title;
-            ImageSource = imageSource;
-            FilePath = filePath;
+            ThumbnailUrl = thumbnailUrl;
+            SongData = songData;
         }
     }
 }

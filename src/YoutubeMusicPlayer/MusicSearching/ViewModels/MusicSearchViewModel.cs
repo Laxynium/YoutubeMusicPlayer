@@ -6,7 +6,7 @@ using Xamarin.Forms;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.Messaging;
 using YoutubeMusicPlayer.MusicBrowsing;
-using YoutubeMusicPlayer.MusicDownloading.Application.Commands;
+using YoutubeMusicPlayer.MusicManagement.Application.Commands;
 using ICommand = System.Windows.Input.ICommand;
 
 namespace YoutubeMusicPlayer.MusicSearching.ViewModels
@@ -83,9 +83,10 @@ namespace YoutubeMusicPlayer.MusicSearching.ViewModels
 
             SelectedMusic = null;
 
-            await _commandDispatcher.DispatchAsync(new DownloadSongCommand(Guid.NewGuid(),
+            await _commandDispatcher.DispatchAsync(new AddSongFromYoutube(Guid.NewGuid(),
                 music.YtVideoId,
                 music.Title,
+                string.Empty,
                 music.ImageSource));
         }
 

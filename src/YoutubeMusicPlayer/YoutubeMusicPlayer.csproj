@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\YoutubeMusicPlayer.MusicBrowsing\YoutubeMusicPlayer.MusicBrowsing.csproj" />
     <ProjectReference Include="..\YoutubeMusicPlayer.MusicDownloading\YoutubeMusicPlayer.MusicDownloading.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicManagement\YoutubeMusicPlayer.MusicManagement.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="PlaylistManagement\PlaylistManagementPage.xaml.cs">

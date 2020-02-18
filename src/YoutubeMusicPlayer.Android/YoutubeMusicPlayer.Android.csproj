@@ -109,9 +109,9 @@
     <AndroidResource Include="Resources\values\styles.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\YoutubeMusicPlayer.Domain\YoutubeMusicPlayer.Domain.csproj">
-      <Project>{B47CC450-4948-4EB3-801A-DADD8255D894}</Project>
-      <Name>YoutubeMusicPlayer.Domain</Name>
+    <ProjectReference Include="..\YoutubeMusicPlayer.Application\YoutubeMusicPlayer.Application.csproj">
+      <Project>{D84A61DC-D55D-4C7A-B931-72193DA0ED59}</Project>
+      <Name>YoutubeMusicPlayer.Application</Name>
     </ProjectReference>
     <ProjectReference Include="..\YoutubeMusicPlayer.Framework\YoutubeMusicPlayer.Framework.csproj">
       <Project>{F22C501A-7864-42AA-B476-B2096D711E81}</Project>
@@ -124,6 +124,10 @@
     <ProjectReference Include="..\YoutubeMusicPlayer.MusicDownloading\YoutubeMusicPlayer.MusicDownloading.csproj">
       <Project>{4077582F-0B0C-4BF5-B0EB-1C447525FBBA}</Project>
       <Name>YoutubeMusicPlayer.MusicDownloading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicManagement\YoutubeMusicPlayer.MusicManagement.csproj">
+      <Project>{9764B92E-A4C8-4E36-AD27-5DB1E2A53515}</Project>
+      <Name>YoutubeMusicPlayer.MusicManagement</Name>
     </ProjectReference>
     <ProjectReference Include="..\YoutubeMusicPlayer\YoutubeMusicPlayer.csproj">
       <Project>{4523b2a8-6f23-4a48-9f8c-7a73264ddbd6}</Project>
@@ -140,6 +144,17 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <Version>3.1.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>3.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design">
+      <Version>1.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Platforms">
       <Version>3.1.0</Version>
@@ -197,6 +212,9 @@
     </PackageReference>
     <PackageReference Include="System.Globalization.Calendars">
       <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Interactive.Async">
+      <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.IO">
       <Version>4.3.0</Version>

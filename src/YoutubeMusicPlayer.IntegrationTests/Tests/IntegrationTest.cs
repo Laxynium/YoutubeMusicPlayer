@@ -1,55 +1,48 @@
 using System;
 using System.IO;
-using ChinhDo.Transactions.FileManager;
+using Microsoft.EntityFrameworkCore;
 using SimpleInjector;
-using SimpleInjector.Lifestyles;
-using YoutubeMusicPlayer.Framework;
+using YoutubeMusicPlayer.Application;
 using YoutubeMusicPlayer.Framework.Messaging;
 
 namespace YoutubeMusicPlayer.MusicDownloading.IntegrationTests.Tests
 {
     public class IntegrationTest
     {
-        public ICommandDispatcher Dispatcher { get; private set; }
-        public static readonly string DbLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "TestDb.db3");
-        public static readonly string ConnectionString = $"Data Source={DbLocation}";
-        public static readonly string MusicDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "testMusic");
-        public IntegrationTest()
+        protected readonly Container Container;
+        protected ICommandDispatcher CommandDispatcher => Container.GetInstance<ICommandDispatcher>();
+        protected IQueryDispatcher QueryDispatcher => Container.GetInstance<IQueryDispatcher>();
+
+        protected static readonly string DbLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "TestingDatabase.db3");
+        protected static readonly string MusicDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "testingMusicDirectory");
+        protected DbContextOptions ContextOptions = new DbContextOptionsBuilder().UseSqlite($"Data Source={DbLocation}").Options;
+        protected IntegrationTest()
         {
             ClearDatabase();
             ClearFiles();
-            SetupDispatcher();
+            Container = SetupContainer();
         }
 
-        private void SetupDispatcher()
+        private static Container SetupContainer()
         {
             var container = new Container();
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-            container.Options.DefaultLifestyle = Lifestyle.Singleton;
-            SetupModules(container);
-
+            container.SetupApplication(
+                new YoutubeMusicPlayerOptions {MusicDirectoryPath = MusicDirectory, DatabasePath = DbLocation}
+            );
             container.Verify(VerificationOption.VerifyAndDiagnose);
-            Dispatcher = container.GetInstance<ICommandDispatcher>();
+            return container;
         }
 
         private void ClearDatabase()
         {
-            var fileManager = new TxFileManager();
-            if(fileManager.FileExists(DbLocation))
-                fileManager.Delete(DbLocation);
+            if(File.Exists(DbLocation))
+                File.Delete(DbLocation);
         } 
 
         private void ClearFiles()
         {
-            var fileManager = new TxFileManager();
-            if(fileManager.DirectoryExists(MusicDirectory))
-                fileManager.DeleteDirectory(MusicDirectory);
-        }
-
-        private void SetupModules(Container container)
-        {
-            FrameworkStartup.Initialize(container);
-            MusicDownloadingStartup.Initialize(container, ConnectionString, MusicDirectory);
+            if(Directory.Exists(MusicDirectory))
+                Directory.Delete(MusicDirectory,true);
         }
     }
 }

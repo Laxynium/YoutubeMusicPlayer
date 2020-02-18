@@ -5,13 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\0001_Create_Table_Songs.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Scripts\0001_Create_Table_Songs.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.6" />
   </ItemGroup>
 
   <ItemGroup>

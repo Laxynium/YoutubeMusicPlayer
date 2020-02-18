@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SimpleInjector" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YoutubeMusicPlayer.Framework\YoutubeMusicPlayer.Framework.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicBrowsing\YoutubeMusicPlayer.MusicBrowsing.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicDownloading\YoutubeMusicPlayer.MusicDownloading.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicManagement\YoutubeMusicPlayer.MusicManagement.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicPlaying\YoutubeMusicPlayer.MusicPlaying.csproj" />
+  </ItemGroup>
+</Project>
