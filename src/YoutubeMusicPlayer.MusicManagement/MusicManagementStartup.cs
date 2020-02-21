@@ -52,6 +52,7 @@ namespace YoutubeMusicPlayer.MusicManagement
             container.RegisterSingleton<YtMp3DownloadLinkGenerator>();
             container.RegisterSingleton<Downloader>();
             container.RegisterSingleton<IYoutubeService,YoutubeService>();
+            container.RegisterSingleton<IDownloadProgressNotifier,DownloadProgressNotifier>();
             container.Register<IMainPlaylistRepository, MainPlaylistRepository>(Lifestyle.Scoped);
             container.Register(typeof(ICommandHandler<>), typeof(MusicManagementStartup).Assembly, Lifestyle.Scoped);
         }

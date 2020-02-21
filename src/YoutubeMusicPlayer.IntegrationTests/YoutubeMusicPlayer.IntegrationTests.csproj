@@ -119,6 +119,10 @@
       <Project>{9764B92E-A4C8-4E36-AD27-5DB1E2A53515}</Project>
       <Name>YoutubeMusicPlayer.MusicManagement</Name>
     </ProjectReference>
+    <ProjectReference Include="..\YoutubeMusicPlayer\YoutubeMusicPlayer.csproj">
+      <Project>{4523B2A8-6F23-4A48-9F8C-7A73264DDBD6}</Project>
+      <Name>YoutubeMusicPlayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

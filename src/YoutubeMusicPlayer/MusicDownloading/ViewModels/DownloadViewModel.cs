@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.Messaging;
+using YoutubeMusicPlayer.MusicDownloading.UI;
 using ICommand = System.Windows.Input.ICommand;
 
 namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
@@ -14,6 +15,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
     {
         private readonly ITabbedPageService _tabbedPageService;
         private readonly IQueryDispatcher _queryDispatcher;
+        private readonly SongDownloadsStore _downloadsStore;
 
         public ICommand UpdateDataCommand;
 
@@ -48,11 +50,13 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 
         public DownloadViewModel(
             ITabbedPageService tabbedPageService,
-            IQueryDispatcher queryDispatcher
+            IQueryDispatcher queryDispatcher,
+            SongDownloadsStore downloadsStore 
         )
         {
             _tabbedPageService = tabbedPageService;
             _queryDispatcher = queryDispatcher;
+            _downloadsStore = downloadsStore;
 
             UpdateDataCommand = new Command(async () => await UpdateData());
             SelectItemCommand = new Command<MusicViewModel>(async (m) => await SelectItem(m));
@@ -60,35 +64,30 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             {
                 ErrorOccured = false;
             });
+
+            SubscribeForDownloadNotifications();
         }
 
-        //public Task HandleAsync(SongDownloaded @event)
-        //{
-        //    var vM = Songs.First(x => x.YtVideoId == @event.YtId);
-        //    //vM.SongPath = @event.SongData;
-        //    return Task.CompletedTask;
-        //}
+        public void SubscribeForDownloadNotifications()
+        {
+            _downloadsStore.Subscribe(
+                x =>
+                {
+                    Songs.Add(new MusicViewModel{Id = x.SongId, Title = x.Title, ImageSource = x.ThumbnailUrl, Value = 0});
+                },
+                (song) =>
+                {
+                    var songToUpdate = Songs.FirstOrDefault(s => s.Id == song.SongId);
+                    if (songToUpdate is null) return;
 
-        //public Task HandleAsync(DownloadProgressed e)
-        //{
-        //    var song = Songs.First(x => x.YtVideoId == e.YoutubeId);
-        //    song.Value = e.Progress;
-        //    return Task.CompletedTask;
-        //}
-
-        //public Task HandleAsync(DownloadStarted e)
-        //{
-        //    Songs.Add(new MusicViewModel { ImageSource = e.ImageSource, Title = e.SongTitle, YtVideoId = e.YoutubeId });
-        //    return Task.CompletedTask;
-        //}
-
-        //public Task HandleAsync(DownloadFailed e)
-        //{
-        //    Songs.Remove(Songs.First(x => x.YtVideoId == e.YoutubeId));
-        //    ErrorOccured = true;
-        //    ErrorMessage = e.Message;
-        //    return Task.CompletedTask;
-        //}
+                    var _ = song.Status switch
+                    {
+                        Status.InProgress => songToUpdate.Value = song.Progress / 100D,
+                        Status.Failure => songToUpdate.Value = 0D,
+                        Status.Completed => songToUpdate.Value = 1D
+                    };
+                });
+        }
 
         private async Task UpdateData()
         {
@@ -102,18 +101,18 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
                 //    Value = 1D
                 //}).ToList();
 
-            songs.ForEach(x =>
-            {
-                if (Songs.SingleOrDefault(y => y.YtVideoId == x.YtVideoId) is null)
-                    Songs.Add(x);
-            });
+            //songs.ForEach(x =>
+            //{
+            //    if (Songs.SingleOrDefault(y => y.YtVideoId == x.YtVideoId) is null)
+            //        Songs.Add(x);
+            //});
         }
 
         private async Task SelectItem(MusicViewModel music)
         {
             SelectedMusic = null;
 
-            if (music?.SongPath == null) return;
+            //if (music?.SongPath == null) return;
 
             //MessagingCenter.Send(this,GlobalNames.MusicSelected, new MusicEventArgs(){Music = music});
 

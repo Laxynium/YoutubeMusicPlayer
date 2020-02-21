@@ -4,6 +4,7 @@ using SimpleInjector;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Application;
 using YoutubeMusicPlayer.Framework;
+using YoutubeMusicPlayer.MusicDownloading.UI;
 using YoutubeMusicPlayer.MusicDownloading.ViewModels;
 using YoutubeMusicPlayer.MusicSearching;
 using YoutubeMusicPlayer.MusicSearching.ViewModels;
@@ -38,6 +39,7 @@ namespace YoutubeMusicPlayer.Droid
             container.Register<App>(Lifestyle.Singleton);
             container.Register<MainPage>();
             container.Register<ITabbedPageService,TabbedPageService>(Lifestyle.Singleton);
+            container.RegisterSingleton<SongDownloadsStore>();
             container.Register<MusicSearchViewModel>(Lifestyle.Singleton);
             container.Register<DownloadViewModel>(Lifestyle.Singleton);
             container.Register<MusicSearchPage>(Lifestyle.Singleton);

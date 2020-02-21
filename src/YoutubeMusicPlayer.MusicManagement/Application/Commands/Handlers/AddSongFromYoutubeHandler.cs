@@ -11,6 +11,7 @@ using YoutubeMusicPlayer.MusicManagement.Domain;
 using YoutubeMusicPlayer.MusicManagement.Domain.Entities;
 using YoutubeMusicPlayer.MusicManagement.Domain.ValueObjects;
 using YoutubeMusicPlayer.MusicManagement.Infrastructure.Services.Youtube;
+using static YoutubeMusicPlayer.MusicManagement.Application.Services.Youtube.SongDownloadEvents;
 
 namespace YoutubeMusicPlayer.MusicManagement.Application.Commands.Handlers
 {
@@ -20,6 +21,7 @@ namespace YoutubeMusicPlayer.MusicManagement.Application.Commands.Handlers
         private readonly IEventDispatcher _eventDispatcher;
         private readonly FileManager _fileManager;
         private readonly IYoutubeService _youtubeService;
+        private readonly IDownloadProgressNotifier _downloadProgressNotifier;
         private readonly MusicManagementOptions _options;
 
         public AddSongFromYoutubeHandler(
@@ -27,20 +29,28 @@ namespace YoutubeMusicPlayer.MusicManagement.Application.Commands.Handlers
             IEventDispatcher eventDispatcher,
             FileManager fileManager,
             IYoutubeService youtubeService,
+            IDownloadProgressNotifier downloadProgressNotifier,
             MusicManagementOptions options)
         {
             _mainPlaylistRepository = mainPlaylistRepository;
             _eventDispatcher = eventDispatcher;
             _fileManager = fileManager;
             _youtubeService = youtubeService;
+            _downloadProgressNotifier = downloadProgressNotifier;
             _options = options;
         }
         public async Task HandleAsync(AddSongFromYoutube command)
         {
-            var (_, failed, value, e) = await _youtubeService.DownloadSong(command.YtId);
+            _downloadProgressNotifier.Notify(new SongDownloadStarted(command.SongId, command.Title, command.ThumbnailUrl));
+            var (_, failed, value, e) = await _youtubeService.DownloadSong(command.YtId,
+                p => _downloadProgressNotifier.Notify(new SongDownloadProgressed(command.SongId,p)));
 
-            if(failed)
+            if (failed)
+            {
+                _downloadProgressNotifier.Notify(new SongDownloadFailed(command.SongId));
                 throw new DownloadFailedException(e);
+            }
+            _downloadProgressNotifier.Notify(new SongDownloadFinished(command.SongId));
 
             var mainPlaylist = await _mainPlaylistRepository.GetAsync();
 

@@ -7,11 +7,8 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
     {
         public Guid Id { get; set; }
 
-        public string YtVideoId { get; set; }
 
         private double _value;
-
-
         public double Value
         {
             get => _value;
@@ -26,7 +23,5 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             get => _imageSource;
             set => SetValue(ref _imageSource, value);
         }
-
-        public string SongPath { get; set; }
     }
 }
