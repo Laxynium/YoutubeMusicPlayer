@@ -20,7 +20,7 @@ namespace YoutubeMusicPlayer.Framework
         public async Task Commit()
         {
             await _transaction.CommitAsync();
-            await _connection.CloseAsync();
+            //await _connection.CloseAsync();
         }
 
         public async Task Rollback()

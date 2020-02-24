@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -23,13 +24,13 @@ namespace YoutubeMusicPlayer.Framework
             container.Register<FileManager>(Lifestyle.Scoped);
 
             container.Register(
-                () => new SqliteConnection(connectionString), Lifestyle.Scoped);
+                () => new SqliteConnection(connectionString), Lifestyle.Singleton);
             container.Register<DbTransaction>(
                 () =>
                 {
                     var connection = container.GetInstance<SqliteConnection>();
                     connection.Open();
-                    return connection.BeginTransaction();
+                    return connection.BeginTransaction(IsolationLevel.ReadUncommitted);
                 }, Lifestyle.Scoped);
             container.Register(() => new DbContextOptionsBuilder().UseSqlite(connectionString).Options, Lifestyle.Singleton);
 

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Xamarin.Forms.Internals;
 using YoutubeMusicPlayer.Framework.Messaging;
 using YoutubeMusicPlayer.MusicManagement.Application.Queries;
 using YoutubeMusicPlayer.MusicManagement.Application.Services.Youtube;
@@ -11,16 +14,17 @@ namespace YoutubeMusicPlayer.MusicDownloading.UI
 {
     public class SongDownload
     {
-        public Guid SongId { get; }
-        public string Title { get; }
-        public string ThumbnailUrl { get; }
-        public int Progress { get; }
-        public Status Status { get; }
+        public Guid SongId { get; set; }
+        public string Title { get; set; }
+        public string ThumbnailUrl { get; set; }
+        public int Progress { get; set; }
+        public Status Status { get; set; }
 
         public SongDownload(Guid songId)
         {
             SongId = songId;
         }
+
         public SongDownload(Guid songId, string title, string thumbnailUrl, int progress, Status status)
         {
             SongId = songId;
@@ -29,7 +33,15 @@ namespace YoutubeMusicPlayer.MusicDownloading.UI
             Progress = progress;
             Status = status;
         }
+
+        public SongDownload Update(string title = null, string thumbnailUrl = null, int? progress = null,
+            Status? status = null)
+        {
+            return new SongDownload(SongId, title ?? Title, thumbnailUrl ?? ThumbnailUrl, progress ?? Progress,
+                status ?? Status);
+        }
     }
+
     public enum Status
     {
         InProgress,
@@ -50,88 +62,65 @@ namespace YoutubeMusicPlayer.MusicDownloading.UI
     {
         private readonly IQueryDispatcher _queryDispatcher;
 
-        private IObservable<List<IObservable<SongDownload>>> _songs;
-        private List<IObservable<SongDownload>> _songs2;
-        public void Subscribe(Action<SongDownload> onNewSong, Action<SongDownload> onSongUpdate)
-        {
-            //_songs.Subscribe(x=>x.)
-            //_songs.Subscribe(x => onSongUpdate(x));
-            //_songs.Subscribe(x => x.Subscribe(onSongUpdate));
-            //_songs.Subscribe(
-            //    x =>
-            //    {
-            //        onNewSong?.Invoke(x);
-            //        x.Subscribe(s => onSongUpdate(x));
-            //    }
-            //);
-        }
+        //private readonly List<SongDownload> _songList = new List<SongDownload>();
+        private readonly BehaviorSubject<List<SongDownload>> _songs;
+        public IObservable<List<SongDownload>> SongDownloads => _songs.AsObservable();
 
         public SongDownloadsStore(IDownloadProgressNotifier notifier, IQueryDispatcher queryDispatcher)
         {
             _queryDispatcher = queryDispatcher;
 
-            var songs = notifier.Events
+            _songs = new BehaviorSubject<List<SongDownload>>(new List<SongDownload>());
+            notifier.Events
                 .GroupBy(x => x.SongId)
-                .Select(
-                    x => new List<IObservable<SongDownload>>
-                    {
-                        x.Scan(
-                            (SongDownload) null,
-                            (sd, e) => e switch
-                            {
-                                SongDownloadStarted s => new SongDownload(s.SongId, s.Title, s.ThumbnailUrl, 0, Status.InProgress),
-                                SongDownloadProgressed s => new SongDownload(
-                                    s.SongId,
-                                    sd.Title,
-                                    sd.ThumbnailUrl,
-                                    s.Progress,
-                                    Status.InProgress
-                                ),
-                                SongDownloadFailed s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, sd.Progress, Status.Failure),
-                                SongDownloadFinished s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, 100, Status.Completed)
-                            }
-                        )
-                    }
-                );
-                //.SelectMany(x => Observable.Start(()=>x.Key));
-                //.Select(x=>new List<IObservable<SongDownload>>() as IEnumerable<IObservable<SongDownload>>)
-                //.Select(
-                //    x => x.Scan(
-                //        (SongDownload)null,
-                //        (sd, e) => e switch
-                //        {
-                //            SongDownloadStarted s => new SongDownload(s.SongId, s.Title, s.ThumbnailUrl, 0, Status.InProgress),
-                //            SongDownloadProgressed s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, s.Progress, Status.InProgress),
-                //            SongDownloadFailed s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, sd.Progress, Status.Failure),
-                //            SongDownloadFinished s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, 100, Status.Completed)
-                //        }
-                //    )
-                //);
-            _songs = songs;
+                .SelectMany(x =>
+                {
+                    return x.Scan(
+                        (SongDownload) null,
+                        (sd, e) => e switch
+                        {
+                            SongDownloadStarted s => new SongDownload(s.SongId, s.Title, s.ThumbnailUrl, 0,
+                                Status.InProgress),
+                            SongDownloadProgressed s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl,
+                                s.Progress, Status.InProgress),
+                            SongDownloadFailed s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, sd.Progress,
+                                Status.Failure),
+                            SongDownloadFinished s => new SongDownload(s.SongId, sd.Title, sd.ThumbnailUrl, 100,
+                                Status.Completed)
+                        }
+                    );
+                })
+                .Subscribe(AddOrReplace);
+        }
+
+        public void AddOrReplace(SongDownload x)
+        {
+            var songs = _songs.Value.ToList();
+            var song = songs.Find(y => y.SongId == x.SongId);
+            if (song is null)
+                songs.Add(x);
+            else
+            {
+                var index = songs.IndexOf(song);
+                songs[index] = x;
+            }
+
+            _songs.OnNext(songs);
         }
 
         public async Task Initialize()
         {
             var songs = await _queryDispatcher.DispatchAsync(new GetAllSongsFromYoutube());
 
-            //var newSongs = new ReplaySubject<(SongDownload song, ISubject<SongDownloadState> state)>();
-            //newSongs.Subscribe(_songs);
-            //_songs = newSongs;
-            //songs.Where(s=>_songs.All(x=>x.song.SongId != s.SongId).Wait()).ToList()
-            //    .ForEach(
-            //        s =>
-            //        {
-            //            var state = new ReplaySubject<SongDownloadState>();
-            //            _songs.OnNext((new SongDownload(s.SongId, s.Title, s.ThumbnailUrl), state));
-            //            state.OnNext(new SongDownloadState(100, Status.Completed));
-            //        });
-            //songs.ForEach(
-            //    s =>
-            //    {
-            //        var state = new ReplaySubject<SongDownloadState>();
-            //        _songs.OnNext((new SongDownload(s.SongId,s.Title,s.ThumbnailUrl), state));
-            //        state.OnNext(new SongDownloadState(100, Status.Completed));
-            //    });
+            songs
+                .Select(s => new SongDownload(s.SongId, s.Title, s.ThumbnailUrl, 100, Status.Completed))
+                .ForEach(AddOrReplace);
+            //_songList.Clear();
+            //songs.Select(s => 
+            //        new SongDownload(s.SongId, s.Title, s.ThumbnailUrl, 100, Status.Completed))
+            //    .ForEach(_songList.Add);
+
+            //_songs.OnNext(_songList.ToList());
         }
     }
 }

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicBrowsing\YoutubeMusicPlayer.MusicBrowsing.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicDownloading\YoutubeMusicPlayer.MusicDownloading.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicManagement\YoutubeMusicPlayer.MusicManagement.csproj" />
+    <ProjectReference Include="..\YoutubeMusicPlayer.MusicPlaying\YoutubeMusicPlayer.MusicPlaying.csproj" />
+  </ItemGroup>
+
+</Project>

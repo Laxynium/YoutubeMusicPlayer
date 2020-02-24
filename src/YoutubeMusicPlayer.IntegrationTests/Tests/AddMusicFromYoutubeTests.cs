@@ -1,10 +1,13 @@
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using YoutubeMusicPlayer.MusicManagement.Application.Commands;
+using YoutubeMusicPlayer.MusicManagement.Domain.Entities;
 using YoutubeMusicPlayer.MusicManagement.Domain.ValueObjects;
 using YoutubeMusicPlayer.MusicManagement.Infrastructure.EF;
 
@@ -12,6 +15,22 @@ namespace YoutubeMusicPlayer.MusicDownloading.IntegrationTests.Tests
 {
     public class AddMusicFromYoutubeTests : IntegrationTest
     {
+        [Fact]
+        public void Check_if_connection_is_opened_after_creating_transaction()
+        {
+            using var musicManagementContext = new MusicManagementDbContext(ContextOptions);
+
+            musicManagementContext.MainPlaylist.Add(new MainPlaylist(new PlaylistId(Guid.NewGuid()),
+                new PlaylistName("abc")));
+
+
+            //var transaction = musicManagementContext.Database.BeginTransaction();
+
+            //var connection = musicManagementContext.Database.GetDbConnection();
+
+            //connection.State.Should().Be(ConnectionState.Closed);
+        }
+
         [Fact]
         public async Task Operation_is_successful_when_no_problems_with_download()
         {

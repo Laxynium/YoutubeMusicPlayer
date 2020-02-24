@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using Xamarin.Forms;
 using YoutubeMusicPlayer.Framework;
 using YoutubeMusicPlayer.Framework.Messaging;
@@ -35,6 +37,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
         }
 
         private bool _errorOccured;
+
         public bool ErrorOccured
         {
             get => _errorOccured;
@@ -51,7 +54,7 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
         public DownloadViewModel(
             ITabbedPageService tabbedPageService,
             IQueryDispatcher queryDispatcher,
-            SongDownloadsStore downloadsStore 
+            SongDownloadsStore downloadsStore
         )
         {
             _tabbedPageService = tabbedPageService;
@@ -60,46 +63,38 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
 
             UpdateDataCommand = new Command(async () => await UpdateData());
             SelectItemCommand = new Command<MusicViewModel>(async (m) => await SelectItem(m));
-            HideErrorCommand = new Command(() =>
-            {
-                ErrorOccured = false;
-            });
+            HideErrorCommand = new Command(() => { ErrorOccured = false; });
 
             SubscribeForDownloadNotifications();
         }
 
         public void SubscribeForDownloadNotifications()
         {
-            _downloadsStore.Subscribe(
-                x =>
+            _downloadsStore.SongDownloads.Subscribe(Observer.Create((IList<SongDownload> songs) =>
+            {
+                foreach (var song in songs)
                 {
-                    Songs.Add(new MusicViewModel{Id = x.SongId, Title = x.Title, ImageSource = x.ThumbnailUrl, Value = 0});
-                },
-                (song) =>
-                {
-                    var songToUpdate = Songs.FirstOrDefault(s => s.Id == song.SongId);
-                    if (songToUpdate is null) return;
-
-                    var _ = song.Status switch
-                    {
-                        Status.InProgress => songToUpdate.Value = song.Progress / 100D,
-                        Status.Failure => songToUpdate.Value = 0D,
-                        Status.Completed => songToUpdate.Value = 1D
-                    };
-                });
+                    var songVm = Songs.TryFirst(s => s.Id == song.SongId);
+                    if (songVm.HasValue)
+                        songVm.Value.Value = song.Progress / 100D;
+                    else
+                        Songs.Add(new MusicViewModel { Id = song.SongId, Title = song.Title, Value = song.Progress, ImageSource = song.ThumbnailUrl });
+                }
+            }));
         }
 
         private async Task UpdateData()
         {
-            var songs =  new List<MusicViewModel>();
-                //    (await _queryDispatcher.DispatchAsync(new GetAllDownloadedSongsQuery()))
-                //.ToList().Select((x) => new MusicViewModel
-                //{
-                //    YtVideoId = x.YtId,
-                //    Title = x.Title,
-                //    ImageSource = x.ImageSource,
-                //    Value = 1D
-                //}).ToList();
+            await _downloadsStore.Initialize();
+            //var songs = new List<MusicViewModel>();
+            //    (await _queryDispatcher.DispatchAsync(new GetAllDownloadedSongsQuery()))
+            //.ToList().Select((x) => new MusicViewModel
+            //{
+            //    YtVideoId = x.YtId,
+            //    Title = x.Title,
+            //    ImageSource = x.ImageSource,
+            //    Value = 1D
+            //}).ToList();
 
             //songs.ForEach(x =>
             //{

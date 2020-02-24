@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using YoutubeMusicPlayer.Framework.Messaging;
 using YoutubeMusicPlayer.MusicDownloading.UI;
-using YoutubeMusicPlayer.MusicManagement.Application.Queries;
 using YoutubeMusicPlayer.MusicManagement.Infrastructure.Services.Youtube;
 using static YoutubeMusicPlayer.MusicManagement.Application.Services.Youtube.SongDownloadEvents;
 
@@ -16,54 +12,13 @@ namespace YoutubeMusicPlayer.UITests
     public class SongDownloadsModelTests
     {
         [Fact]
-        public void Learning_how_rx_works()
-        {
-            var obs = new ReplaySubject<List<(int, string)>>();
-
-            var list = new List<(int,string)>();
-            obs.Subscribe(
-                x =>
-                {
-                    foreach (var el in x)
-                    {
-                        list.Add(el);
-                        //Console.WriteLine($"{id}->{value}");
-                    }
-                }
-            );
-
-            obs.OnNext(new List<(int, string)>{(1,"a")});
-            obs.OnNext(new List<(int, string)>{(2,"b")});
-
-            var list2 = new List<(int, string)>();
-            obs.Subscribe(
-                x =>
-                {
-                    foreach (var el in x)
-                    {
-                        list2.Add(el);
-                        //Console.WriteLine($"{id}->{value}");
-                    }
-                }
-            );
-        }
-
-        [Fact]
         public void Test()
         {
             var notifier = new DownloadProgressNotifier();
             var model = new SongDownloadsStore(notifier, null);
 
-            var songs = new List<SongDownload>();
-            var songStates = new List<SongDownload>();
-            model.Subscribe(
-                s =>
-                {
-                },
-                s =>
-                {
-                    songs.Add(s);
-                });
+            var songs = new List<List<SongDownload>>();
+            model.SongDownloads.Subscribe(songDownloads => { songs.Add(songDownloads.ToList()); });
 
             var songId = Guid.NewGuid();
             var title = "title";
@@ -72,71 +27,20 @@ namespace YoutubeMusicPlayer.UITests
             notifier.Notify(new SongDownloadStarted(songId, title, thumbnailUrl));
 
             notifier.Notify(new SongDownloadProgressed(songId, 10));
-            notifier.Notify(new SongDownloadProgressed(songId, 50));
             notifier.Notify(new SongDownloadProgressed(songId, 100));
 
             notifier.Notify(new SongDownloadFinished(songId));
 
-            //songs.Should().HaveCount(5)
-            //    .And
-            //    .ContainEquivalentOf(new SongDownload(songId, title, thumbnailUrl));
-            //songStates.Should().HaveCount(4)
-            //    .And.BeEquivalentTo(
-            //        new List<(SongDownload, SongDownloadState)>
-            //        {
-            //            (songs[0], new SongDownloadState( 10, Status.InProgress)),
-            //            (songs[0], new SongDownloadState( 50, Status.InProgress)),
-            //            (songs[0], new SongDownloadState( 100, Status.InProgress)),
-            //            (songs[0], new SongDownloadState( 100, Status.Completed))
-            //        }
-            //    );
+            songs.Should().HaveCount(5)
+                .And.BeEquivalentTo(new List<List<SongDownload>>
+                {
+                    new List<SongDownload>(),
+                    new List<SongDownload> {new SongDownload(songId, title, thumbnailUrl, 0, Status.InProgress)},
+                    new List<SongDownload> {new SongDownload(songId, title, thumbnailUrl, 10, Status.InProgress)},
+                    new List<SongDownload> {new SongDownload(songId, title, thumbnailUrl, 100, Status.InProgress)},
+                    new List<SongDownload> {new SongDownload(songId, title, thumbnailUrl, 100, Status.Completed)},
+                });
         }
-
-        //[Fact]
-        //public void Test2()
-        //{
-        //    var notifier = new DownloadProgressNotifier();
-        //    var model = new SongDownloadsStore(notifier, null);
-
-        //    var songs = new List<SongDownload>();
-        //    var songStates = new List<(SongDownload, SongDownloadState)>();
-        //    model.Subscribe(
-        //        s =>
-        //        {
-        //            songs.Add(s);
-        //        },
-        //        (s,ss) =>
-        //        {
-        //            songStates.Add((s,ss));
-        //        });
-
-        //    var songId = Guid.NewGuid();
-        //    var title = "title";
-        //    var thumbnailUrl = "thumbnail";
-
-        //    notifier.Notify(new SongDownloadStarted(songId, title, thumbnailUrl));
-
-        //    notifier.Notify(new SongDownloadProgressed(songId, 10));
-        //    notifier.Notify(new SongDownloadProgressed(songId, 50));
-        //    notifier.Notify(new SongDownloadFailed(songId));
-        //    notifier.Notify(new SongDownloadProgressed(songId, 90));
-        //    notifier.Notify(new SongDownloadProgressed(songId, 100));
-
-        //    notifier.Notify(new SongDownloadFinished(songId));
-
-        //    songs.Should().HaveCount(1)
-        //        .And
-        //        .ContainEquivalentOf(new SongDownload(songId, title, thumbnailUrl));
-        //    songStates.Should().HaveCount(3)
-        //        .And.BeEquivalentTo(
-        //            new List<(SongDownload, SongDownloadState)>
-        //            {
-        //                (songs[0],new SongDownloadState( 10, Status.InProgress)),
-        //                (songs[0],new SongDownloadState( 50, Status.InProgress)),
-        //                (songs[0],new SongDownloadState( -1, Status.Failure))
-        //            }
-        //        );
-        //}
 
         //class FakeQueryDispatcher : IQueryDispatcher
         //{
@@ -234,6 +138,5 @@ namespace YoutubeMusicPlayer.UITests
         //        }
         //    );
         //}
-
     }
 }

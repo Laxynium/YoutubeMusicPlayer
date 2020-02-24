@@ -55,6 +55,7 @@ namespace YoutubeMusicPlayer.MusicManagement
             container.RegisterSingleton<IDownloadProgressNotifier,DownloadProgressNotifier>();
             container.Register<IMainPlaylistRepository, MainPlaylistRepository>(Lifestyle.Scoped);
             container.Register(typeof(ICommandHandler<>), typeof(MusicManagementStartup).Assembly, Lifestyle.Scoped);
+            container.Register(typeof(IQueryHandler<,>), typeof(MusicManagementStartup).Assembly, Lifestyle.Singleton);
         }
     }
 }

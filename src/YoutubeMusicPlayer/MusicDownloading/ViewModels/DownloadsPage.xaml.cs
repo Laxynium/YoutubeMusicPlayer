@@ -14,6 +14,8 @@ namespace YoutubeMusicPlayer.MusicDownloading.ViewModels
             BindingContext = _viewModel = viewModel;
         }
         
+
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
